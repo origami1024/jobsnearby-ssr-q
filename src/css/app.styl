@@ -1,0 +1,298 @@
+// app global css in Stylus form
+*
+  font-family "Montserrat", sans-serif
+  --main-bg-color #fff
+  --main-borders-color #2E2768//#3A6E8F
+  --btn-color #C00027
+  --btn-color1 #D00027
+  --violet-btn-color #8645FF
+  --violet2 #9955FF
+  --color1 #2E2768 //#181059
+  --color-graypink #F8F4FF
+  --footer-color #EDEEF2
+  --logoWidth 180px
+  --maxW 1135px
+  @media screen and (max-width: 1160px)
+    --maxW 100%
+body
+  background-image url('/statics/bg1.png'), url('/statics/bg2.png'), linear-gradient(180deg, var(--footer-color), var(--footer-color))
+  background-repeat no-repeat
+  background-size: auto, auto, 100% 200px;
+  background-position right top, left 18px bottom, center bottom
+  @media screen and (max-width 550px)
+    background-size: auto, auto, 100% 300px;
+#q-app
+  box-sizing border-box
+  position relative
+  font-family 'Montserrat', sans-serif
+  -webkit-font-smoothing antialiased
+  -moz-osx-font-smoothing grayscale
+  text-align center
+  color #2c3e50
+  font-size 13px
+  line-height 14px
+  //max-width var(--maxW)
+  margin auto
+  //padding-bottom 70px
+  //border-bottom 1.5px solid red//#E6E6E6
+  .header-wrapper
+    border-bottom 1.5px solid #E6E6E6
+  header
+    display flex
+    align-items center
+    justify-content space-between
+    margin 0px auto
+    height 115px
+    padding 0px
+    box-sizing border-box
+    max-width var(--maxW)
+    @media screen and (max-width 1160px)
+      padding 0px 10px
+    @media screen and (max-width 950px)
+      height 95px
+      margin 0px
+    @media screen and (max-width 800px)
+      height 75px
+      padding 0px 5px
+    @media screen and (max-width 550px)
+      display block
+      margin-bottom 20px
+    #nav
+      display flex
+      align-items center
+      margin-left auto
+      margin-right 15px
+      @media screen and (max-width 550px)
+        margin-left 0
+        margin-right 0
+  .lowres__header-right
+    display flex
+    align-items center
+    @media screen and (max-width 550px)
+      justify-content center
+      
+  .r-link
+    margin-right 10px
+    display block
+    border-radius 4px
+    color var(--main-borders-color)//purple
+    text-decoration none
+  h1,h2,h3,h5,h6
+    font-size 14px
+    line-height 1
+  h4
+    line-height 1
+  // a 
+  //   &:visited
+  //     color purple
+  .logo.router-link-exact-active
+    color white
+    background-color white//purple
+    &:visited
+      color white
+      background-color white//purple
+  .searched
+    background-color yellow
+  .r-view
+    //width 90%
+    max-width var(--maxW)
+    min-height calc(100vh - 150px - 1.5px - 200px)
+    box-sizing border-box
+    margin auto
+  // .logo
+  //   //margin-right 10px
+  //   font-weight 700
+  //   letter-spacing 2px
+  .logoText
+    color var(--color1)
+    letter-spacing 0.115em
+    font-size 34px
+    font-weight bold
+    font-family 'Montserrat', serif
+    line-height 123.4%
+    @media screen and (max-width 800px)
+      letter-spacing 0.01em
+  .logolink
+    margin-right 10px
+    text-decoration none
+    @media screen and (max-width: 550px)
+      // font-size 24px
+      // margin-right 2px
+      margin 5px auto
+      display block
+  .headerBtns1
+    padding 0 5px
+    white-space nowrap
+    background-color: var(--btn-color);
+    font-weight: bold;
+    align-self:flex-start;
+    border-radius 10px
+    height 40px
+    transition-duration 0.3s
+    @media screen and (max-width 800px)
+      height 40px
+      padding 0
+      white-space normal
+      max-width 120px
+    div
+      font-family 'Montserrat', sans-serif !important
+      font-size 14px !important
+      line-height 17px !important
+      @media screen and (max-width 800px)
+        line-height 1 !important
+        //max-height 30px
+        padding 0 5px
+      div
+        @media screen and (max-width 800px)
+          //max-height 24px
+          padding 0
+  .headerBtnRed
+    &:hover
+      background-color var(--btn-color1) !important
+    @media screen and (max-width: 550px)
+      // font-size 12px
+      // padding 0 !important
+      // white-space normal
+      // height 36px
+      // line-height 14px
+      // div
+      //   padding 0 !important
+      //   width 82px
+  .violetBtns
+    padding 0 3px
+    margin-left 15px
+    @media screen and (max-width 800px)
+      margin-left 10px
+      padding 0 6px
+    @media screen and (max-width: 550px)
+      // font-size 16px
+      // line-height 36px
+      // height 36px
+      // padding 0 !important
+      // margin-right 0
+      // div
+      //   width 55px
+      // div div
+      //   margin-top -3px
+  .scrollTopBtn
+    position fixed
+    bottom 12px
+    left 40px
+    opacity 0.7
+    z-index 3
+  .main__footer
+    display flex
+    justify-content flex-end
+    margin 0 auto
+    margin-top 20px
+    padding-top 30px
+    box-sizing border-box
+    height 200px
+    max-width var(--maxW)
+    padding 30px 200px 12px 100px
+    @media screen and (max-width 950px)
+      padding 25px 75px 12px 50px
+    @media screen and (max-width 800px)
+      padding 20px 15px 12px 15px
+    @media screen and (max-width 550px)
+      height auto
+    .footer__ul-top
+      display flex
+      list-style-type none
+      padding 0
+      margin 0
+      width 100%
+      justify-content space-between
+      @media screen and (max-width 550px)
+        flex-wrap wrap
+      h3
+        text-decoration none
+        font-family: Montserrat, sans-serif
+        font-weight bold
+        font-size: 12px;
+        line-height: 15px;
+        color var(--color1)
+        margin 0
+        margin-bottom 15px
+        @media screen and (max-width 800px)
+          margin-bottom 10px
+      li
+        padding 0
+        margin 0
+        text-align left
+        max-width 20%
+        @media screen and (max-width 800px)
+          max-width 26%
+        @media screen and (max-width 550px)
+          display inline-block
+          max-width 50%
+          margin-bottom 12px
+        ul
+          list-style-type none
+          width 100%
+          padding 0
+          margin 0
+          li
+            max-width 100%
+            margin 3px 0
+            a
+              width 100%
+              text-decoration none
+              font-family: Montserrat, sans-serif
+              font-size: 12px;
+              line-height: 15px;
+              color var(--color1)
+              &:hover
+                color var(--violet-btn-color)
+        &:last-child li a
+          font-weight bold
+  .user-status-bar
+    display flex
+    align-items center
+  .headerBtn
+    text-decoration none
+    color var(--main-borders-color)
+    font-size 16px
+    background-color transparent
+    text-transform uppercase
+    //border 2px solid transparent
+    //transition-duration .4s
+    //padding 4px
+    margin 0 2px
+    border-radius 4px
+    padding-right 0px
+    letter-spacing 2px
+    font-weight 700
+    &:hover
+      color var(--violet-btn-color)//var(--btn-color)
+.marginLeft30pxOnBig
+  margin-left 30px
+  @media screen and (max-width 550px)
+    margin-left 0px
+.multipleUploadsHeader
+  margin-right 5px
+  transition-duration 0.25s
+  &:hover
+    color var(--violet-btn-color)
+  @media screen and (max-width 550px)
+    margin-right 0px
+.footerLinkFB
+  background-color: var(--violet-btn-color) !important
+  color: white !important
+  height: 32px !important
+  line-height: 32px !important
+  padding 0 5px !important
+  text-align: center;
+  display: inline-block;
+  margin: 0 !important
+  text-transform uppercase
+  &:hover
+    background-color var(--violet2) !important
+
+.nav-icon
+  @media screen and (max-width 550px)
+    font-size 30px !important
+.nav-icon-logout
+  @media screen and (max-width 550px)
+    font-size 26px !important
+
