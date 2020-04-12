@@ -9,16 +9,16 @@ installDependencies() {
 
 
 buildSSR() {
-  echo  " Installing server dependencies .. .."
+  echo  " building ./dist/ssr .. .."
   quasar build -m ssr
 }
 
 
 
-goFurther() {
+installSSR() {
   echo  " Installing application dependencies .. .."  &&  echo
   cd ./dist/ssr
   npm install
 }
 
-installDependencies && buildSSR && goFurther
+installDependencies && buildSSR && installSSR
