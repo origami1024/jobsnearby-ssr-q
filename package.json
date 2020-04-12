@@ -10,8 +10,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ./",
     "test": "echo \"No test specified\" && exit 0",
-    "build": "quasar build -m ssr",
-    "postinstall": "cd ./dist/ssr/ && npm install",
+    "postinstall": "bash install.sh",
     "start": "node ./dist/ssr/index.js"
   },
   "dependencies": {
