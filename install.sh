@@ -15,12 +15,10 @@ buildSSR() {
 
 
 
-setupClient() {
+goFurther() {
   echo  " Installing application dependencies .. .."  &&  echo
-  echo dir .
-  echo " -------- "
   cd ./dist/ssr
   npm install
 }
 
-installDependencies && buildSSR && setupClient
+installDependencies && buildSSR && goFurther
