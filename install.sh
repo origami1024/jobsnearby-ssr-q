@@ -23,4 +23,4 @@ setupClient() {
   npm install
 }
 
-installDependencies && buildSSR && setupClient && copy
+installDependencies && buildSSR && setupClient
