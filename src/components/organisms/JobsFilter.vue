@@ -1,17 +1,7 @@
 <template>
   <div class="jobsfilter" :class="{ filtersHideBelow550: !filtersToggle}">
     <span class="line0">
-      <h3
-        style="
-          text-transform: uppercase;
-          font-family: Montserrat, sans-serif;
-          font-style: normal;
-          font-weight: bold;
-          font-size: 16px;
-          line-height: 20px;
-          margin-bottom: 15px;
-        "
-      >
+      <h3 class="filter__header">
         Расширенный поиск:
       </h3>
       <button class="closeModal" @click="$emit('toggleFilters')">X</button>
@@ -269,6 +259,14 @@ export default {
     left 5px
     right 5px
     z-index 4
+  .filter__header
+    text-transform: uppercase;
+    font-family: Montserrat, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 20px;
+    margin-bottom: 15px;
   .lowresline
     @media screen and (max-width 800px)
       display flex

@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ./",
     "test": "echo \"No test specified\" && exit 0",
     "build": "quasar build -m ssr",
-    "heroku-postbuild": "cd ./dist/ssr/ && npm install",
+    "postinstall": "cd ./dist/ssr/ && npm install",
     "start": "node ./dist/ssr/index.js"
   },
   "dependencies": {
