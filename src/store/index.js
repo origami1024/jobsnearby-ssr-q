@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-// import example from './module-example'
+import { axiosInstance } from 'boot/axios'
 
 Vue.use(Vuex)
 
@@ -46,6 +46,7 @@ export default function (/* { ssrContext } */) {
       jFilters: {
         query: ''
       },
+      jobDetails: {} //Главный объект JobPage
     },
     mutations: {
       setRegState (state, value) {
@@ -79,7 +80,10 @@ export default function (/* { ssrContext } */) {
             tmp.statlink
           ]
         }
-      }
+      },
+      setJobDetails (state, job) {
+        state.jobDetails = job
+      },
     },
     actions: {
       regStateChange (context, value) {
@@ -102,6 +106,17 @@ export default function (/* { ssrContext } */) {
       refreshUStats (context, stats) {
         context.commit('refreshUStats', stats)
       },
+      setJobDetails (context, job) {
+        context.commit('setJobDetails', job)
+      },
+      async fetchJobDetails (context, id) {
+        console.log(id)
+        let jobUrl = '/jobby.idjson=' + id
+        return axiosInstance.get(jobUrl, null, {headers: {'Content-Type' : 'application/json' }})
+          .then(({ data }) => {
+            context.commit('setJobDetails', data)
+          })
+      }
     },
 
     // enable strict mode (adds overhead!)

@@ -2,18 +2,25 @@
 
 const routes = [
   {
-    path: '/registration',
-    component: () => import('pages/Registration.vue'),
-    // props: true,
-    props: true
-  },
-  {
     path: '/',
     component: () => import('pages/Jobs.vue')
   },
   {
-    path: '/test1',
-    component: () => import('pages/test1.vue')
+    path: '/registration',
+    component: () => import('pages/Registration.vue'),
+    props: true
+  },
+  {
+    path: '/jobpage',
+    component: () => import('pages/JobPage.vue') //Home
+  },
+  {
+    path: '/companypage',
+    component: () => import('pages/CompanyPage.vue') //Home
+  },
+  {
+    path: '/feedback',
+    component: () => import('pages/Feedback.vue')
   }
 ]
 
