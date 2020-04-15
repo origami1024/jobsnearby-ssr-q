@@ -3,7 +3,7 @@
     <div class="header-wrapper">
       <header>
         <router-link
-          @click.native="refreshjobs('logoclick')" to="/"
+          @click.native="$store.dispatch('refreshjobs', {param: 'logoclick'})" to="/"
           class="logolink"
         >
           <span class="logoText">
@@ -18,7 +18,7 @@
           <div id="nav">
             <router-link
               class="headerBtn"
-              v-if="user.role === 'company' && isagency == true" to="/uploads"
+              v-if="user.role === 'company' && user.isagency == true" to="/uploads"
               :style="{color: $route.name != 'uploads' ? 'green' : 'var(--violet-btn-color)'}"
             >
               <q-icon name="description" style="font-size: 32px;" class="nav-icon multipleUploadsHeader"></q-icon>
@@ -91,7 +91,7 @@
                 </q-tooltip>
               </router-link>
               <router-link
-                @click.native="logout"
+                @click.native="logout(true)"
                 v-if="user.role && (user.role === 'company' || user.role === 'subscriber')"
                 class="headerBtn"
                 to="/"
@@ -151,6 +151,7 @@
           </ul>
         </li>
       </ul>
+      {{$store.state.user}}
     </footer>
   </div>
 </template>
@@ -170,12 +171,21 @@ export default {
   beforeDestroy() {
     window.removeEventListener("storage", this.onStorageUpdate)
   },
-  
+  preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
+    if (ssrContext && typeof ssrContext.req.userData === 'object' && ssrContext.req.userData !== null) {
+      return store.dispatch('storeAuth', ssrContext.req.userData)
+    }
+  },
   mounted() {
     if (localStorage.lang) this.$i18n.locale = localStorage.lang
     if (this.$route.query.verified == 1) this.$q.notify({message: 'Email пользователя верифицирован.', icon: 'warning', color: 'green',timeout: 5000})
     if (this.$route.query.resender == 1) this.$q.notify({message: 'Повторное письмо со ссылкой для активации учетной записи отправлено.', icon: 'warning', color: 'green',timeout: 5000})
     if (this.$route.query.reset == 1) this.$q.notify({message: 'Пароль сброшен. Новый пароль отправлен на вашу почту.', icon: 'warning', color: 'green',timeout: 5000})
+
+    /*
+    //Seems that this data is always coming from the server, no need to look for it in LS
+    //LS is needed only to synchronize tabs then
+    //so there needs to be LS save on succesfull auth - so all tabs are synched
 
     let storageUserInit = {}
     if (localStorage.user) {
@@ -206,6 +216,7 @@ export default {
       storageUserInit.ownCVs = Array(localStorage.ownCVs)
     }
     this.$store.dispatch('setUserMass', storageUserInit)
+    */
     window.addEventListener("storage", this.onStorageUpdate)
 
     /* THIS NEEDS TO BE REDONE - !! - TRANSFERED TO PREFETCH, AND SERVERSIDE SYNCHRONIZED
@@ -243,44 +254,37 @@ export default {
       this.dismiss = this.$q.notify(this.$t('App.doAuthForPublishing'))
     },
     onStorageUpdate(event) {
-      if (['identity','role','user_id','username','surname','company','isagency','insearch','cvurl','ownCvs'].includes(event.key)) {
-        let newValue = event.newValue
-        if (event.key === "user_id") newValue = Number(event.newValue)
-        else if (event.key === "isagency" || event.key === "insearch") newValue = Boolean(event.newValue)
-        else if (event.key === "ownCVs") newValue = Array(event.newValue)
-        this.$store.dispatch('setUserKeyProp', {key: event.key,prop:newValue})
+      // console.log('on stoarge updoto', JSON.parse(event.newValue))
+      if (event.key == 'userData') {
+        let userData = JSON.parse(event.newValue)
+        this.$store.dispatch('storeAuth', userData)
       }
     },
-    refreshjobs(param, param2) {
-      if (this.$router.currentRoute.name == 'jobpage' && param != 'logoclick') {
-        //this condition maybe needs repair
-        console.log('get one job app level (bluff)')
-      } else {
-        console.log('refresh ALL jobs app level', param, param2)
-        let jobslistUrl = '/jobs.json'
-        if (param !== 'init') {
-          jobslistUrl += this.jFilters.query
-          if (param === 'page') {
-            jobslistUrl += this.query.length > 0 ? '&page=' : '?page='
-            jobslistUrl += param2
-          }
-        }
+    logout(retry) {
+      if (this.user_id !== -1) {
         this.$axios
-          .get(jobslistUrl, null, {headers: {'Content-Type' : 'application/json' }})
-          .then(response => {
-            this.$store.dispatch('refreshJobsDataLight', response.data)
-          })
+          .post('/out', [], {withCredentials: true})
+      }
+      this.$store.dispatch('resetUser')
+      localStorage.setItem('userData',JSON.stringify({
+          identity: 'Гость',
+          role: 'guest',
+          user_id: -1,
+          username: '',
+          surname: '',
+          company: '',
+          isagency: false,
+          insearch: false,
+          cvurl: '',
+          ownJobs: [],
+          ownCVs: []
+        }))
+      if (this.$route.path != '/') {
+        this.$router.push("/")
+        if (retry === true) this.$store.dispatch('refreshjobs', {})
+      }
+    },
 
-        //user stats тоже тут, может следует передвинуть
-        this.$axios
-          .get('/salstats.json', null, {headers: {'Content-Type' : 'application/json' }})
-          .then(response => {
-            // console.log('cp user stats 1 ', response.data)
-            this.$store.dispatch('refreshUStats', response.data)
-          })
-      }
-      
-    },
     cvupd(e) {// CHANGE THIS TO USE VUEX
       this.cvurl = e
     },
@@ -420,91 +424,30 @@ export default {
         return false
       }
     },
-    authIt: function(token) {//CHANGE THIS
-      this.status = 'Вход выполнен'//имя пользователя?
-      this.user = token[0]
-      this.user_id = token[1]
-      this.role = token[2]
-      this.modalShown = 'none'
-      this.ownJobs = []
-      if (token[2] === 'subscriber') {
-        this.username = token[3]
-        this.surname = token[4]
-        this.insearch = token[5]
-        //this.likedJobs = token[6]
-        this.cvurl = token[7]
-        setTimeout(()=>{this.getOwnCVHits()}, 50)
-      } else
-      if (token[2] === 'company') {
-        this.company = token[3]
-        this.isagency = token[4]
-        //this.likedJobs = []
-      }
-      //console.log('cp111')
-    },
+    // moved it into store - loginGo
+    // authIt: function(token) {//CHANGE THIS
+    //   if (token[2] === 'subscriber') {
+    //     this.username = token[3]
+    //     this.surname = token[4]
+    //     this.insearch = token[5]
+    //     //this.likedJobs = token[6]
+    //     this.cvurl = token[7]
+    //     setTimeout(()=>{this.getOwnCVHits()}, 50)
+    //   } else
+    //   if (token[2] === 'company') {
+    //     this.company = token[3]
+    //     this.isagency = token[4]
+    //     //gET OWN JOBS HERE PERHAPS?
+    //     //this.likedJobs = []
+    //   }
+    //   //console.log('cp111')
+    // },
     uDataChangeFromSubProfile(udata) {//CHANGE THIS
       this.username = udata.username
       this.surname = udata.surname
       this.insearch = udata.insearch
     },
-    logoutAndRetry: function() {
-      //this is logout when logout has happened on different tab - no need to send data to server
-      console.log('logoutandretry')
-      this.status = 'Выход...'//имя пользователя?
-      this.user = 'Гость'
-      this.user_id = -1
-      this.role = 'guest'
-      this.status = 'Вход не выполнен'
-      this.cvurl = ''
-      this.token = undefined
-      this.surname = ''
-      this.username = ''
-      this.company = ''
-      this.isagency = false
-      this.insearch = false
-      //this.likedJobs = []
-      this.cvurl = ''
-      //this.likedJobsList = []
-      this.ownJobs = []
-      this.ownCVs = []
-      //console.log(this.$route)
-      
-      if (this.$route.name != 'home') {
-        this.$router.push("/")
-        // this.refreshjobs()
-      }
-      //this.$destroy() try this to flush data on logout
-    },
-    logout: function() {
-      if (this.user_id !== -1) {
-        this.status = 'Выход...'//имя пользователя?
-        this.user = 'Гость'
-        this.user_id = -1
-        this.role = 'guest'
-        this.status = 'Вход не выполнен'
-        this.cvurl = ''
-        this.token = undefined
-        this.surname = ''
-        this.username = ''
-        this.company = ''
-        this.isagency = false
-        this.insearch = false
-        //this.likedJobs = []
-        this.cvurl = ''
-        //this.likedJobsList = []
-        this.ownJobs = []
-        this.ownCVs = []
-        console.log('cplogout1: ', this.ownCVs)
-        axios
-          .post(config.jobsUrl + '/out', [], {withCredentials: true})
-          .then(response => {
-            this.status = 'Вход не выполнен'
-            //console.log(this.$route)
-            if (this.$route.name != 'home') this.$router.push("/")
-            this.refreshjobs()
-          })
-      }
-    },
+    
     
     getOwnJobs() {
       console.log('getOwnJobs app level')
@@ -516,12 +459,15 @@ export default {
           
           if (response.data && response.data.rows) {
             this.ownJobs = response.data.rows
-          } else
-          if (response.data && response.data.startsWith('logout')) {
-            console.log('logged out on different tab')
-            this.logoutAndRetry()
           }
-          this.ajaxLoading = false
+          // else
+          // if (response.data && response.data.startsWith('logout')) {
+          //   //do we need this particular part
+          //   //when u logout on other tab, u dont need to send shit to server
+          //   //and user data should be synched from LS
+          //   console.log('logged out on different tab')
+          //   this.logout(false)
+          // }
         })
     },
     updQue(params) {

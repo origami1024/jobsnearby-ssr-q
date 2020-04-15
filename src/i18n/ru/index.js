@@ -179,6 +179,7 @@ export default {
       'm': 'm',
     },
     doAuthForPublishing: 'Авторизируйтесь для возможности добавления вакансий',
+    statusLoginNotDone: 'Вход не выполнен',
   },
   filters: {
     searchHint: 'Поиск по полям название, автор, город, основной текст',

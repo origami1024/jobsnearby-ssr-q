@@ -11,11 +11,15 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ./",
     "test": "echo \"No test specified\" && exit 0",
     "build": "bash install.sh",
-    "start": "node ./dist/ssr/index.js"
+    "start": "node ./dist/ssr/index.js",
+    "quasardev": "quasar dev -m ssr"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^0.18.1",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.5",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.0.2",
     "quasar": "^1.0.0",
     "vue-i18n": "^8.0.0"

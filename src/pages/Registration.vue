@@ -6,7 +6,6 @@
         @input="$store.dispatch('regStateChange', $event)"
         inline-label
         class="shadow-2 tabs"
-        style="fontWeight:700;"
         active-color="red-10"
       >
         <!-- style="color: white; backgroundColor: var(--main-borders-color);" -->
@@ -202,18 +201,7 @@
                 @blur="valiRegPWC"
                 @input="validation.pwc = ''"
               />
-              <!-- @blur="validateMail" -->
             </div>
-            <!-- <div class="colx">
-              <div class="row">
-                <span v-show="showErrors" class="err_span">{{validation.pw}}</span>
-              </div>
-              <input v-model="pw" id="pw" placeholder="* Пароль">
-              <div class="row">
-                <span v-show="showErrors" class="err_span">{{validation.pwc}}</span>
-              </div>
-              <input v-model="pwc" id="pwconfirm" placeholder="* Повторите пароль">
-            </div> -->
             
             <div style="display: flex; flex-direction:row; margin-bottom: 12px">
               <q-checkbox
@@ -222,14 +210,6 @@
                 * {{$t('reg.rulesStart')}} <a style="color: var(--btn-color)" href="#">{{$t('reg.rulesLink')}}</a>{{$t('reg.rulesEnd')}}
               </label>
             </div>
-            <span style="margin-bottom: 10px; font-size: 12px " v-show="showErrors && !rules" class="err_span">{{validation.rules}}</span>          
-            <!-- <div class="colx">
-              <div>
-                <input type="checkbox" id="rulescb" v-model="rules">
-                <label class="rulescb-label" for="rulescb">* Я соглашаюсь с <a href="#">правилами использования сервиса</a>, а также с передачей и обработкой моих данных в TEST.com. Я подтверждаю своё совершеннолетие и ответственность за размещение объявления.</label>
-              </div>
-              <span v-show="showErrors" class="err_span">{{validation.rules}}</span>
-            </div> -->
             <q-btn 
               color="red-10"
               :label="$t('reg.regBtn')"
@@ -237,8 +217,6 @@
               :loading="submitting"
               class="submitBtn"
             />
-            <!-- <input type="submit" value="Регистрация"> -->
-            <!-- <p>{{status}}</p> -->
           </form>
         </q-tab-panel>
       </q-tab-panels>
@@ -250,16 +228,10 @@
 </template>
 
 <script>
-// import axios from 'axios'
-// const config = require('./../configs/main_config')
 import { mapState } from 'vuex'
 
 export default {
   name: 'registration',
-  props: {
-    // regState: {type: String, default: 'reg'},
-    // role: String,
-  },
   computed: {
     ...mapState(['user', ['role']]),
     ...mapState(['regState'])
@@ -312,8 +284,8 @@ export default {
         //this.status = 'Попытка регистрации'
         this.submitting = true
         //console.log('cp123f, ', this.surname)
-        axios
-          .post(config.jobsUrl + '/reg', [this.mail.toLowerCase(), this.pw, this.usertype, this.usertype === 'subscriber' ? this.name : this.company, this.usertype === 'subscriber' ? this.surname : this.agency], {headers: {'Content-Type' : 'application/json' }})
+        this.$axios
+          .post('/reg', [this.mail.toLowerCase(), this.pw, this.usertype, this.usertype === 'subscriber' ? this.name : this.company, this.usertype === 'subscriber' ? this.surname : this.agency], {headers: {'Content-Type' : 'application/json' }})
           .then(response => {
             if (response.data == 'OK') {
               this.status = this.$t('reg.regSuccess')
@@ -505,17 +477,21 @@ export default {
         this.showErrors = false
         //this.login.status = 'Попытка входа'
         this.submitting = true
-        axios
-          .post(config.jobsUrl + '/login', [this.login.mail.toLowerCase(), this.login.pw, this.login.rememberme], {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+        this.$axios
+          .post('/login', [this.login.mail.toLowerCase(), this.login.pw, this.login.rememberme], {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
           .then(response => {
             //fix: need to send auth data on login
-            if (response.data && response.data[0] === 'OK' && response.data.length > 3) {
+            if (response.data.success = 'OK') {
               this.login.status = ''
               this.$q.notify({type:'positive', message: this.$t('reg.loginSuccess')})
               // console.log('cp123ss:', response.data.slice(1))
-              this.$emit('authed', response.data.slice(1))
-              this.$router.push({ name: 'home' })
-              this.$emit('refresh')
+              // this.$emit('authed', response.data.slice(1))
+              this.$store.dispatch('loginGo', response.data)
+              localStorage.setItem('userData',JSON.stringify(response.data))
+              
+              this.$router.push('/')
+              // this.$emit('refresh')
+              this.$store.dispatch('refreshjobs', {})
               this.login.mail = ''
               this.login.pw = ''
             }
@@ -583,19 +559,11 @@ export default {
       return false
     }
   },
-  components: {
-  },
   mounted() {
     //console.log(this.$route.query.login)
     if (this.$route.query.login == 1) this.$store.dispatch('regStateChange', 'login')
     if (this.$route.query.login == 2) this.$store.dispatch('regStateChange', 'reg')
   }
-  // watch: {
-  //   $route (to, from){
-  //     console.log('cp5', to)
-
-  //   },
-  // }
 }
 </script>
 
@@ -625,6 +593,7 @@ export default {
     border-top-right-radius 5px
     box-shadow 0 0 4px 1px var(--main-borders-color)
     color var(--color1)
+    font-weight 700
   form
     display flex
     flex-direction column
@@ -659,12 +628,12 @@ export default {
     .spacebetw
       justify-content space-between
       margin-bottom 5px
-    #rulescb
-      display inline
-      margin-right 5px
-    .rulescb-label
-      line-break normal
-      display inline
+    // #rulescb
+    //   display inline
+    //   margin-right 5px
+    // .rulescb-label
+    //   line-break normal
+    //   display inline
 .submitBtn
   margin 0 auto
   width 45%

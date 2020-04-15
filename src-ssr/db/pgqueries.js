@@ -3,6 +3,39 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL || `postgres://postgres:123456@localhost:5433/jobsnearby`
 })
 
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken')
+
+const SupremeValidator = {
+  // comparePassword(hashPassword, password) {
+  //   return bcrypt.compareSync(password, hashPassword);
+  // },
+  isValidEmail(email) {
+    //return /\S+@\S+\.\S+/.test(email);
+    if (email.length < 6 || email.length > 50) return false
+    return /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test(email)
+  },
+  isValidPW(pw) {
+    let pwRegex = /[a-zA-Z]/
+    if (pw.length < 6 || pw.length > 25) return false
+    return (pw && pw.length > 5 && pw.length < 26 && pwRegex.test(pw))
+  },
+  generateJSONWebToken(mail){
+    const signature = 'YoiRG3rots' + Math.random()
+    const expiration = '6h'
+    return jwt.sign({ mail }, signature, { expiresIn: expiration }).substr(0, 165)
+  },
+  // generateToken(id) {
+  //   const token = jwt.sign({
+  //     user_id: id
+  //   },
+  //     process.env.SECRET, { expiresIn: '7d' }
+  //   );
+  //   return token;
+  // }
+}
+
+
 const getJobs = (req, res) => {
   let perpage = '25'
   if (req.query.perpage === '50') perpage = '50'
@@ -55,13 +88,13 @@ const getJobs = (req, res) => {
   else if (req.query.sal == '1-3') sal_line = ` AND (jobs.salary_min BETWEEN 1000 AND 3000 OR jobs.salary_max BETWEEN 1000 AND 3000)`
   else if (req.query.sal == '3') sal_line = ` AND (jobs.salary_max >= 3000)`
   else sal_line = ''
-  console.log('sal_line: ', sal_line)
+  // console.log('sal_line: ', sal_line)
 
   let curr_line
   if (req.query.cur == '$') curr_line = ` AND jobs.currency = '$'`
   else if (req.query.cur == 'm') curr_line = ` AND jobs.currency = 'm'`
   else curr_line = ''
-  console.log('curr_line: ', curr_line)
+  // console.log('curr_line: ', curr_line)
 
   let que =  `SELECT jobs.author_id, users.company as author, jobs.job_id, jobs.city, jobs.experience, jobs.title, jobs.currency, jobs.salary_min, jobs.salary_max, jobs.description, jobs.time_updated as updated, jobs.contact_mail, contact_tel
               FROM jobs, users
@@ -210,6 +243,147 @@ async function getJobByIdJSON(req, res) {
   } else res.status(400).json('Неправильный id вакансии')
 }
 
+async function getCompanyById(req, res) {
+  const id = parseInt(req.params.id)
+  if (isNaN(id) || id < 0 || String(id).length > 10) {
+    console.log('Error: wrong company id')
+    res.status(400).send('Неправильный id компании.')
+    return false
+  }
+  console.log('cp1')
+  let que = `
+    SELECT company, logo_url, domains, website, full_description, users.time_created, count(*) as jobs_count
+    FROM users JOIN jobs ON (jobs.author_id = users.user_id)
+    WHERE users.user_id = $1 AND users.role = 'company'
+    GROUP BY users.user_id
+  `
+  let result = await pool.query(que, [id]).catch(error => {
+    console.log('cp getCompanyById err: ', error)
+    //throw new Error('job by id error')
+    return false
+  })
+  console.log('cp2')
+  let company
+  if (result.rows && result.rows.length === 1) company = result.rows[0]
+  else {
+    res.status(400).json('Неправильный id компании. Ошибка 2')
+    return false
+  }
+  
+  res.status(200).send(company)
+}
+
+
+async function out(req, res) {
+  //maybe delete stuff in db and write some statistics down
+  //for now just reset cookies and send back OK
+  // console.log('user logout')
+  res.cookie('session', '')
+  res.cookie('mail', '')
+  res.send('get out then')
+}
+
+async function tryInsertAuthToken(id,token) { 
+  let que = `UPDATE "users" SET auth_cookie = $1, last_logged_in = NOW() where user_id = $2`
+  let params = [token, id]
+  let result = await pool.query(que, params).catch(error => {
+    console.log(error)
+    return false
+  })
+  //console.log(result)
+  return true
+}
+async function login(req, res) {
+  // console.log('cp login: ', req.cookies)
+  let mail = req.body[0].toLowerCase()
+  let pw = req.body[1]
+  let rememberme = req.body[2]
+  // console.log('cp login rm: ', mail, ',', pw, ',', rememberme)
+  if (SupremeValidator.isValidEmail(mail) && SupremeValidator.isValidPW(pw)) {
+    //console.log('user validated')
+    //get hash from db checking if mail exists
+    let que = `
+      SELECT pwhash, user_id, role, name, surname, 
+      insearch, company, isagency, cvurl, is_active, 
+      block_reason FROM "users" WHERE "email" = $1`
+    let params = [mail]
+    let userData = await pool.query(que, params).catch(error => {
+      res.send('step2')
+      return undefined
+    })
+    if (userData.rowCount !== 1) result = false
+    else {
+      userData = userData.rows[0]
+      userData.identity = mail
+    }
+    // console.log('cp77', userData)
+    if (userData) {
+      //check if blockd
+      if (userData.is_active == false) {
+        if (userData.block_reason == 'not_verified') {
+          res.status(211).send('Email не верифицирован. Вам на почту должно было прийти письмо о верификации')
+        } else {
+          res.status(209).send('Пользователь заблокирован модератором, причина: ' + userData.block_reason)
+        }
+        return false
+      }
+      
+      //is the pw right?
+      let authed = bcrypt.compareSync(pw, userData.pwhash)
+      // console.log('authed cp: ', authed)
+      if (authed) {
+        //generate and store a cookie
+        let jwtoken = SupremeValidator.generateJSONWebToken(mail)
+        //send the cookie and send the ok
+        //console.log(req.cookies)
+        let laststage = await tryInsertAuthToken(userData.user_id, jwtoken).catch(error => {
+          res.send('step3')
+          return undefined
+        })
+        if (laststage === undefined) return false
+        delete userData.pwhash
+        delete userData.block_reason
+        userData.success = 'OK'
+        if (rememberme) {
+          res.cookie('session', jwtoken, {expires: new Date(Date.now() + 590013000)})
+          res.cookie('mail', mail, {expires: new Date(Date.now() + 590013000)})
+        } else {
+          res.cookie('session', jwtoken)
+          res.cookie('mail', mail)
+        }
+        res.send(userData)
+      } else res.send('step2')
+
+    } else {console.log('user does not exist?', userData); res.send('step2'); return false}
+
+    //res.send('OK')
+  } else {res.send('step1')}
+  
+}
+
+
+async function getUserAuthByCookies(session, mail) {
+  let que = `SELECT email AS identity, user_id, role, 
+    name AS username, surname, company, insearch, isagency, cvurl, is_active
+    FROM "users" 
+    WHERE ("auth_cookie" = $1 AND "email" = $2)`
+  let params = [session, mail]
+  let result = await pool.query(que, params).catch(error => {
+    // console.log('authcheck failed', error)
+    // throw new Error('auth check failed')
+    return 'error2'
+  })
+  if (result.rowCount !== 1) return 'error3'
+  if (result.rows[0].is_active == false) return 'notactive'
+  else return result.rows[0]
+}
+
+
+
+
+
+
+
 
 async function getCompanyDataSSR(uid) {
   let que = `
@@ -308,6 +482,10 @@ module.exports = {
   getJobs,
   getSalStats,
   getJobByIdJSON,
+  getCompanyById,
+
+  login,
+  out,
 
   feedback,
 
@@ -316,5 +494,6 @@ module.exports = {
   getJobsUserStatsSSR,
   getJobDataSSR,
   getCompanyDataSSR,
+  getUserAuthByCookies,
   // testAsyncSSR
 }
