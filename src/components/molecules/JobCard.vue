@@ -8,7 +8,6 @@
         </a>
       </div>
       <div class="line" style="align-items: center; font-weight: 500; font-size: 12px; line-height: 15px; color: var(--color1);">
-        <!-- <div class="updated__label">Размещено:</div> -->
         <p class="updated__value" v-html="lastUpdated"></p>
       </div>
     </div>
@@ -21,7 +20,6 @@
       <div class="colx salary__outer-wrap">
         <strong class="alignRight jobcard__salary">
           <p v-if="job.salary_min === job.salary_max && job.salary_min > 0">{{job.salary_max}}&nbsp;{{currency}}</p>
-          <!-- <p v-else-if="job.salary_min && job.salary_min > 0">от {{job.salary_min}} до {{job.salary_max}} {{currency}}</p> -->
           <p v-else-if="job.salary_min && job.salary_min > 0">{{job.salary_min}}&nbsp;-&nbsp;{{job.salary_max}}&nbsp;{{currency}}</p>
           <p v-else-if="job.salary_max > 0">{{job.salary_max}}&nbsp;{{currency}}</p>
           <p v-else style="text-align: right; font-size: 16px;">{{$t('jc.salaryNone')}}</p>
@@ -46,14 +44,13 @@
     
     <div class="line">
       <div class="line spbtw lowres_twolines" style="width: 100%">
-        <!-- <q-btn class="mr-5px" v-else-if="role == 'subscriber'" round size="xs" icon="work"/> -->
         <a class="showContactsLink" @click.prevent="isContactsShown = !isContactsShown" href="#">
           {{$t('jc.contactsLabel')}}
         </a>
-        <a v-if="role != 'company' && !cved" class="sendCVLink" @click.prevent="$emit('hitcv', job.job_id)" href="#">
+        <a v-if="user.role != 'company' && !cved" class="sendCVLink" @click.prevent="$emit('hitcv', job.job_id)" href="#">
           {{$t('jc.sendCVLabel')}}
         </a>
-        <div v-else-if="role == 'subscriber'" class="cvSentSpan">
+        <div v-else-if="user.role == 'subscriber'" class="cvSentSpan">
           <span style="font-size: 13px; color: gray; user-select: none">Резюме отправлено</span>
           <q-tooltip v-if="hitcv">
             <p v-if="(hitcv && hitcv.date_created)" style="font-size: 15px; margin: 0">{{$t('jc.tooltipSent')}} {{formatDate(hitcv.date_created)}}</p>
@@ -61,19 +58,6 @@
             <p v-else style="font-size: 15px; margin: 0">{{$t('jc.tooltipNotseen')}}</p>
           </q-tooltip>
         </div>
-        <!-- <q-btn
-          v-if="role != 'company' && cved" text-color="primary" 
-          round
-          size="xs" 
-          :icon="cved ? 'assignment_turned_in': 'assignment'"
-          @click="$emit('hitcv', job.job_id)"
-        >
-          <q-tooltip v-if="hitcv">
-            <p v-if="(hitcv && hitcv.date_created)" style="font-size: 15px; margin: 0">{{$t('jc.tooltipSent')}} {{formatDate(hitcv.date_created)}}</p>
-            <p v-if="(hitcv && hitcv.date_checked)" style="font-size: 15px; margin: 0">{{$t('jc.tooltipSeen')}} {{formatDate(hitcv.date_checked)}}</p>
-            <p v-else style="font-size: 15px; margin: 0">{{$t('jc.tooltipNotseen')}}</p>
-          </q-tooltip>
-        </q-btn> -->
       </div>
     </div>
     <div :class="{heightTransition: isContactsShown}" class="contactsPanel line" style="margin-top: 10px;">
@@ -84,11 +68,6 @@
 </template>
 
 <script>
-// const currencyDic = {
-//   '$': '$',
-//   'm': 'манат',
-// }
-
 export default {
   name: 'JobCard',
   props: {
@@ -96,15 +75,18 @@ export default {
     hitcv: Object,
     hitcvDateEnd: String,
     cved: Boolean,
-    role: String, 
     job: Object,
-    searchFilter: {type: String, default: ''},
-    lenses: {type: String, default: 'full'},
   },
   data: ()=>{return {
     isContactsShown: false  
   }},
   computed: {
+    user() {
+      return {role: this.$store.state.user.role}
+    },
+    searchFilter() {
+      return this.$store.state.jFilters.txt.toLowerCase()
+    },
     lastUpdated() {
       let d = new Date(this.job.updated)
       let today = new Date()
@@ -170,7 +152,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus">
 *
   margin 0

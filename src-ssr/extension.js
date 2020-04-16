@@ -45,7 +45,10 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/fb', db.feedback)
 
   app.post('/login', db.login)
+  app.post('/reg', db.reg)
   app.post('/out', db.out)
+
+  app.get('/verify.json', db.verify)
 
   //ssr stuff
   //0 -- wait! on what route is this? on any first route?

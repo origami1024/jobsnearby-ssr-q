@@ -3,15 +3,15 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL || `postgres://postgres:123456@localhost:5433/jobsnearby`
 })
 
+const titleRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\+\$\%\(\)\№\:\#\/]*$/
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 
+let nodeMailer = require('nodemailer')
+
 const SupremeValidator = {
-  // comparePassword(hashPassword, password) {
-  //   return bcrypt.compareSync(password, hashPassword);
-  // },
   isValidEmail(email) {
-    //return /\S+@\S+\.\S+/.test(email);
     if (email.length < 6 || email.length > 50) return false
     return /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test(email)
   },
@@ -22,25 +22,82 @@ const SupremeValidator = {
   },
   generateJSONWebToken(mail){
     const signature = 'YoiRG3rots' + Math.random()
-    const expiration = '6h'
-    return jwt.sign({ mail }, signature, { expiresIn: expiration }).substr(0, 165)
-  },
-  // generateToken(id) {
-  //   const token = jwt.sign({
-  //     user_id: id
-  //   },
-  //     process.env.SECRET, { expiresIn: '7d' }
-  //   );
-  //   return token;
-  // }
+    return jwt.sign({ mail }, signature, { expiresIn: '6h' }).substr(0, 165)
+  }
 }
+
+function hashSome() {
+  let base = String(Number(new Date()))
+  var hash = 0, i, chr;
+  if (base.length === 0) return hash;
+  for (i = 0; i < base.length; i++) {
+    chr   = base.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+}
+
+
+
+async function verifCheck(n) {
+  let que = `
+    DELETE FROM "verifications"
+    WHERE url = $1
+    RETURNING uid
+  `
+  let result = await pool.query(que, [n]).catch(error => {
+    console.log(error)
+    throw new Error('veri check err1')
+  })
+  if (result && result.rowCount === 1) {
+    let uid = result.rows[0].uid
+    console.log('cp67gg1: ', uid)
+    let que2 = `
+      UPDATE "users" SET (is_active, email_confirmed, block_reason) = (TRUE, TRUE, '')
+      WHERE user_id = $1
+    `
+    let params2 = [uid]
+    let result2 = await pool.query(que2, params2).catch(error => {
+      console.log(error)
+      throw new Error('veri check err2')
+    })
+    return result.rowCount
+  } return -1
+}
+async function verify(req, res) {
+  //check if in the base
+  
+  //get the param
+  //check if is a number
+  let reg = /^\d+$/
+  let n1 = req.query.n
+  console.log('got client: ' + n1)
+  if (reg.test(n1) == false || String(n1).length > 25) {
+    console.log('Error: wrong num')
+    res.status(400).send('WRONG VERIFICATION LINK')
+    return false
+  }
+  // console.log('cp1: ', n1)
+  //after that check if its in db, check by deletion
+  let veri = await verifCheck(n1).catch(error => {
+    return -2
+  })
+  console.log('copcpo', veri)
+  if (veri === 1) {
+    let baseUrl = process.env.NODE_ENV ? 'https://jobsnearby.herokuapp.com' : 'http://127.0.0.1:8080'
+    //res.send('Email пользователя верифицирован. Теперь вы можете <a href="' + baseUrl + '/registration?login=1">Войти</a>')
+    res.send('<html><body><script>window.location.replace("' + baseUrl + '/registration?login=1&verified=1")</script></body></html>')
+  } else res.send('Ошибка в адресе верификации')
+}
+
 
 
 const getJobs = (req, res) => {
   let perpage = '25'
   if (req.query.perpage === '50') perpage = '50'
   else if (req.query.perpage === '100') perpage = '100'
-  //console.log('cpGetJobs, txt: ', req.query.txt)
+  console.log('cpGetJobs, txt: ', req.query)
   let txt
   if (req.query.txt != undefined && 
       req.query.txt.length > 0 && 
@@ -115,6 +172,7 @@ const getJobs = (req, res) => {
                 ${curr_line}
               ${sort}
               LIMIT $1 ${'OFFSET ' + offset}`
+              
   //console.log('cp_getJobs2: ', que)
   let qparams = [perpage]
   if (txt) qparams.push(txt)
@@ -122,9 +180,9 @@ const getJobs = (req, res) => {
   pool.query(que, qparams, (error, results) => {
     if (error) {
       console.log(error)
-      throw error
+      return false
     }
-    qparams[0] = 1
+    qparams = txt != undefined ? [qparams[1]] : null
     let countque =  `SELECT count(*) AS full_count
                     FROM jobs, users
                     WHERE jobs.author_id = users.user_id AND
@@ -132,17 +190,17 @@ const getJobs = (req, res) => {
                       jobs.is_closed = FALSE
                       ${timerange} 
                       ${txt != undefined ? ` AND
-                      (LOWER(jobs.title) LIKE $2 OR
-                      LOWER(users.company) LIKE $2 OR
-                      LOWER(jobs.description) LIKE $2 OR
-                      LOWER(jobs.city) LIKE $2)` : ''}
+                      (LOWER(jobs.title) LIKE $1 OR
+                      LOWER(users.company) LIKE $1 OR
+                      LOWER(jobs.description) LIKE $1 OR
+                      LOWER(jobs.city) LIKE $1)` : ''}
                       ${city != undefined ? ` AND 
-                      LOWER(jobs.city) LIKE ${cityN}`: ''}
+                      LOWER(jobs.city) LIKE ${cityN - 1}`: ''}
                       ${jcat != undefined ? ` AND jobs.jcategory = ${jcat}`: ''}
                       ${exp_line}
                       ${sal_line}
                       ${curr_line}`
-    pool.query(countque, null, (error2, results2) => {
+    pool.query(countque, qparams, (error2, results2) => {
       if (error2) {
         console.log('errcp33 ', error2)
         return false
@@ -273,6 +331,160 @@ async function getCompanyById(req, res) {
   res.status(200).send(company)
 }
 
+async function testMail(n, mail) {
+  let baseUrl = process.env.NODE_ENV ? 'https://jobsnearby.herokuapp.com' : 'http://127.0.0.1:7777'
+  
+  let txt = baseUrl + '/verify.json?n=' + n
+  console.log('sending mail func: ' + txt)
+  let transporter = nodeMailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        // should be replaced with real sender's account
+        user: 'jobsnearby1000@gmail.com',
+        pass: 'g789451bb'
+    }
+  })
+  let mailOptions = {
+    // should be replaced with real recipient's account
+    to: mail, //'origami1024@gmail.com',
+    subject: 'Верификация пользователя на jobsnearby',
+    text: 'Перейдите по ссылке для верификации пользователя: ' + txt
+  }
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return 'ERR'
+    }
+    console.log('Message %s sent: %s', info.messageId, info.response);
+    return 'OK'
+  })
+}
+
+//Добавить лог
+async function addLog (action, body, author_id, author_mail) {
+  //time, action, body, author_id, author_name
+  let que = `
+    INSERT INTO "logs" (time, action, body, author_id, author_mail) VALUES
+    (NOW(), $1, $2, $3, $4)`
+  let params = [action, body, author_id, author_mail]
+  let result1 = await pool.query(que, params).catch(error => {
+    console.log('cp addLog err: ', error)
+    return undefined
+  })
+  return Boolean(result1)
+}
+
+
+async function registerFinish (id, hash, usertype, arg1, arg2) {
+  let insert = ''
+  if (usertype === 'company' && (arg2 != true && arg2 != 'true')) arg2 = false
+  if (usertype === 'subscriber') insert = `, name = $4, surname = $5`
+  else if (usertype === 'company') insert = `, company = $4, isagency = $5`
+  let que = `UPDATE "users" SET pwhash = $1, role = $3${insert} where user_id = $2 RETURNING email`
+  //console.log(que, '///', arg2)
+  let params = [hash, id, usertype, arg1, arg2]
+  let result = await pool.query(que, params).catch(error => {
+    console.log(error)
+    throw new Error('user update fail')
+  })
+  //Добавление логов
+  addLog('Регистрация пользователя', usertype === 'company' ? 'Компания ' + arg1 : 'Соискатель ' + arg1 + ' ' + arg2, id, result.rows[0].email)
+  return true
+}
+
+async function tryInsertMailVerification(hash1, userId, mail) {
+  let que = `INSERT INTO "verifications" ("uid", "url", "time_created", "mail") VALUES ($1, $2, NOW(), $3)`
+  let params = [userId, hash1, mail]
+  let result = await pool.query(que, params).catch(error => {
+    console.log(error)
+    throw new Error('veri insertion failed')
+  })
+  if (result && result.rows) {
+    return true
+  } return undefined
+}
+
+async function reg(req, res) {
+  console.log('cp register', req.body)
+  //first server-side literal validation
+  let mail = req.body[0].toLowerCase()
+  let pw = req.body[1]
+  let usertype = req.body[2]
+  let arg1 = req.body[3]
+  let arg2 = req.body[4]
+  
+  //check type
+  if (usertype !== 'subscriber' && usertype !== 'company') {
+    res.send('step3')
+    return -1
+  }
+  //add /s but not from beginning or end
+  let nameregex = /^[\w1234567890а-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-]*$/
+  if (arg1.length < 3 ||
+     (arg1.length > 60 && usertype === 'subscriber') ||
+     (arg1.length > 80 && usertype === 'company') ||
+      !nameregex.test(arg1)
+    ) {
+    res.send('step3')
+    return -1
+  }
+  //check arg2
+  if ((arg2.length < 3 && usertype === 'subscriber') ||
+      (arg2.length > 60 && usertype === 'subscriber') ||
+      (!nameregex.test(arg2) && usertype === 'subscriber') ||
+      ((arg2 != true && arg2 != false && arg2 != 'true' && arg2 != 'false') && usertype === 'company')
+    ) {
+    res.send('step3')
+    return -1
+  }
+  
+  console.log('tops validated')
+  if (SupremeValidator.isValidEmail(mail) && SupremeValidator.isValidPW(pw)) {
+    //try to insert the email//if fails then error
+    let que = `INSERT INTO "users" ("email") VALUES ($1) RETURNING user_id`
+    let params = [mail]
+    let userId = await pool.query(que, params).catch(error => {
+      console.log('cp reg I', error)
+      return undefined
+    })
+    if (userId && userId.rowCount == 1) userId = userId.rows[0].user_id
+    else {
+      res.send('step2')
+      return -1
+    }
+
+    if (userId === -1 || userId === undefined) return false
+    console.log('step2 passed, email inserted:', userId)
+    //if all before is successful, id of new user in emailIn
+    //go on
+    //hash the pw with pw and salt
+    let hash = bcrypt.hashSync(pw, bcrypt.genSaltSync(9))
+    //store rest of the new user
+    let isDone = await registerFinish(userId, hash, usertype, arg1, arg2).catch(error => {
+      console.log('STEP3', error)
+      res.send('step3')
+      return false
+    })
+    if (isDone === false) return false
+    
+    
+    let hash1 = String(hashSome()) + userId + parseInt(Math.random()*1000000000, 10)
+
+    let success1 = await tryInsertMailVerification(hash1, userId, mail).catch(error => {
+      res.send('step5')
+      return undefined
+    })
+    if (success1) {
+      testMail(hash1, mail)
+      console.log('it is successful registraion at this point')
+      res.send('OK')
+    } else {res.send('step6'); console.log('failed at creating the verification entry')}
+    
+  } else {res.send('step1'); console.log('not valid mail or wrong pw')}
+  
+}
+
 
 async function out(req, res) {
   //maybe delete stuff in db and write some statistics down
@@ -311,7 +523,7 @@ async function login(req, res) {
       res.send('step2')
       return undefined
     })
-    if (userData.rowCount !== 1) result = false
+    if (userData.rowCount !== 1) userData = false
     else {
       userData = userData.rows[0]
       userData.identity = mail
@@ -329,6 +541,8 @@ async function login(req, res) {
       }
       
       //is the pw right?
+      // console.log('derpeprepr')
+      // console.log(userData)
       let authed = bcrypt.compareSync(pw, userData.pwhash)
       // console.log('authed cp: ', authed)
       if (authed) {
@@ -485,7 +699,10 @@ module.exports = {
   getCompanyById,
 
   login,
+  reg,
   out,
+  
+  verify,
 
   feedback,
 

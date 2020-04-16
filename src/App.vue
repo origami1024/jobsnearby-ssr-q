@@ -134,10 +134,10 @@
           <h3>Работодателю</h3>
           <ul>
             <li>
-              <router-link @click.native="newJobInit();scrollTop()" v-if="role == 'company'" class="newlinks" to="/addJob">
+              <router-link @click.native="newJobInit();scrollTop()" v-if="user.role == 'company'" class="newlinks" to="/addJob">
               {{$t('App.newJobHint')}}
               </router-link>
-              <router-link @click.native="newJobInit();scrollTop()" v-else-if="role != 'subscriber'" class="newlinks" to="/registration">
+              <router-link @click.native="newJobInit();scrollTop()" v-else-if="user.role != 'subscriber'" class="newlinks" to="/registration">
               {{$t('App.newJobHint')}}
               </router-link>
             </li>
@@ -165,8 +165,8 @@ export default {
     dismiss: null,
   }},
   computed: {
-    ...mapState(['user', ['role']]),
-    ...mapState(['jFilters',['query']])
+    ...mapState(['user']),
+    ...mapState(['jFilters'])
   },
   beforeDestroy() {
     window.removeEventListener("storage", this.onStorageUpdate)
@@ -470,10 +470,10 @@ export default {
           // }
         })
     },
-    updQue(params) {
-      this.query = params
-      console.log(this.query)
-    },
+    // updQue(params) {
+    //   this.query = params
+    //   console.log(this.query)
+    // },
   },
   watch:{
     $route (to, from){//CHANGE THIS TO PREFETCH IF POSSIBLE

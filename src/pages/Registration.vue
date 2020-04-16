@@ -234,7 +234,8 @@ export default {
   name: 'registration',
   computed: {
     ...mapState(['user', ['role']]),
-    ...mapState(['regState'])
+    ...mapState(['regState']),
+    ...mapState(['authStatus'])
   },
   data: ()=>{return {
     notVerified: false,
@@ -275,21 +276,18 @@ export default {
   }},
   methods: {
     tryreg() {
-      this.status = this.$t('reg.regAllFields')
+      this.$store.dispatch('setAuthStatus', this.$t('reg.regAllFields'))
       //client validation here
       if (this.rules != true) this.rules = false
       if (this.agency != true) this.agency = false
       if (this.validate()) {
         this.showErrors = false
-        //this.status = 'Попытка регистрации'
         this.submitting = true
-        //console.log('cp123f, ', this.surname)
         this.$axios
           .post('/reg', [this.mail.toLowerCase(), this.pw, this.usertype, this.usertype === 'subscriber' ? this.name : this.company, this.usertype === 'subscriber' ? this.surname : this.agency], {headers: {'Content-Type' : 'application/json' }})
           .then(response => {
             if (response.data == 'OK') {
-              this.status = this.$t('reg.regSuccess')
-              // console.log(this.status)
+              this.$store.dispatch('setAuthStatus', this.$t('reg.regSuccess'))
               this.mail = ''
               this.pw = ''
               this.pwc = ''
@@ -298,7 +296,7 @@ export default {
               this.surname = ''
               this.company = ''
               this.agency = false
-              $store.dispatch('regStateChange', 'login')
+              this.$store.dispatch('regStateChange', 'login')
               this.login.mail = ''
               this.login.pw = ''
               this.login.status = ''
@@ -306,22 +304,19 @@ export default {
               this.login.validation.pw = ''
             }
             else if (response.data == 'step3') {
-              this.status = this.$t('reg.regError3')
-              //this.$q.notify(this.status)
+              this.$store.dispatch('setAuthStatus', this.$t('reg.regError3'))
             }
             else if (response.data == 'step2') {
-              this.status = this.$t('reg.regError2')
-              //this.$q.notify(this.status)
+              this.$store.dispatch('setAuthStatus', this.$t('reg.regError2'))
             }
             else if (response.data == 'step1') {
-              this.status = this.$t('reg.regError1')
-              //this.$q.notify(this.status)
+              this.$store.dispatch('setAuthStatus', this.$t('reg.regError1'))
             }
             else console.dir('successful registering', response.data)
             this.submitting = false
-            this.$q.notify(this.status)
+            this.$q.notify(this.authStatus)
           })
-      } else {this.showErrors = true; this.$q.notify(this.status)}
+      } else {this.showErrors = true; this.$q.notify(this.authStatus)}
     },
     valiRegMail(){
       let mailregex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
@@ -481,7 +476,7 @@ export default {
           .post('/login', [this.login.mail.toLowerCase(), this.login.pw, this.login.rememberme], {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
           .then(response => {
             //fix: need to send auth data on login
-            if (response.data.success = 'OK') {
+            if (response.data && response.data.success && response.data.success == 'OK') {
               this.login.status = ''
               this.$q.notify({type:'positive', message: this.$t('reg.loginSuccess')})
               // console.log('cp123ss:', response.data.slice(1))

@@ -211,21 +211,36 @@ export default {
     cities: ["Не имеет значения", "Ашхабад", "Дашогуз", "Мары", "Туркменабад", "Туркменбаши"],
   },
   jobs: {
-    sortOpts: [
-      {label: 'По Дате', value: 'new'},
-      {label: 'По ЗП ↓', value: 'saldesc'},
-      {label: 'По ЗП ↑', value: 'salasc'}
-    ],
-    dateOpts: [
-      {label: 'За Месяц', value: 'mon'},
-      {label: 'За Неделю', value: 'wee'},
-      {label: 'За Сутки', value: 'day'}
-    ],
-    perpageOpts: [
-      {label: '25 вакансий', value: '25'},
-      {label: '50 вакансий', value: '50'},
-      {label: '100 вакансий', value: '100'}
-    ],
+    sortOpts: {
+      new: 'По Дате',
+      saldesc: 'По ЗП ↓',
+      salasc: 'По ЗП ↑'
+    },
+    dateOpts: {
+      mon: 'За Месяц',
+      wee: 'За Неделю',
+      day: 'За Сутки'
+    },
+    perpageOpts: {
+      '25': '25 вакансий',
+      '50': '50 вакансий',
+      '100': '100 вакансий'
+    },
+    // sortOpts: [
+    //   {label: 'По Дате', value: 'new'},
+    //   {label: 'По ЗП ↓', value: 'saldesc'},
+    //   {label: 'По ЗП ↑', value: 'salasc'}
+    // ],
+    // dateOpts: [
+    //   {label: 'За Месяц', value: 'mon'},
+    //   {label: 'За Неделю', value: 'wee'},
+    //   {label: 'За Сутки', value: 'day'}
+    // ],
+    // perpageOpts: [
+    //   {label: '25 вакансий', value: '25'},
+    //   {label: '50 вакансий', value: '50'},
+    //   {label: '100 вакансий', value: '100'}
+    // ],
     
   },
   jc: {

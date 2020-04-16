@@ -19,8 +19,6 @@ export default {
     picked: String
   },
   data: ()=>{return {
-    //cities: ['London', 'Moscow', 'Japan'],
-    //picked: '',
     i_focus: false,
   }},
   methods: {

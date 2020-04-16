@@ -11,14 +11,16 @@
         <input
           class="searchInput"
           type="text"
-          v-model="txt" @keyup.enter="refreshPlus"
+          @keyup.enter="$store.dispatch('refreshjobs', {})"
+          :value="jFilters.txt"
+          @input="$store.dispatch('filterUpd', {prop: 'txt', value: $event.target.value})"
           placeholder="Введите ключевые слова"
         >
         <q-btn 
-          @click="refreshPlus"
+          @click="$store.dispatch('refreshjobs', {})"
           class="headerBtns1 searchBtn"
           style="background-color: var(--violet-btn-color); margin-left: -15px; padding: 0 12px;"
-          text-color="white" :loading="pending"
+          text-color="white"
           :label="$t('filters.searchBtn')"
         />
       </div>
@@ -27,15 +29,6 @@
     <div class="jobs__main">
       <div class="jobs__filterpart">
         <JobsFilter
-          :isResetShown="isResetShown"
-          @resetFilters="resetFilters"
-          @currUpd="currUpd"
-          :currency="currency"
-          @cityUpd="cityUpd" @jcatUpd="jcatUpd" @expUpd="expUpd"
-          @salaryUpd="salaryUpd" :city="city" :salary="salary"
-          :exp="exp" :jcat="jcat"
-          :pending="pending"
-          @refresh="$emit('refresh')"
           :filtersToggle="filtersToggle"
           @toggleFilters="filtersToggle = !filtersToggle"
         />
@@ -45,32 +38,32 @@
           <div class="prefilters-leftwrap">
             <span class="jobs__prefilters-label">Сортировка:</span>
             <button class="orderLink">
-              {{timerange.label}}
+              {{$t('jobs.dateOpts')[jFilters.timerange]}}
               <q-menu dense>
                 <q-item
-                  v-for="timerangeee in $t('jobs.dateOpts')"
-                  :key="timerangeee.value"
+                  v-for="timerangeKey in Object.keys($t('jobs.dateOpts'))"
+                  :key="timerangeKey"
                   style="lineHeight: 2"
-                  dense :style="{color: timerange.value == timerangeee.value ? 'var(--violet-btn-color)' : 'var(--color1)'}"
-                  clickable v-close-popup
-                  @click="timerange = timerangeee; prefilterDelayedRefreshPlus()"
+                  :style="{color: jFilters.timerange == timerangeKey ? 'var(--violet-btn-color)' : 'var(--color1)'}"
+                  dense clickable v-close-popup
+                  @click="$store.dispatch('filterUpd', {prop: 'timerange', value: timerangeKey})"
                 >
-                  {{timerangeee.label}}
+                  {{$t('jobs.dateOpts')[timerangeKey]}}
                 </q-item>
               </q-menu>
             </button>
             <button class="orderLink">
-              {{sort.label}}
+              {{$t('jobs.sortOpts')[jFilters.sort]}}
               <q-menu dense>
                 <q-item
-                  v-for="sortee in $t('jobs.sortOpts')"
-                  :key="sortee.value"
+                  v-for="sortKey in Object.keys($t('jobs.sortOpts'))"
+                  :key="sortKey"
                   style="lineHeight: 2"
-                  dense :style="{color: sort.value == sortee.value ? 'var(--violet-btn-color)' : 'var(--color1)'}"
+                  dense :style="{color: jFilters.sort == sortKey ? 'var(--violet-btn-color)' : 'var(--color1)'}"
                   clickable v-close-popup
-                  @click="sort = sortee; prefilterDelayedRefreshPlus()"
+                  @click="$store.dispatch('filterUpd', {prop: 'sort', value: sortKey})"
                 >
-                  {{sortee.label}}
+                  {{$t('jobs.sortOpts')[sortKey]}}
                 </q-item>
               </q-menu>
             </button>
@@ -78,17 +71,17 @@
           <div class="prefilters-rightwrap">
             <span class="jobs__prefilters-label">Отображать:</span>
             <button class="orderLink">
-              {{perpage.label}}
+              {{$t('jobs.perpageOpts')[jFilters.perpage]}}
               <q-menu dense>
                 <q-item
-                  v-for="perpageee in $t('jobs.perpageOpts')"
-                  :key="perpageee.value"
+                  v-for="perpageKey in Object.keys($t('jobs.perpageOpts'))"
+                  :key="perpageKey"
                   style="lineHeight: 2"
-                  dense :style="{color: perpage.value == perpageee.value ? 'var(--violet-btn-color)' : 'var(--color1)'}"
+                  dense :style="{color: jFilters.perpage == perpageKey ? 'var(--violet-btn-color)' : 'var(--color1)'}"
                   clickable v-close-popup
-                  @click="perpage = perpageee; prefilterDelayedRefreshPlus()"
+                  @click="$store.dispatch('filterUpd', {prop: 'perpage', value: perpageKey})"
                 >
-                  {{perpageee.label}}
+                  {{$t('jobs.perpageOpts')[perpageKey]}}
                 </q-item>
               </q-menu>
             </button>
@@ -97,7 +90,6 @@
         <JobsList
           :ownCVs="ownCVs"
           @hitcv="hitcv"
-          :searchFilter="searchFilter"
         />
         <div v-if="pages && pages > 0" class="paginationWrap">
           <button
@@ -125,19 +117,14 @@ import JobsList from 'components/organisms/JobsList.vue'
 import JobsFilter from 'components/organisms/JobsFilter.vue'
 import UserStats from 'components/organisms/UserStats.vue'
 
+import { mapState } from 'vuex'
+
 export default {
   name: 'Jobs',
   props: {
-    // jobslist: {type: Array, default: ()=>[]},
     ownCVs: {type: Array, default: ()=>[]},
-    pending: {type: Boolean, default: false},
     pages: {type: Number, default: 1},
-    page_current: {type: Number, default: 1},
-    jobsFullcount: {type: Number, default: 0},
-    salMin: String,
-    salAvg: String,
-    salMax: String,
-    tops: Array,
+    // page_current: {type: Number, default: 1},
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
     if (ssrContext) {
@@ -145,24 +132,8 @@ export default {
       return store.dispatch('refreshJobsData', ssrContext.req.rawjobs)
     }
   },
-  data(){return {
+  data() {return {
     filtersToggle: false,
-    lenses: 'full',
-    txt: '',
-    wordRegex: /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\\-]*$/,
-    sort: this.$t('jobs.sortOpts[0]'),//{label: 'По дате', value: 'new'},
-    timerange: this.$t('jobs.dateOpts[0]'),
-    perpage: this.$t('jobs.perpageOpts[0]'),
-    searchFilter: '',
-    langsFilter: [],
-    // maxSal: 100000,
-    // minSal: 0,
-    //langOptions: ["Русский", "Английский", "Немецкий", "Французкий"],
-    city: '',
-    jcat: {label: "", value: 0},
-    salary: {label: "", value: 'idc'},
-    exp: {label: "", value: 'idc'}, 
-    currency: {label: "", value: 'idc'},
   }},
   components: {
     JobsFilter,
@@ -170,103 +141,18 @@ export default {
     UserStats
   },
   computed: {
-    // jobslist() {
-    //   return this.$store.state.jobslist
-    // },
-    isResetShown() {
-      let res = false
-      if (this.city != this.$t('filters.cities[0]') && this.city != '') res = true
-      else if (this.salary.value != 'idc') res = true
-      else if (this.currency.value != 'idc') res = true
-      else if (this.exp.value != 'idc') res = true
-      else if (this.jcat.value != 0) res = true
-      //else if (this.outerResetNeeded != false) res = true
-
-      else if (this.sort.value != 'new') res = true
-      else if (this.timerange.value != 'mon') res = true
-      else if (this.perpage.value != '25') res = true
-      
-      else if (this.txt != '') res = true
-
-      return res
-    },
-    query() {
-      let params = []
-      if (this.txt !== '' && this.wordRegex.test(this.txt)) params.push('txt=' + this.txt)
-      if (this.sort.value !== 'new') params.push('sort=' + this.sort.value)
-      if (this.timerange.value !== 'mon') params.push('timerange=' + this.timerange.value)
-      if (this.perpage.value !== '25') params.push('perpage=' + this.perpage.value)
-      if ((this.city !== this.$t('filters.cities[0]') && this.city !== '') && this.wordRegex.test(this.city)) params.push('city=' + this.city)
-      if (this.exp.value !== 'idc') params.push('exp=' + this.exp.value)
-      if (this.jcat.value !== 0) params.push('jcat=' + this.jcat.value)
-      if (this.salary.value !== 'idc') params.push('sal=' + this.salary.value)
-      if (this.currency.value !== 'idc') params.push('cur=' + this.currency.value)
-      let que = params.length == 0 ? '' : '?' + params.join('&')
-      return que
-    }
-  },
-  watch: {
-    query(que){
-      this.$emit('updQue', que)
+    ...mapState(['jFilters', ['txt', 'timerange', 'sort', 'perpage']]),
+    page_current() {
+      return this.$store.state.jobs.page_current
     },
   },
   methods: {
-    prefilterDelayedRefreshPlus() {
-      setTimeout(()=>this.refreshPlus())
-    },
-    resetFilters() {
-      this.txt = ''
-      this.searchFilter = this.txt.toLowerCase()
-      this.city = ''
-      this.jcat= {label: "", value: 0}
-      this.salary= {label: "", value: 'idc'}
-      this.exp= {label: "", value: 'idc'}
-      this.currency= {label: "", value: 'idc'}
-
-      this.sort = this.$t('jobs.sortOpts[0]')
-      this.timerange = this.$t('jobs.dateOpts[0]')
-      this.perpage = this.$t('jobs.perpageOpts[0]')
-      //this.outerResetNeeded = false
-      this.$emit('updQue', this.query)
-      this.$emit('refresh')
-    },
     hitcv(id) {
       this.$emit('hitcv', id)
     },
-    refreshPlus(){
-      
-      this.searchFilter = this.txt.toLowerCase()
-      this.$emit('refresh')
-    },
-
-    updSearch: function(str) {
-      this.searchFilter = str
-    },
-    // updQue: function(params) {
-    //   console.log('cpUpdQue1: ', params)
-    //   this.$emit('updQue', params)
-    // },
-    perPageUpd(e) {
-      this.$emit('perPageUpd', e)
-    },
-    switchPage(newV) {
+    switchPage(newV) {//CHANGE THIS, WOTS THIS REFRESH????
       this.$emit('refresh', 'page', newV)
     },
-    salaryUpd(new1) {
-      this.salary = new1
-    },
-    expUpd(new1) {
-      this.exp = new1
-    },
-    jcatUpd(new1) {
-      this.jcat = new1
-    },
-    cityUpd(new1) {
-      this.city = new1
-    },
-    currUpd(new1) {
-      this.currency = new1
-    }
   },
 }
 </script>
