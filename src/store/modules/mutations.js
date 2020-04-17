@@ -53,7 +53,7 @@ export default {
     state.cdata = company
   },
   storeAuth (state, user) {
-    state.user = user
+    state.user = {...state.user, ...user}
     // console.log('cnt', user)
   },
   resetUser (state) {
