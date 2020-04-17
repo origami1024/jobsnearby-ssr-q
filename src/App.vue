@@ -285,9 +285,9 @@ export default {
       }
     },
 
-    cvupd(e) {// CHANGE THIS TO USE VUEX
-      this.cvurl = e
-    },
+    // cvupd(e) {// TO BE DELETED!
+    //   this.cvurl = e
+    // },
     setSentState(state) {//CHANGE THIS VUEX &(&*(&))
       this.newJobSentState = state
     },

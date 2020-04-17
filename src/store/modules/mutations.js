@@ -1,4 +1,7 @@
 export default {
+  setCVUrl(state, cvurl) {
+    state.user.cvurl = cvurl
+  },
   setFilter(state, {prop, value}) {
     state.jFilters[prop] = value
   },

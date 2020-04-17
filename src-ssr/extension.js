@@ -15,14 +15,7 @@ const db = require('./db/pgqueries')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 
-function authPreValidation(session, mail) {
-  if (
-    session && session.length > 50
-    &&
-    mail && mail.length > 2 && mail.length < 51 //50 is max mail length in db now
-  ) return true
-  else return false
-}
+
 
 module.exports.extendApp = function ({ app, ssr }) {
   /*
@@ -34,7 +27,8 @@ module.exports.extendApp = function ({ app, ssr }) {
 
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
-  app.use(cookieParser('qwekkk-12345'))
+  //app.use(cookieParser('qwekkk-12345'))
+  app.use(cookieParser())
 
   app.get('/jobs.json', db.getJobs)
   app.get('/salstats.json', db.getSalStats)
@@ -50,6 +44,11 @@ module.exports.extendApp = function ({ app, ssr }) {
 
   app.get('/verify.json', db.verify)
 
+
+  app.post('/getcvhitshistory', db.getCVHitsHistory)
+  app.post('/cvupdate.json', db.cvurlupdate)
+  app.post('/cvdelete.json', db.cvurldelete)
+  
   //ssr stuff
   //0 -- wait! on what route is this? on any first route?
   //0 -- think this trhourh
@@ -70,7 +69,7 @@ module.exports.extendApp = function ({ app, ssr }) {
   //1
   app.get('/', async function (req, res, next) {
     //auth first
-    if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
       req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
@@ -89,7 +88,7 @@ module.exports.extendApp = function ({ app, ssr }) {
   //2
   app.get('/jobpage', async function (req, res, next) {
     //auth first
-    if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
       req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
@@ -117,7 +116,7 @@ module.exports.extendApp = function ({ app, ssr }) {
   //3
   app.get('/companypage', async function (req, res, next) {
     //auth first
-    if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
       req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
@@ -141,9 +140,9 @@ module.exports.extendApp = function ({ app, ssr }) {
     })
     next()
   })
-  app.post('/registration', async function (req, res, next) {
+  app.get('/registration', async function (req, res, next) {
     //only auth here
-    if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
       req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
@@ -154,9 +153,22 @@ module.exports.extendApp = function ({ app, ssr }) {
     }
     next()
   })
-  app.post('/feedback', async function (req, res, next) {
+  app.get('/subprofile', async function (req, res, next) {
     //only auth here
-    if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+        console.log('getUserAuthByCookies. xxx', error)
+        return 'error1'
+      })
+    } else {
+      //empty or not valid auth data
+      req.userData = 'noauth'
+    }
+    next()
+  })
+  app.get('/feedback', async function (req, res, next) {
+    //only auth here
+    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
       req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'

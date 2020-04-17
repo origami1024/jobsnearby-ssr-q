@@ -54,6 +54,9 @@ export default function (/* { ssrContext } */) {
     },
     mutations,
     actions: {
+      async updateCVUrl (context, cvurl) {
+        context.commit('setCVUrl', cvurl)
+      },
       resetFilters (context) {
         context.commit('resetFilters')
         context.dispatch('refreshjobs', {})

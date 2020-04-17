@@ -10,6 +10,15 @@ const jwt = require('jsonwebtoken')
 
 let nodeMailer = require('nodemailer')
 
+function authPreValidation(session, mail) {
+  if (
+    session && session.length > 50
+    &&
+    mail && mail.length > 2 && mail.length < 51 //50 is max mail length in db now
+  ) return true
+  else return false
+}
+
 const SupremeValidator = {
   isValidEmail(email) {
     if (email.length < 6 || email.length > 50) return false
@@ -92,6 +101,80 @@ async function verify(req, res) {
 }
 
 
+async function cvurldelete(req, res) {
+  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    let que = `
+      UPDATE "users" SET "cvurl" = ''
+      WHERE auth_cookie = $1 AND role = 'subscriber'
+    `
+    let params = [req.cookies.session]
+    let result = await pool.query(que, params).catch(error => {
+      console.log('cp cvurldelete err: ', error)
+      return undefined
+    })
+    if (result) {
+      res.send('OK')
+      return true
+    } else {
+      res.send('User non existent')
+      return false
+    }
+
+  } else res.send('err2')
+}
+
+async function cvurlupdate(req, res) {
+  if (req.body && req.body.cvurl && req.body.cvurl.length > 4 && req.body.cvurl.length < 86) {
+    if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+      //console.log(req.body)
+      let que = `
+        UPDATE "users" SET "cvurl" = $1
+        WHERE auth_cookie = $2 AND email = $3 AND role = 'subscriber'
+      `
+      let params = [req.body.cvurl, req.cookies.session, req.cookies.mail]
+      let result = await pool.query(que, params).catch(error => {
+        console.log('cp cvurlupdate err: ', error)
+        return undefined
+      })
+      if (result) {
+        res.send('OK')
+        return true
+      } else {
+        res.send('User non existent')
+        return false
+      }
+    } else res.send('err2')
+  } else res.send('err1')
+}
+
+async function getCVHitsHistory(req, res) {
+  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    let que = `
+      SELECT user_id
+      FROM users
+      WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'
+    `
+    let result = await pool.query(que, [req.cookies.session, req.cookies.mail]).catch(error => {
+      console.log('cp getResps err1: ', error)
+    })
+    if (result.rows.length == 1) {
+      let que2 = `
+        SELECT cvhits.*, jobs.title, jobs.is_closed, users.company
+        FROM cvhits, jobs, users
+        WHERE jobs.author_id = users.user_id AND cvhits.cvjob_id = jobs.job_id AND cvhits.cvuser_id = $1
+        ORDER BY (cvhits.date_created) DESC
+      `
+      let params2 = [result.rows[0].user_id]
+      let history = await pool.query(que2, params2).catch(error => {
+        console.log('cp getResps err2: ', error)
+      })
+      if (history.rows && history.rows.length > 0) {
+        res.send({rows: history.rows})
+      } else res.send({rows: []})
+
+    } else res.send('error 2')
+  } else res.send('error 1')
+}
 
 const getJobs = (req, res) => {
   let perpage = '25'
@@ -708,9 +791,15 @@ module.exports = {
 
   hitJobById,
 
+  getCVHitsHistory,
+  cvurlupdate,
+  cvurldelete,
+
   getJobsUserStatsSSR,
   getJobDataSSR,
   getCompanyDataSSR,
   getUserAuthByCookies,
-  // testAsyncSSR
+
+  //utils
+  authPreValidation,
 }

@@ -12,11 +12,15 @@ const routes = [
   },
   {
     path: '/jobpage',
-    component: () => import('pages/JobPage.vue') //Home
+    component: () => import('pages/JobPage.vue')
   },
   {
     path: '/companypage',
-    component: () => import('pages/CompanyPage.vue') //Home
+    component: () => import('pages/CompanyPage.vue')
+  },
+  {
+    path: '/subprofile',
+    component: () => import('pages/SubProfile.vue')
   },
   {
     path: '/feedback',
