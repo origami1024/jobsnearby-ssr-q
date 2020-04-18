@@ -56,6 +56,10 @@ export default {
     state.user = {...state.user, ...user}
     // console.log('cnt', user)
   },
+  setNameSurnameInSearch (state, user) {
+    state.user = {...state.user, ...user}
+    // console.log('cnt', user)
+  },
   resetUser (state) {
     state.user = {
       identity: 'Гость',

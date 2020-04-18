@@ -44,7 +44,8 @@ module.exports.extendApp = function ({ app, ssr }) {
 
   app.get('/verify.json', db.verify)
 
-
+  app.post('/changeuserstuff', db.changeuserstuff)
+  app.post('/changepw', db.changepw)
   app.post('/getcvhitshistory', db.getCVHitsHistory)
   app.post('/cvupdate.json', db.cvurlupdate)
   app.post('/cvdelete.json', db.cvurldelete)

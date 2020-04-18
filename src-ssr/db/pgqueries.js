@@ -458,6 +458,73 @@ async function addLog (action, body, author_id, author_mail) {
   return Boolean(result1)
 }
 
+async function authedForUserData(session, mail, usertype) {
+  let que1st = `SELECT user_id FROM "users" WHERE "auth_cookie" = $1 AND "email" = $2 AND "role" = $3`
+  let params1st = [session, mail, usertype]
+  //return user_id
+  let result1 = await pool.query(que1st, params1st).catch(error => {
+    console.log('cp authedForUserData err: ', error)
+    return false
+  })
+  //console.log('cpc p2: ', result1)
+  if (result1.rows && result1.rows.length == 1) return result1.rows[0].user_id
+  else return false
+}
+async function updateUserData(user_id, udata) {
+  //its prechecked for validity and existence
+  let que = `
+    UPDATE "users" SET ("name", "surname") =
+    ($1, $2)
+    WHERE user_id = $3
+  `
+  console.log(udata)
+  let params = [udata.name, udata.surname, user_id]
+  let result = await pool.query(que, params).catch(error => {
+    console.log('cp updDiapers err: ', error)
+    return false
+  })
+  //res.send('OK')
+  return result
+}
+async function changeuserstuff(req, res) {
+  console.log('cp change user stuff: ', req.body)
+  let udata = {}
+  if (req.body && req.body.username && req.body.username.length < 36 && req.body.username.length > 2) {
+    udata.name = req.body.username
+  } else {
+    res.send('error name')
+    return false
+  }
+  if (req.body.surname && req.body.surname.length < 36 && req.body.surname.length > 2) {
+    udata.surname = req.body.surname
+  } else {
+    res.send('error surname')
+    return false
+  }
+  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    let user_id = await authedForUserData(req.cookies.session, req.cookies.mail,'subscriber').catch(error => {
+      res.send('step2')
+      return undefined
+    })
+    if (user_id) {
+      console.log('cp256: ', user_id, udata)
+      let doit = await updateUserData(user_id, udata).catch(error => {
+        res.send('step3')
+        return undefined
+      })
+      if (doit) {
+        res.send('OK')
+      }
+    } else {
+      res.send('error bad userdata')
+      return false
+    }
+  } else {
+    res.send('error auth')
+    return false
+  }
+}
+
 
 async function registerFinish (id, hash, usertype, arg1, arg2) {
   let insert = ''
@@ -794,7 +861,9 @@ module.exports = {
   getCVHitsHistory,
   cvurlupdate,
   cvurldelete,
-
+  changeuserstuff,
+  changepw,
+  
   getJobsUserStatsSSR,
   getJobDataSSR,
   getCompanyDataSSR,

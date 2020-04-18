@@ -33,7 +33,7 @@
               </div>
             </div>
           </div>
-
+          {{user.cvurl}}
           <q-btn class="headerBtns1" v-if="user.cvurl != null && user.cvurl != ''" color="red-10" :label="$t('sub.deleteCVBtn')" @click="cvdel" />
         </q-tab-panel>
         <q-tab-panel name="sentCVS">
@@ -42,16 +42,6 @@
           />
         </q-tab-panel>
         <q-tab-panel class="subprofile__settings" name="personal">
-          <!-- <q-checkbox
-            :label="userdata.insearch === true ? 'Я ищу работу' : 'Я не ищу работу'"
-            
-            v-model="userdata.insearch"
-          /> -->
-          <!-- <p>Добавить контакты</p>
-          <q-input dense class="subprofile__inp" outlined bottom-slots v-model="contacts1" label="Контакты" counter maxlength="30"/>
-          <q-input dense v-show="contacts_count > 1" class="subprofile__inp" outlined bottom-slots v-model="contacts2" label="Контакты" counter maxlength="30"/>
-          <q-input dense v-show="contacts_count > 2" class="subprofile__inp" outlined bottom-slots v-model="contacts3" label="Контакты" counter maxlength="30"/>
-          <q-btn round color="primary" @click="contacts_count < 4 ? contacts_count += 1 : ''" size="sm" icon="add" :disable="contacts_count > 2"/> -->
           
           <q-input
             class="subprofile__inp"
@@ -110,14 +100,6 @@ export default {
   name: 'SubProfile',
   props: {
     ownCVs: {type: Array, default: ()=>[]},
-    // likedJobs: {type: Array, default: ()=>[]},
-    // likedJobsList: {type: Array, default: ()=>[]},
-    // username: {type: String, default: ''},
-    // surname: {type: String, default: ''},
-    insearch: {type: Boolean, default: false},
-    // role: String,
-    // cvurl: {type: String, default: ''},
-    // user: String,
   },
   computed: {
     ...mapState(['user']),
@@ -125,13 +107,8 @@ export default {
   data: ()=>{return {
     cvhitsHistory: [],
     sentCVJobsList: [],
-    cvfile: null,
     cvurlnew: '',
     cv_upload_error: '',
-    contacts1: '',
-    contacts2: '',
-    contacts3: '',
-    contacts_count: 1,
     userdata: {
       username: '',
       surname: '',
@@ -201,21 +178,20 @@ export default {
         .then(response => {
           if (response.data == 'OK') {
             this.$q.notify(this.$t('sub.cvDeleted'))
-            this.$emit('cvupd', '')
+            this.$store.dispatch('updateCVUrl', '')
           } else this.$q.notify(this.$t('sub.dataError'))
           this.cvurlnew = ''
           //if error, show like popup or status update
       })
     },
-    uploadCV(val) {
-      this.cvfile = val[0]
+    uploadCV(val) {//ok
       let dumper = 'https://decreed-silk.000webhostapp.com/cvu.php'
       //logoUploader
       console.log('start cvu')
       var formData = new FormData()
-      formData.append("cv", this.cvfile)
+      formData.append("cv", val[0])
       //this.$refs.cvForm.reset()
-      this.cvfile = null
+      this.$refs.cvUplInp.value = null
       this.$axios
         .post(dumper, formData, {
           headers: {'Content-Type': 'multipart/form-data'}
@@ -239,16 +215,17 @@ export default {
           //if (response.data === 'OK') {} else 
         })
     },
-    tryChangeUData() {
-      let url = config.jobsUrl + '/changeuserstuff'
+    tryChangeUData() {//ok
+      let url = '/changeuserstuff'
       let udata = this.userdata
       
-      axios
+      this.$axios
         .post(url, udata, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
         .then(response => {
           console.log('tryChangeUData', response.data)
           if (response.data == 'OK') {
-            this.$emit('changeUDataSub', udata)
+            // this.$emit('changeUDataSub', udata)
+            this.$store.dispatch('setNameSurnameInSearch', udata)
             this.$q.notify(this.$t('sub.dataChanged'))
           }
           else this.$q.notify(this.$t('sub.wrongData'))
@@ -258,9 +235,9 @@ export default {
       })
     },
     tryChangePw() {
-      let url = config.jobsUrl + '/changepw'
+      let url = '/changepw'
       let udata = { oldmail: this.user, oldpw: this.mailpw.oldpw, newpw: this.mailpw.newpw }
-      axios
+      this.$axios
         .post(url, udata, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
         .then(response => {
           console.log('trychpw', response.data)
@@ -268,14 +245,11 @@ export default {
             this.$q.notify(this.$t('sub.pwChanged'))
           }
           else this.$q.notify(this.$t('sub.wrongData'))
-          //if ok show like compnenet
-          //reset fields
-          //error like validation
       })
     },
     setLocalRoute(rou) {
       if (rou == 'personal') {
-        this.userdata.username = this.user.identity
+        this.userdata.username = this.user.username
         this.userdata.surname = this.user.surname
         this.userdata.insearch = this.user.insearch
       } else
@@ -294,14 +268,14 @@ export default {
     this.userdata.insearch = this.user.insearch
     //this.cvurlnew = this.cvurl
   },
-  watch: {
-    username(newu) {
-      this.newusername = newu
-    },
-    surname(news) {
-      this.newsurname = news
-    },
-  }
+  // watch: {
+  //   username(newu) {
+  //     this.newusername = newu
+  //   },
+  //   surname(news) {
+  //     this.newsurname = news
+  //   },
+  // }
 }
 </script>
 

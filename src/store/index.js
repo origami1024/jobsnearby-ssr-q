@@ -102,9 +102,9 @@ export default function (/* { ssrContext } */) {
       regStateChange (context, value) {
         context.commit('setRegState', value)
       },
-      setUserMass (context, mass) {
+      setNameSurnameInSearch (context, mass) {
         // console.log(mass)
-        context.commit('setUserMass', mass)
+        context.commit('setNameSurnameInSearch', mass)
       },
       // setUserKeyProp (context, {key, prop}) {
       //   context.commit('setUserKeyProp', {key, prop})
