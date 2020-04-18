@@ -66,6 +66,7 @@
             color="deep-purple-10" 
             :value="user.identity"
             :label="$t('sub.email')"
+            readonly
             counter maxlength="50"
           />
           <q-input square color="deep-purple-10"  :type="isPwd ? 'password' : 'text'" class="subprofile__inp" outlined bottom-slots v-model="mailpw.oldpw" :label="$t('sub.oldPW')" counter maxlength="25" >
@@ -236,7 +237,7 @@ export default {
     },
     tryChangePw() {
       let url = '/changepw'
-      let udata = { oldmail: this.user, oldpw: this.mailpw.oldpw, newpw: this.mailpw.newpw }
+      let udata = { oldmail: this.user.identity, oldpw: this.mailpw.oldpw, newpw: this.mailpw.newpw }
       this.$axios
         .post(url, udata, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
         .then(response => {

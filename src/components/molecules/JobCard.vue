@@ -47,7 +47,7 @@
         <a class="showContactsLink" @click.prevent="isContactsShown = !isContactsShown" href="#">
           {{$t('jc.contactsLabel')}}
         </a>
-        <a v-if="user.role != 'company' && !cved" class="sendCVLink" @click.prevent="$emit('hitcv', job.job_id)" href="#">
+        <a v-if="user.role != 'company' && !cved" class="sendCVLink" @click.prevent="$store.dispatch('hitcv', job.job_id)" href="#">
           {{$t('jc.sendCVLabel')}}
         </a>
         <div v-else-if="user.role == 'subscriber'" class="cvSentSpan">
@@ -71,9 +71,7 @@
 export default {
   name: 'JobCard',
   props: {
-    hitcvDateStart: String,
     hitcv: Object,
-    hitcvDateEnd: String,
     cved: Boolean,
     job: Object,
   },
@@ -179,8 +177,6 @@ export default {
   a
     text-decoration none
   .cardHeader
-    //font-weight 400
-    //margin-bottom 3px
     font-weight: bold;
     font-size: 17px;
     line-height: 21px;

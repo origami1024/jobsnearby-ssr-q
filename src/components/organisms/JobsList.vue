@@ -1,9 +1,8 @@
 <template>
-  <div class="jobslist">
+  <div>
     <JobCard
-      :cved="ownCVs.map(v=>v.cvjob_id).includes(item.job_id)"
+      :cved="ownCVj_ids.includes(item.job_id)"
       :hitcv="ownCVs.find(v=>v.cvjob_id == item.job_id)"
-      @hitcv="hitcv"
       :job="item" 
       v-for="item in jobslist"
       :key="item.job_id">
@@ -18,17 +17,15 @@ import JobCard from './../molecules/JobCard'
 
 export default {
   name: 'JobsList',
-  props: {
-    ownCVs: {type: Array, default: ()=>[]},
-  },
   computed: {
     jobslist() {
       return this.$store.state.jobslist
-    }
-  },
-  methods: {
-    hitcv(id) {
-      this.$emit('hitcv', id)
+    },
+    ownCVs() {
+      return this.$store.state.user.ownCVs
+    },
+    ownCVj_ids() {
+      return this.$store.getters.ownCVj_ids
     }
   },
   components: {

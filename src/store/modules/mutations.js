@@ -1,4 +1,7 @@
 export default {
+  addOwnCV(state, cv) {
+    state.user.ownCVs.push(cv)
+  },
   setCVUrl(state, cvurl) {
     state.user.cvurl = cvurl
   },

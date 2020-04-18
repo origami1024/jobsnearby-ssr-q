@@ -23,6 +23,9 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     state,
     getters: {
+      ownCVj_ids(state) {
+        return state.user.ownCVs.map(v=>v.cvjob_id)
+      },
       isResetShown(state) {
         let res = false
         if (state.jFilters.city != '') res = true
@@ -54,6 +57,27 @@ export default function (/* { ssrContext } */) {
     },
     mutations,
     actions: {
+      async hitcv (context, job_id) {
+        if (context.state.user.role == 'subscriber') {
+          if (!context.state.user.cvurl || context.state.user.cvurl.length < 5) {
+            this.$router.push("/subprofile")
+            this.$q.notify(this.$t('App.firstCVNote'))
+            return false
+          }
+          let hitcvUrl = '/hitjobcv?jid=' + job_id
+          axiosInstance
+            .post(hitcvUrl, {cvurl: context.state.user.cvurl}, {withCredentials: true,})
+            .then(response => {
+              if (response && response.data && response.data.cvhit_id) {
+                context.commit('addOwnCV', response.data)
+              }
+            })
+        } else if (context.state.user.role != 'company') {
+          this.$router.push("/registration")
+          this.$q.notify({html: true, message: this.$t('App.onlyRegisteredCV')})
+          return false
+        }
+      },
       async updateCVUrl (context, cvurl) {
         context.commit('setCVUrl', cvurl)
       },

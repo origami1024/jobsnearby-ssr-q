@@ -87,10 +87,7 @@
             </button>
           </div>
         </div>
-        <JobsList
-          :ownCVs="ownCVs"
-          @hitcv="hitcv"
-        />
+        <JobsList/>
         <div v-if="pages && pages > 0" class="paginationWrap">
           <button
             :class="{pageBtns: true, currentPage: page_current == i}"
@@ -122,13 +119,11 @@ import { mapState } from 'vuex'
 export default {
   name: 'Jobs',
   props: {
-    ownCVs: {type: Array, default: ()=>[]},
     pages: {type: Number, default: 1},
     // page_current: {type: Number, default: 1},
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
     if (ssrContext) {
-      // console.log('ormongtrong', Object.keys(ssrContext))
       return store.dispatch('refreshJobsData', ssrContext.req.rawjobs)
     }
   },
@@ -147,9 +142,6 @@ export default {
     },
   },
   methods: {
-    hitcv(id) {
-      this.$emit('hitcv', id)
-    },
     switchPage(newV) {//CHANGE THIS, WOTS THIS REFRESH????
       this.$emit('refresh', 'page', newV)
     },

@@ -49,6 +49,66 @@ function hashSome() {
 
 
 
+async function hitjobcv(req, res) {
+  const jid = parseInt(req.query.jid)
+  //проверить жоб айди формально
+  if (isNaN(jid) || jid < 0 || String(jid).length > 10) {
+    console.log('Error: wrong id')
+    res.status(400).send('Неправильный id вакансии.')
+    return false
+  }
+  if (!req.body.cvurl || req.body.cvurl.length > 85) {
+    //и еще надо проверить cv url  - что начинается с webhost000
+    res.send('Error: CV not loaded')
+    return false
+  }
+  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    let que = `
+      SELECT user_id
+      FROM users
+      WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'
+    `
+    let result = await pool.query(que, [req.cookies.session, req.cookies.mail]).catch(error => {
+      console.log('cp hitjobcv err: ', error)
+    })
+    if (result && result.rows && result.rows.length == 1) {
+      let uid = result.rows[0].user_id
+
+      //ПРОВЕРКА - существует ли такая cvhit уже - по job_id, user_id
+      let precheck_que = `
+        SELECT cvhit_id
+        FROM cvhits WHERE
+        cvjob_id = $1 AND cvuser_id = $2
+      `
+      let precheck_params = [jid, uid]
+      let precheck_result = await pool.query(precheck_que, precheck_params).catch(error => {
+        console.log('cp hitjobcv1.5 err: ', error)
+      })
+      if (precheck_result.rows.length != 0) {
+        res.send('Уже подано')
+        return false
+      }
+
+      let que2 = `INSERT INTO "cvhits" ("cvjob_id", "cvuser_id", "cv_url") VALUES ($1, $2, $3) RETURNING *`
+      let params2 = [jid, uid, req.body.cvurl]
+      let result2 = await pool.query(que2, params2).catch(error => {
+        console.log('cp hitjobcv2 err: ', error)
+      })
+      if (result2 && result2.rows.length == 1) {
+        console.log(result2.rows[0])
+        res.send(result2.rows[0])
+      }
+      else res.send('Ошбика в бд')
+    } else {
+      res.send('Ошибка 1')
+      return false
+    }
+    
+    
+  } else res.send('Ошибка авторизации')
+}
+
+
 async function verifCheck(n) {
   let que = `
     DELETE FROM "verifications"
@@ -105,9 +165,9 @@ async function cvurldelete(req, res) {
   if (authPreValidation(req.cookies.session, req.cookies.mail)) {
     let que = `
       UPDATE "users" SET "cvurl" = ''
-      WHERE auth_cookie = $1 AND role = 'subscriber'
+      WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'
     `
-    let params = [req.cookies.session]
+    let params = [req.cookies.session, req.cookies.mail]
     let result = await pool.query(que, params).catch(error => {
       console.log('cp cvurldelete err: ', error)
       return undefined
@@ -524,7 +584,63 @@ async function changeuserstuff(req, res) {
     return false
   }
 }
+async function getDiapers(sess, mail) {
+  let que = `
+    SELECT pwhash
+    FROM users
+    WHERE LOWER(email) = $1 AND auth_cookie = $2
+  `
+  let result = await pool.query(que, [mail, sess]).catch(error => {
+    console.log('cp getDiapers err: ', error)
+  })
+  if (result.rows && result.rows.length === 1) return result.rows[0]
+  else return false
+}
+async function updateDiaper(newhash, oldhash, sess) {
+  let que = `
+    UPDATE "users" SET "pwhash" =
+    $1
+    WHERE auth_cookie = $2 AND pwhash = $3
+  `
+  let params = [newhash, sess, oldhash]
+  let result = await pool.query(que, params).catch(error => {
+    console.log('cp updDiapers err: ', error)
+    return false
+  })
+  return result
+}
+async function changepw(req, res) {
+  if (req.body && req.body.oldmail && typeof req.body.oldmail === 'string' && req.body.oldpw && req.body.newpw && typeof req.body.oldpw === 'string' && typeof req.body.newpw === 'string') {
 
+    let mail = req.body.oldmail.toLowerCase()
+    let oldpw = req.body.oldpw
+    let newpw = req.body.newpw
+    if (SupremeValidator.isValidEmail(mail) && SupremeValidator.isValidPW(oldpw) && SupremeValidator.isValidPW(newpw)) {
+      //if cookies present
+      if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+        //check data in db
+        let userData = await getDiapers(req.cookies.session, mail).catch(error => {
+          res.send('step2')
+          return undefined
+        })
+        if (userData) {
+          let authed = bcrypt.compareSync(oldpw, userData.pwhash)
+          //console.log('cp219: ', userData, ' and ', authed)
+          if (authed) {
+            let newhash = bcrypt.hashSync(newpw, bcrypt.genSaltSync(9))
+            let updator = await updateDiaper(newhash, userData.pwhash, req.cookies.session).catch(error => {
+              res.send('step2')
+              return undefined
+            })
+            //console.log('cp134 ', updator)
+            if (updator) res.send('OK')
+            //else res.send('smthngs')
+          } else {res.send('step4')}
+        } else {res.send('step5')}
+      } else {res.send('step1'); console.log('not valid cookies')}
+    } else {res.send('step1'); console.log('not valid mail or pw')}
+  } else {res.send('step1'); console.log('not valid stuff: ')}
+}
 
 async function registerFinish (id, hash, usertype, arg1, arg2) {
   let insert = ''
@@ -739,7 +855,20 @@ async function getUserAuthByCookies(session, mail) {
   })
   if (result.rowCount !== 1) return 'error3'
   if (result.rows[0].is_active == false) return 'notactive'
-  else return result.rows[0]
+  else {
+    //attach ownCVs
+    if (result.rows[0].role == 'subscriber') {
+      let que = 'SELECT cvhit_id, cvjob_id, date_created, date_checked FROM cvhits WHERE cvuser_id = $1'
+      let result2 = await pool.query(que, [result.rows[0].user_id]).catch(error => {
+        return 'errorCVHITS'
+      })
+      if (result2 && result2.rows) {
+        result.rows[0].ownCVs = result2.rows
+      }
+
+    }
+    return result.rows[0]
+  }
 }
 
 
@@ -863,11 +992,16 @@ module.exports = {
   cvurldelete,
   changeuserstuff,
   changepw,
-  
+
+  hitjobcv,
+
+  //SSR
   getJobsUserStatsSSR,
   getJobDataSSR,
   getCompanyDataSSR,
+
   getUserAuthByCookies,
+
 
   //utils
   authPreValidation,

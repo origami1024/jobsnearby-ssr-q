@@ -50,6 +50,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/cvupdate.json', db.cvurlupdate)
   app.post('/cvdelete.json', db.cvurldelete)
   
+  app.post('/hitjobcv', db.hitjobcv)
+  
   //ssr stuff
   //0 -- wait! on what route is this? on any first route?
   //0 -- think this trhourh

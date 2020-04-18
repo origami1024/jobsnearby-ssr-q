@@ -182,85 +182,22 @@ export default {
     if (this.$route.query.resender == 1) this.$q.notify({message: 'Повторное письмо со ссылкой для активации учетной записи отправлено.', icon: 'warning', color: 'green',timeout: 5000})
     if (this.$route.query.reset == 1) this.$q.notify({message: 'Пароль сброшен. Новый пароль отправлен на вашу почту.', icon: 'warning', color: 'green',timeout: 5000})
 
-    /*
-    //Seems that this data is always coming from the server, no need to look for it in LS
-    //LS is needed only to synchronize tabs then
-    //so there needs to be LS save on succesfull auth - so all tabs are synched
-
-    let storageUserInit = {}
-    if (localStorage.user) {
-      storageUserInit.identity = localStorage.user
-    }
-    if (localStorage.role) {
-      storageUserInit.role = localStorage.role
-    }
-    if (localStorage.user_id) {
-      storageUserInit.user_id = Number(localStorage.user_id)
-    }
-    if (localStorage.username) {
-      storageUserInit.username = localStorage.username
-    }
-    if (localStorage.surname) {
-      storageUserInit.surname = localStorage.surname
-    }
-    if (localStorage.company) {
-      storageUserInit.company = localStorage.company
-    }
-    if (localStorage.isagency) {
-      storageUserInit.isagency = localStorage.isagency
-    }
-    if (localStorage.insearch) {
-      storageUserInit.insearch = Boolean(localStorage.insearch)
-    }
-    if (localStorage.ownCVs) {
-      storageUserInit.ownCVs = Array(localStorage.ownCVs)
-    }
-    this.$store.dispatch('setUserMass', storageUserInit)
-    */
     window.addEventListener("storage", this.onStorageUpdate)
 
-    /* THIS NEEDS TO BE REDONE - !! - TRANSFERED TO PREFETCH, AND SERVERSIDE SYNCHRONIZED
-    //send auth by cookies request
-    axios
-      .post(config.jobsUrl + '/auth', [], {withCredentials: true,})
-      .then(response => {
-        if (response.data === 'fail') {
-          console.log('auth failed')
-          this.status = 'Вход не выполнен'
-          this.token = undefined
-          this.user = 'Гость'
-          this.user_id = -1
-          this.role = 'guestUnau'
-          this.surname = ''
-          this.username = ''
-          this.company = ''
-          this.isagency = false
-          this.insearch = false
-          //this.likedJobs = []
-          this.cvurl = ''
-          //this.likedJobsList = []
-          this.ownJobs = []
-          this.ownCVs = []
-        } else if (response.data && response.data[0] && response.data[1] && response.data[2]) {
-          this.authIt(response.data)
-          
-        }
-      })*/
-      
   },
   methods: {
-    authPls() {
+    authPls() {//OK
       if (this.dismiss != null) this.dismiss()
       this.dismiss = this.$q.notify(this.$t('App.doAuthForPublishing'))
     },
-    onStorageUpdate(event) {
+    onStorageUpdate(event) {//OK
       // console.log('on stoarge updoto', JSON.parse(event.newValue))
       if (event.key == 'userData') {
         let userData = JSON.parse(event.newValue)
         this.$store.dispatch('storeAuth', userData)
       }
     },
-    logout(retry) {
+    logout(retry) {//OK
       if (this.user_id !== -1) {
         this.$axios
           .post('/out', [], {withCredentials: true})
@@ -285,9 +222,7 @@ export default {
       }
     },
 
-    // cvupd(e) {// TO BE DELETED!
-    //   this.cvurl = e
-    // },
+
     setSentState(state) {//CHANGE THIS VUEX &(&*(&))
       this.newJobSentState = state
     },
@@ -382,71 +317,7 @@ export default {
     //   const duration = 250
     //   setScrollPosition(target, offset, duration)
     // },
-    getOwnCVHits() {//CHANGE THIS
-      let owncvhitsUrl = config.jobsUrl + '/getallcvuser'
-      this.ajaxLoading = true
-      axios
-        .post(owncvhitsUrl, [], {withCredentials: true,})
-        .then(response => {
-          if (response.data.cvs) {
-            //console.log('getOwnCVHits response cp621: ', response.data.cvs)
-            this.ownCVs = response.data.cvs //wat
-          }
-          
-          this.ajaxLoading = false
-        })
-    },
-    hitcv(id) {//CHANGE THIS
-      if (this.role == 'subscriber') {
-        console.log('app hitOne', id)
-        console.log(this.role)
-        console.log(this.ownCVs)
-      if (!this.cvurl || this.cvurl.length < 5) {
-        this.$router.push("/subprofile")
-        this.$q.notify(this.$t('App.firstCVNote'))
-        return false
-      }
-      let hitcvUrl = config.jobsUrl + '/hitjobcv?jid=' + id
-      this.ajaxLoading = true
-      axios
-        .post(hitcvUrl, {cvurl: this.cvurl}, {withCredentials: true,})
-        .then(response => {
-          if (response && response.data && response.data.cvhit_id) {
-            this.ownCVs.push(response.data)
-          }
-          //console.log('getOwnJobs response cp61: ', response.newCV, response.data)
-          this.ajaxLoading = false
-        })
-      } else
-      if (this.role != 'company') {
-        this.$router.push("/registration")
-        this.$q.notify({html: true, message: this.$t('App.onlyRegisteredCV')})
-        return false
-      }
-    },
-    // moved it into store - loginGo
-    // authIt: function(token) {//CHANGE THIS
-    //   if (token[2] === 'subscriber') {
-    //     this.username = token[3]
-    //     this.surname = token[4]
-    //     this.insearch = token[5]
-    //     //this.likedJobs = token[6]
-    //     this.cvurl = token[7]
-    //     setTimeout(()=>{this.getOwnCVHits()}, 50)
-    //   } else
-    //   if (token[2] === 'company') {
-    //     this.company = token[3]
-    //     this.isagency = token[4]
-    //     //gET OWN JOBS HERE PERHAPS?
-    //     //this.likedJobs = []
-    //   }
-    //   //console.log('cp111')
-    // },
-    uDataChangeFromSubProfile(udata) {//CHANGE THIS
-      this.username = udata.username
-      this.surname = udata.surname
-      this.insearch = udata.insearch
-    },
+    
     
     
     getOwnJobs() {
