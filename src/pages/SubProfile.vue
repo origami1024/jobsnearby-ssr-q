@@ -107,7 +107,7 @@ export default {
   },
   data: ()=>{return {
     cvhitsHistory: [],
-    sentCVJobsList: [],
+    // sentCVJobsList: [],
     cvurlnew: '',
     cv_upload_error: '',
     userdata: {
@@ -116,7 +116,6 @@ export default {
       insearch: false
     },
     mailpw: {
-      // oldemail: '', - заменено на user props из app
       newpw: '',
       oldpw: ''
     },
@@ -142,20 +141,9 @@ export default {
             console.log('cp124 - ошибка cvhitsHistory')
             this.$q.notify('Ошибка, не удалось получить данные')
           }
-          
-          //if error, show like popup or status update
+
       })
     },
-    // getSentCVJobs() { turned off 17-APR-20 - couldnt find what runs this func
-    //   let url = config.jobsUrl + '/getcvedjobs'
-    //   axios
-    //     .post(url, null, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
-    //     .then(response => {
-    //       if (response.data && response.data.jobs) {
-    //         this.sentCVJobsList = response.data.jobs
-    //       } else console.log('cp123 - ошибка getsentcvjobs')
-    //   })
-    // },
     updateCVLink() {//OK
       let url = '/cvupdate.json'
       this.$axios
@@ -235,7 +223,7 @@ export default {
           //error like validation
       })
     },
-    tryChangePw() {
+    tryChangePw() {//ok
       let url = '/changepw'
       let udata = { oldmail: this.user.identity, oldpw: this.mailpw.oldpw, newpw: this.mailpw.newpw }
       this.$axios
@@ -248,7 +236,7 @@ export default {
           else this.$q.notify(this.$t('sub.wrongData'))
       })
     },
-    setLocalRoute(rou) {
+    setLocalRoute(rou) {//ok
       if (rou == 'personal') {
         this.userdata.username = this.user.username
         this.userdata.surname = this.user.surname
@@ -263,20 +251,10 @@ export default {
     },
   },
   mounted(){
-    //console.log('cp11: ', this.insearch)
     this.userdata.username = this.user.username
     this.userdata.surname = this.user.surname
     this.userdata.insearch = this.user.insearch
-    //this.cvurlnew = this.cvurl
   },
-  // watch: {
-  //   username(newu) {
-  //     this.newusername = newu
-  //   },
-  //   surname(news) {
-  //     this.newsurname = news
-  //   },
-  // }
 }
 </script>
 

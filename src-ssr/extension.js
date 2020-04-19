@@ -51,7 +51,16 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/cvdelete.json', db.cvurldelete)
   
   app.post('/hitjobcv', db.hitjobcv)
-  
+
+
+  app.post('/getownjobs.json', db.getOwnJobs)
+  app.post('/ownCompany.json', db.getOwnCompanyJSON)
+  app.post('/companyupdpic.json', db.updateOneCompanyPic)
+  app.post('/companyUpdate.json', db.updateOneCompany)
+
+  app.post('/oneJob', db.addOneJob)
+  app.post('/updateJob', db.updateJob)
+
   //ssr stuff
   //0 -- wait! on what route is this? on any first route?
   //0 -- think this trhourh
@@ -161,6 +170,32 @@ module.exports.extendApp = function ({ app, ssr }) {
     if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
       req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
+        return 'error1'
+      })
+    } else {
+      //empty or not valid auth data
+      req.userData = 'noauth'
+    }
+    next()
+  })
+  app.get('/entprofile', async function (req, res, next) {
+    //only auth here
+    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+        console.log('getUserAuthByCookies. xxx', error)
+        return 'error1'
+      })
+    } else {
+      //empty or not valid auth data
+      req.userData = 'noauth'
+    }
+    next()
+  })
+  app.get('/addjob', async function (req, res, next) {
+    //only auth here
+    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+        console.log('getUserAuthByCookies. addjob', error)
         return 'error1'
       })
     } else {

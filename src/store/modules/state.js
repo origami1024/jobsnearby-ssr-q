@@ -1,5 +1,10 @@
 export default function () {
   return {
+    addJob: {
+      newJobsPageType: 'new',
+      jobEditedObj: {},
+      sent: 'none'
+    },
     user: {
       identity: 'Гость',//previously 'user', or is a mail
       role: 'guest',
@@ -12,6 +17,13 @@ export default function () {
       cvurl: '',
       ownJobs: [],
       ownCVs: []
+    },
+    cabout: {
+      company: '',
+      logo_url: '',
+      domains: [], //3max
+      website: '',
+      full_description: ''
     },
     authStatus: 'Вход не выполнен',//previously status in the app - maybe not needed now
     regState: 'login',//текущий таб регистрации

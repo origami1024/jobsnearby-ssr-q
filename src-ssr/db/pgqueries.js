@@ -47,7 +47,356 @@ function hashSome() {
   return Math.abs(hash);
 }
 
+function validateOneJob (data) {
+  let parsedData = {}
+  //title - обязат поле, без него вакансия пропускается; длина от 2 до 75 символов
+  if (data.title && data.title.length > 1 && data.title.length < 76 && titleRegex.test(data.title)) {
+    parsedData.title = data.title
+  } else return false//{ iSkipped += 1; continue}
+  //salary_max - необязат, целое число
+  console.log(data.salary_min)
+  console.log(data.salary_max)
+  if (data.salary_max && isNaN(data.salary_max) === false && data.salary_max > -1 && Number.isInteger(Number(data.salary_max))) {
+    if (String(data.salary_max).length > 5) data.salary_max = String(data.salary_max).substring(0,5)
+    parsedData.salary_max = Number(data.salary_max)
+  } else parsedData.salary_max = 0
+  //salary_min - необязат, целое число
+  if (data.salary_min && isNaN(data.salary_min) === false && data.salary_min > -1 && Number.isInteger(Number(data.salary_min))) {
+    if (String(data.salary_min).length > 5) data.salary_min = String(data.salary_min).substring(0,5)
+    parsedData.salary_min = Number(data.salary_min)
+  } else parsedData.salary_min = 0
+  //если указана min но не указана max, то добавить max
+  if (parsedData.salary_max == 0 && parsedData.salary_min > 0) parsedData.salary_max = parsedData.salary_min
+  if (parsedData.salary_max < parsedData.salary_min) parsedData.salary_max = parsedData.salary_min
+  //валюта - необязат, [m, $, р, e], по умолчанию m
+  if (data.currency && (data.currency === '$' || data.currency === 'm' || data.currency === 'р' || data.currency === 'e')) {
+    parsedData.currency = data.currency
+  } else parsedData.currency = 'm'
 
+  //возр от - необязат, целое число
+  if (data.age1 && isNaN(data.age1) === false && Number(data.age1) > 0 && Number(data.age1) < 250 && Number.isInteger(Number(data.age1))) {
+    parsedData.age1 = Number(data.age1)
+    if (parsedData.age1 < 18) parsedData.age1 = 18
+  } else parsedData.age1 = 0
+  //возр до - необязат, целое число
+  if (data.age2 && isNaN(data.age2) === false && data.age2 > 0 && data.age2 < 250 && Number.isInteger(Number(data.age2))) {
+    parsedData.age2 = Number(data.age2)
+    if (parsedData.age2 < 18) parsedData.age2 = 18
+  } else parsedData.age2 = 0
+  //возр проверки
+  if (parsedData.age2 == 18) {
+    parsedData.age1 = 18
+    parsedData.age2 = 0
+  }
+  //время от - необязат
+  if (data.worktime1 && isNaN(data.worktime1) === false && data.worktime1 > -1 && data.worktime1 < 25) {
+    parsedData.worktime1 = data.worktime1
+  } else parsedData.worktime1 = ''
+  //время до - необязат
+  if (data.worktime2 && isNaN(data.worktime2) === false && data.worktime2 > -1 && data.worktime2 < 25) {
+    parsedData.worktime2 = data.worktime2
+  } else parsedData.worktime2 = ''
+  //режим
+  if (data.schedule && data.schedule.length > 0 && data.schedule.length < 11) {
+    parsedData.schedule = data.schedule
+  } else parsedData.schedule = ''
+  //языки - обязательно массив, длина каждого языка - 50, макс кол-во языков - 3
+  if (data.langs && Array.isArray(data.langs) && data.langs.length < 4) {
+    let langsFiltered = data.langs.filter(lang => lang.length < 51)
+    parsedData.langs = langsFiltered
+  } else parsedData.langs = []
+  //edu - необязат, от 2х символов до 20
+  if (data.edu && data.edu.length > 1 && data.edu.length < 21) {
+    parsedData.edu = data.edu
+  } else parsedData.edu = ''
+  //experience - стаж в годах, дробное число от 0 до 250
+  if (data.experience != undefined && isNaN(data.experience) === false && data.experience >= -1 && data.experience < 250) {
+    parsedData.experience = Number(data.experience)
+  } else parsedData.experience = -1 //не указано = -1, без опыта = 0
+  //jcategory - стаж в годах, дробное число от 0 до 250
+  if (data.jcategory != undefined && isNaN(data.jcategory) === false && data.jcategory >= 0 && data.jcategory < 100) {
+    parsedData.jcategory = Math.round(Number(data.jcategory))
+  } else parsedData.jcategory = 0 //без категории = 0
+  //city - необязат, от 2х символов до 100
+  if (data.city && data.city.length > 1 && data.city.length < 101) {
+    parsedData.city = data.city
+  } else parsedData.city = ''
+  //jobtype - постоянная, временная или пусто
+  if (data.jtype && data.jtype == 'c') parsedData.jobtype = 'c'
+  else if (data.jtype && data.jtype == 'v') parsedData.jobtype = 'v'
+  else parsedData.jobtype = ''
+  //description - необязат, от 2х символов до 500
+  if (data.description && data.description.length > 1 && data.description.length < 2001) {
+    parsedData.description = data.description
+  } else parsedData.description = ''
+  //"contact_tel", "contact_mail", 
+  //contact_tel - не обязат на самом деле; длина до 15 символов
+  data.contact_tel = String(data.contact_tel).trim()
+  if (data.contact_tel && data.contact_tel.length < 16 && /^[\+0-9\-\(\)]*$/.test(data.contact_tel)) {
+    parsedData.contact_tel = data.contact_tel
+  } else parsedData.contact_tel = ''
+  //contact_mail - не обязат на самом деле; длина до 40 символов
+  if (data.contact_mail && data.contact_mail.length < 41 && /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test(data.contact_mail)) {
+    parsedData.contact_mail = data.contact_mail
+  } else parsedData.contact_mail = ''
+
+  return parsedData
+}
+
+
+
+async function getOwnJobs (req, res) {
+  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    let que1st = `SELECT user_id FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
+    let params1st = [req.cookies.session, req.cookies.mail]
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        res.send('step2')
+        return false
+      }
+      if (!results.rows || results.rows.length < 1) {
+        res.send('step3')
+        return false
+      }
+
+      let que2nd = `
+        SELECT jobs.job_id, jobs.city, jobs.experience, jobs.jobtype, jobs.title, jobs.edu, jobs.currency, jobs.salary_min, jobs.salary_max, jobs.sex, jobs.description, jobs.worktime1, jobs.worktime2, jobs.age1, jobs.age2, jobs.langs, jobs.time_published as published, jobs.time_updated as updated, jobs.contact_tel, jobs.contact_mail, cardinality(jobs.hits_log) as hits_all, (select count(distinct a) from unnest(jobs.hits_log) as a) as hits_uniq, jobs.is_closed, jobs.closed_why, jobs.jcategory, jobs.is_published
+        FROM jobs
+        WHERE jobs.author_id = $1
+        GROUP BY jobs.job_id
+        ORDER BY (jobs.time_updated, jobs.job_id) DESC
+      `
+      
+      let params2nd = [results.rows[0].user_id]
+      pool.query(que2nd, params2nd, (error2, results2) => {
+        if (error2) {
+          res.send('step3')
+          return false
+        }
+        // res.send({rows: results2.rows})
+        res.send(results2.rows)
+      })
+      //send back response
+      //handle finding nothing?
+    })
+  } else res.send('logout, wrong userinfo')
+}
+
+
+async function updateJob (req, res) {
+  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    let que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
+    let params1st = [req.cookies.session, req.cookies.mail]
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        res.send('step2')
+        return false
+      }
+      if (!results.rows || results.rows.length != 1) {
+        res.send('step3')
+        return false
+      }
+
+      let jid = req.body.job_id
+      if (isNaN(jid) != false || !Number.isInteger(Number(jid)) || jid < 0) {
+        res.send('wrong job id: ' + jid)
+        console.log('cp34: ', jid)
+        return false
+      }
+      let parsedData = validateOneJob(req.body)
+      if (parsedData == false) {
+        res.send('error, not passing validation')
+        return false
+      }
+
+      let que2nd = `UPDATE "jobs" SET ("time_updated", "title", "salary_max", "salary_min", "currency", "age1", "age2", "worktime1", "worktime2", "schedule", "langs", "edu", "experience", "city", "jobtype", "description", "contact_tel", "contact_mail", "jcategory") =
+                    (NOW(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+                    WHERE author_id = $19 AND job_id = $20
+                    RETURNING job_id, title`
+      let params2nd = [parsedData.title, parsedData.salary_max, parsedData.salary_min, parsedData.currency, parsedData.age1, parsedData.age2, parsedData.worktime1, parsedData.worktime2, parsedData.schedule, parsedData.langs, parsedData.edu, parsedData.experience, parsedData.city, parsedData.jobtype, parsedData.description, parsedData.contact_tel, parsedData.contact_mail, parsedData.jcategory, results.rows[0].user_id, jid]
+
+      pool.query(que2nd, params2nd, (error2, results2) => {
+        if (error2) {
+          console.log('updateJob, err2: ', error2)
+          res.send('error')
+          return false
+        }
+        if (results2.rows.length > 0) {
+          //Добавление логов
+          addLog('Вакансия изменена', parsedData.title, results.rows[0].user_id, results.rows[0].email)
+          res.send({...results2.rows[0], 'result': 'OK'})
+        } else res.send('error unkn')
+      })
+    })
+  } else {res.send('auth fail edit')}
+}
+
+async function addOneJob (req, res) {
+  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    let que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
+    let params1st = [req.cookies.session, req.cookies.mail]
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        res.send('step2')
+        return false
+      }
+      if (!results.rows || results.rows.length != 1) {
+        res.send('step3')
+        return false
+      }
+
+      let parsedData = validateOneJob(req.body)
+      if (parsedData == false) {
+        res.send('error, not passing validation')
+        return false
+      }
+      //author_id - проверка не нужна
+      parsedData.author_id = results.rows[0].user_id
+      //console.log('addOneJob cp2: ', parsedData)
+      let que2nd = `INSERT INTO "jobs" ("title", "salary_max", "salary_min", "currency", "age1", "age2", "worktime1", "worktime2", "schedule", "langs", "edu", "experience", "city", "jobtype", "description", "author_id", "contact_tel", "contact_mail", "jcategory") VALUES
+                    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+                    RETURNING job_id, title`
+      let params2nd = [parsedData.title, parsedData.salary_max, parsedData.salary_min, parsedData.currency, parsedData.age1, parsedData.age2, parsedData.worktime1, parsedData.worktime2, parsedData.schedule, parsedData.langs, parsedData.edu, parsedData.experience, parsedData.city, parsedData.jobtype, parsedData.description, parsedData.author_id, parsedData.contact_tel, parsedData.contact_mail, parsedData.jcategory]
+      
+      pool.query(que2nd, params2nd, (error2, results2) => {
+        if (error2) {
+          console.log('send1Job, err2: ', error2)
+          res.send('error')
+          return false
+        }
+        if (results2.rows.length > 0) {
+          //Добавление логов
+          addLog('Вакансия добавлена', parsedData.title, parsedData.author_id, results.rows[0].email)
+          res.send({...results2.rows[0], 'result': 'OK'})
+        } else res.send('error unkn')
+        
+        
+      })
+    })
+
+  } else {res.send('auth fail')}
+}
+
+async function updateOneCompany(req, res) {
+  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    //console.log(req.body)
+    let que1st = `SELECT user_id, company, logo_url, role FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
+    let params1st = [req.cookies.session, req.cookies.mail]
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        res.send('step2')
+        console.log('updateOneCompany Error: ', error)
+        return false
+      }
+      if (results.rows.length != 1 || results.rows[0].role != 'company') {
+        res.send('step3')
+        return false
+      }
+
+      let uid = results.rows[0].user_id
+
+      let parsedData = {}
+      //VALIDATE SHIET HERE!
+      if (req.body.company && req.body.company.length < 80 && titleRegex.test(req.body.company)) {
+        parsedData.company = req.body.company
+      } else parsedData.company = results.rows[0].company
+      if (req.body.logo_url && req.body.logo_url.length < 86) {
+        parsedData.logo_url = req.body.logo_url
+      } else parsedData.logo_url = results.rows[0].logo_url
+      //console.log('cp100: ', req.body.logo_url)
+      if (req.body.domains) {
+        parsedData.domains = req.body.domains.slice(0, 3)
+      } else parsedData.domains = '{}'
+      if (req.body.website) {
+        parsedData.website = req.body.website
+      } else parsedData.website = ''
+      if (req.body.full_description && req.body.full_description.length < 2001) {
+        parsedData.full_description = req.body.full_description
+      } else parsedData.full_description = ''
+
+      let que2nd = `UPDATE "users" SET ("company", "logo_url", "domains", "website", "full_description") =
+                    ($1, $2, $3, $4, $5)
+                    WHERE user_id = $6`
+      let params2nd = [parsedData.company, parsedData.logo_url, parsedData.domains, parsedData.website, parsedData.full_description, uid]
+
+      pool.query(que2nd, params2nd, (error2, results2) => {
+        if (error2) {
+          console.log('updateOneCompany, err2: ', error2)
+          res.send('error')
+          return false
+        }
+        res.send('OK')
+      })
+
+
+    })
+  } else res.send('auth error')
+
+}
+
+async function updateOneCompanyPic(req, res) {
+  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    let que1st = `SELECT user_id, logo_url, role FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
+    let params1st = [req.cookies.session, req.cookies.mail]
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        res.send('step2')
+        console.log('updateOneCompanyPic Error: ', error)
+        return false
+      }
+      if (results.rows.length != 1 || results.rows[0].role != 'company') {
+        res.send('step3')
+        return false
+      }
+
+      let uid = results.rows[0].user_id
+      
+      let logo_url = ''
+      //VALIDATE SHIET HERE!
+      if (req.body.logo_url && req.body.logo_url.length < 86) {
+        logo_url = req.body.logo_url
+      } else logo_url = results.rows[0].logo_url
+
+      let que2nd = `
+        UPDATE "users"
+        SET "logo_url" = $1
+        WHERE user_id = $2
+      `
+      let params2nd = [logo_url, uid]
+
+      pool.query(que2nd, params2nd, (error2, results2) => {
+        if (error2) {
+          console.log('updateOneCompanyPic, err2: ', error2)
+          res.send('error')
+          return false
+        }
+        res.send('OK')
+      })
+
+
+    })
+  } else res.send('auth error')
+}
+
+async function getOwnCompanyJSON(req, res) {
+  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    let que = `
+      SELECT company, logo_url, domains, website, full_description
+      FROM users
+      WHERE auth_cookie = $1 AND email = $2 AND role = 'company'
+    `
+    let result = await pool.query(que, [req.cookies.session, req.cookies.mail]).catch(error => {
+      console.log('cp getOwnCompanyJSON err: ', error)
+      return false
+    })
+    if (result.rows && result.rows.length == 1) company = result.rows[0]
+    else {
+      res.send('error1, wrong user data 1')
+      return false
+    }
+    res.send(company)
+  } else res.send('error0, wrong user data 0')
+}
 
 async function hitjobcv(req, res) {
   const jid = parseInt(req.query.jid)
@@ -70,6 +419,7 @@ async function hitjobcv(req, res) {
     `
     let result = await pool.query(que, [req.cookies.session, req.cookies.mail]).catch(error => {
       console.log('cp hitjobcv err: ', error)
+      return false
     })
     if (result && result.rows && result.rows.length == 1) {
       let uid = result.rows[0].user_id
@@ -994,6 +1344,14 @@ module.exports = {
   changepw,
 
   hitjobcv,
+
+  getOwnJobs,
+  getOwnCompanyJSON,
+  updateOneCompanyPic,
+  updateOneCompany,
+
+  addOneJob,
+  updateJob,
 
   //SSR
   getJobsUserStatsSSR,

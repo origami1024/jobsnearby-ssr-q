@@ -27,7 +27,7 @@
               </q-tooltip>
             </router-link>
             <q-btn 
-              @click.native="newJobInit"
+              @click.native="$store.dispatch('newJobInitAJ')"
               v-if="user.role == 'company'"
               class="headerBtns1 headerBtnRed"
               text-color="white" 
@@ -68,7 +68,7 @@
               </router-link>
 
               <router-link
-                @click.native="getOwnJobs"
+                @click.native="$store.dispatch('getOwnJobs')"
                 v-if="user.role && user.role === 'company' && $route.name == 'entprofile'"
                 class="headerBtn marginLeft30pxOnBig"
                 to="/entprofile"
@@ -113,7 +113,7 @@
       </header>
     </div>
     <keep-alive>
-      <router-view class="r-view"/>
+      <router-view class="r-view" @scrollTo="scrollTo"/>
     </keep-alive>
     <footer class="main__footer">
       <ul class="footer__ul-top">
@@ -134,11 +134,11 @@
           <h3>Работодателю</h3>
           <ul>
             <li>
-              <router-link @click.native="newJobInit();scrollTop()" v-if="user.role == 'company'" class="newlinks" to="/addJob">
-              {{$t('App.newJobHint')}}
+              <router-link @click.native="$store.dispatch('newJobInitAJ')" v-if="user.role == 'company'" class="newlinks" to="/addJob">
+                {{$t('App.newJobHint')}}
               </router-link>
-              <router-link @click.native="newJobInit();scrollTop()" v-else-if="user.role != 'subscriber'" class="newlinks" to="/registration">
-              {{$t('App.newJobHint')}}
+              <router-link @click.native="$store.dispatch('newJobInitAJ')" v-else-if="user.role != 'subscriber'" class="newlinks" to="/registration">
+                {{$t('App.newJobHint')}}
               </router-link>
             </li>
           </ul>
@@ -146,7 +146,7 @@
         <li>
           <h3>Контакты</h3>
           <ul>
-            <li><router-link class="headerBtns1 violetBtns footerLinkFB" @click.native="scrollTop()" to="/feedback">{{$t('App.fbBtnLabel')}}</router-link></li>
+            <li><router-link class="headerBtns1 violetBtns footerLinkFB" to="/feedback">{{$t('App.fbBtnLabel')}}</router-link></li>
             <!-- <li><a href="#">info@gmail.com</a></li> -->
           </ul>
         </li>
@@ -157,6 +157,9 @@
 </template>
 
 <script>
+import { scroll } from 'quasar'
+const { getScrollTarget, setScrollPosition } = scroll
+
 import LangChanger from 'components/atoms/LangChanger'
 import { mapState } from 'vuex'
 export default {
@@ -166,7 +169,7 @@ export default {
   }},
   computed: {
     ...mapState(['user']),
-    ...mapState(['jFilters'])
+    ...mapState(['jFilters']),
   },
   beforeDestroy() {
     window.removeEventListener("storage", this.onStorageUpdate)
@@ -221,51 +224,6 @@ export default {
         if (retry === true) this.$store.dispatch('refreshjobs', {})
       }
     },
-
-
-    setSentState(state) {//CHANGE THIS VUEX &(&*(&))
-      this.newJobSentState = state
-    },
-    newJobInit() { //CHANGE THIS
-      this.newJobsPageType = 'new'
-      this.jobEditId = -1
-      this.jobEditedObj = {}
-      this.newJobSentState = 'none'
-    },
-    editJob(jid) {//CHANGE THIS
-      this.newJobsPageType = 'edit'
-      this.jobEditId = jid
-
-      let tmpObj = this.ownJobs.find(j => j.job_id == jid)
-      let jcatOptions = this.$t('App.jcats')
-
-      let jtypeOptions = this.$t('App.jtypeOptions')
-      let expOptions = this.$t('App.expOpts')
-
-      let curOpts = this.$t('App.curOpts')
-      let searched
-      
-      searched = jcatOptions.find(c => c.value == tmpObj.jcategory)
-      if (!searched) searched = jcatOptions[0]
-      tmpObj.jcategory = searched
-
-      searched = curOpts.find(c => c.value == tmpObj.currency)
-      if (!searched) searched = curOpts[0]
-      tmpObj.currency = searched
-      
-      searched = expOptions.find(c => c.value == tmpObj.experience)
-      if (!searched) searched = expOptions[0]
-      tmpObj.experience = searched
-
-      searched = jtypeOptions.find(c => c.value == tmpObj.jtype)
-      if (!searched) searched = jtypeOptions[0]
-      tmpObj.jtype = searched
-      this.jobEditedObj = Object.assign({}, tmpObj)
-      if (this.jobEditedObj.contact_mail == null) this.jobEditedObj.contact_mail = ''
-      if (this.jobEditedObj.contact_tel == null) this.jobEditedObj.contact_tel = ''
-      
-      this.$router.push('/addJob')
-    },
     deleteJobById(jid) {//CHANGE THIS
       //console.log('cpcpcp ', jid)
       let indx = this.ownJobs.indexOf(this.ownJobs.find(val=>val.job_id == jid))
@@ -303,7 +261,7 @@ export default {
           this.ajaxLoading = false
         })
     },
-    scrollTo(yyy) {//CHANGE THIS
+    scrollTo(yyy) {//Ok?
       let el = document.documentElement
       const target = getScrollTarget(el)
       const offset = el.offsetTop + yyy
@@ -317,42 +275,14 @@ export default {
     //   const duration = 250
     //   setScrollPosition(target, offset, duration)
     // },
-    
-    
-    
-    getOwnJobs() {
-      console.log('getOwnJobs app level')
-      let jobslistUrl = config.jobsUrl + '/getOwnJobs.json'
-      this.ajaxLoading = true
-      axios
-        .post(jobslistUrl, [], {withCredentials: true,})
-        .then(response => {
-          
-          if (response.data && response.data.rows) {
-            this.ownJobs = response.data.rows
-          }
-          // else
-          // if (response.data && response.data.startsWith('logout')) {
-          //   //do we need this particular part
-          //   //when u logout on other tab, u dont need to send shit to server
-          //   //and user data should be synched from LS
-          //   console.log('logged out on different tab')
-          //   this.logout(false)
-          // }
-        })
-    },
-    // updQue(params) {
-    //   this.query = params
-    //   console.log(this.query)
-    // },
   },
   watch:{
     $route (to, from){//CHANGE THIS TO PREFETCH IF POSSIBLE
       if (to.name === 'uploads') {
-        this.getOwnJobs()
+        this.$store.dispatch('getOwnJobs')
       } else
       if (to.name === 'addjob') {
-        this.newJobSentState = 'none'
+        this.$store.dispatch('setAJSentState', 'none')
       }
     },
     //THERE ARE MANY LOCALSTORAGE INSERTS, MOVE IT INTO WHEN DATA IS RECEIVED (AUTH RELATED!)

@@ -1,4 +1,30 @@
 export default {
+  
+  setOwnJobs(state, jobs) {
+    state.user.ownJobs = jobs
+  },
+  newJobInitAJ(state) {
+    state.addJob = {
+      newJobsPageType: 'new',
+      jobEditedObj: {},
+      sent: 'none'
+    }
+  },
+  setAJEditedObj(state, value) {
+    state.addJob.jobEditedObj = value
+  },
+  setAJNewJobsPageType(state, value) {
+    state.addJob.newJobsPageType = value
+  },
+  setAJSentState(state, value) {
+    state.addJob.sent = value
+  },
+  setCAboutProp(state, {prop, value}) {
+    state.cabout[prop] = value
+  },
+  setCAbout(state, cabout) {
+    state.cabout = cabout
+  },
   addOwnCV(state, cv) {
     state.user.ownCVs.push(cv)
   },

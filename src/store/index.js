@@ -7,14 +7,7 @@ Vue.use(Vuex)
 
 import state from './modules/state'
 import mutations from './modules/mutations'
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation;
- *
- * The function below can be async too; either use
- * async/await or return a Promise which resolves
- * with the Store instance.
- */
+
 
 const wordRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\\-]*$/
 
@@ -57,6 +50,45 @@ export default function (/* { ssrContext } */) {
     },
     mutations,
     actions: {
+      newJobInitAJ (context) {
+        context.commit('newJobInitAJ')
+      },
+      getOwnJobs (context) {
+        axiosInstance
+          .post('/getownjobs.json', [], {withCredentials: true,})
+          .then(response => {
+            if (response && response.data) {
+              // console.log('cp1 ', response.data)
+              context.commit('setOwnJobs', response.data)
+            }
+          })
+      },
+      setAJEditedObj (context, value) {
+        context.commit('setAJEditedObj', value)
+      },
+      setAJSentState (context, value) {
+        context.commit('setAJSentState', value)
+      },
+      setAJNewJobsPageType (context, value) {
+        context.commit('setAJNewJobsPageType', value)
+      },
+      caboutPropUpd (context, {prop, value}) {
+        // console.log('codscsd: ', value)
+        context.commit('setCAboutProp', {prop, value})
+      },
+      async getOwnCAbout (context) {
+        console.log('get own company data - check if no duplication of this!~!!')
+        let url = '/ownCompany.json'
+        axiosInstance
+          .post(url, null, {withCredentials: true,})
+          .then(response => {
+            console.log('getOwnCompany ajax req cp')
+            if (response.data && response.data.company) {
+              context.commit('setCAbout', response.data)
+            }
+        })
+        
+      },
       async hitcv (context, job_id) {
         if (context.state.user.role == 'subscriber') {
           if (!context.state.user.cvurl || context.state.user.cvurl.length < 5) {

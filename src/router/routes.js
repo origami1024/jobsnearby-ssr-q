@@ -23,6 +23,14 @@ const routes = [
     component: () => import('pages/SubProfile.vue')
   },
   {
+    path: '/entprofile',
+    component: () => import('pages/EntProfile.vue')
+  },
+  {
+    path: '/addjob',
+    component: () => import('pages/AddJob.vue')
+  },
+  {
     path: '/feedback',
     component: () => import('pages/Feedback.vue')
   }
