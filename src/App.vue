@@ -153,6 +153,7 @@
       </ul>
       {{$store.state.user}}
     </footer>
+    
   </div>
 </template>
 
