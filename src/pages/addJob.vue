@@ -569,14 +569,12 @@ export default {
         scrollPos = 620
         this.$refs.exp1.show()
       }
-      console.log(scrollPos)
       if (scrollPos)
         this.$emit('scrollTo', scrollPos)
       else {
         if (this.props.newJobsPageType == 'new') this.addOneJob()
         else this.editJobSend()
       }
-        
     },
     editJobSend() {//Ok
       let j = Object.assign({}, this.job)
