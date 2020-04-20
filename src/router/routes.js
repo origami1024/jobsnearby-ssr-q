@@ -28,7 +28,7 @@ const routes = [
   },
   {
     path: '/addjob',
-    component: () => import('pages/AddJob.vue')
+    component: () => import('pages/NewJob.vue')
   },
   {
     path: '/feedback',

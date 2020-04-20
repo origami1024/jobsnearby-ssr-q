@@ -388,7 +388,7 @@ if (process.env.CLIENT) {
 }
 
 export default {
-  name: 'AddJob',
+  name: 'NewJob',
   computed: {
     user() {
       return { role: this.$store.state.user.role }
