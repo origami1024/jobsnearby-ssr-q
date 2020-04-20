@@ -158,8 +158,8 @@
 </template>
 
 <script>
-// import { scroll } from 'quasar'
-// const { getScrollTarget, setScrollPosition } = scroll
+import { scroll } from 'quasar'
+const { getScrollTarget, setScrollPosition } = scroll
 
 import LangChanger from 'components/atoms/LangChanger'
 import { mapState } from 'vuex'
@@ -263,11 +263,11 @@ export default {
         })
     },
     scrollTo(yyy) {//Ok?
-      // let el = document.documentElement
-      // const target = getScrollTarget(el)
-      // const offset = el.offsetTop + yyy
-      // const duration = 250
-      // setScrollPosition(target, offset, duration)
+      let el = document.documentElement
+      const target = getScrollTarget(el)
+      const offset = el.offsetTop + yyy
+      const duration = 250
+      setScrollPosition(target, offset, duration)
     },
     // scrollTop() {//CHANGE THIS
     //   let el = document.documentElement
