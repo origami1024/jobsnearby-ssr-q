@@ -167,12 +167,12 @@
           
           <div class="desc-col-wrap" style="textAlign: left; width: 100%">
             <q-no-ssr placeholder="Loading Your Editor...">
-              <!-- <vue-editor
+              <vue-editor
                 v-model="job.description"
                 @blur="descBlur"
                 @input="descUpd"
                 :editorToolbar="customToolbar"
-              /> -->
+              />
             </q-no-ssr>
             <div class="hint" :style="{color: job.description.length > 2000 ? '#c10015' : 'inherit'}">{{job.description.length}} / 2000</div>
           </div>
@@ -382,10 +382,10 @@
 </template>
 
 <script>
-// let VueEditor
-// if (process.env.CLIENT) {
-//   VueEditor = require('vue2-editor').VueEditor
-// }
+let VueEditor
+if (process.env.CLIENT) {
+  VueEditor = require('vue2-editor').VueEditor
+}
 
 export default {
   name: 'addJob',
@@ -654,7 +654,7 @@ export default {
     },
   },
   components: {
-    // VueEditor
+    VueEditor
   }
 }
 </script>
