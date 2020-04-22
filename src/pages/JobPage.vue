@@ -101,14 +101,13 @@
             </div>
         </div>
       </section>
-      <!-- <section style="display: flex; justifyContent: space-between">
-        <p>Последние изменения: {{updated}}</p>
-        <p>Уникальных просмотров: {{job.hits_uniq > 0 ? job.hits_uniq : 1}}</p>
-      </section> -->
-      <section style="display: flex; justifyContent: space-between">
+      <section style="display: flex; justify-content: space-between;">
         <p>{{$t('jobPage.publishedDate')}} {{published}}</p>
         <p style="font-size: 17px">
-          <q-icon class="bdscolored" :name="'visibility'" />
+          <svg width="20" height="12" class="bdscolored">
+            <rect width="18" x="1" y="1" height="10" fill="transparent" stroke-width="2" style="stroke:var(--violet-btn-color)" rx="15"/>
+            <circle cx="50%" cy="50%" r="4" style="fill:var(--violet-btn-color)" />
+          </svg>
           <span>{{job.hits_all > 0 ? job.hits_all : 1}}</span>
         </p>
       </section>
@@ -121,15 +120,9 @@ import { mapState } from 'vuex'
 export default {
   name: 'jobpage',
   data() {return {
-    // job: {},
     currency: '',//this.$t('App.currencyDic')['m']
-    // jcategory: '',
     salary_deriv: '',
   }},
-  // mounted() {
-  //   console.log(this.$route.query.id)
-    
-  // },
   computed: {
     ...mapState(['user', ['role','ownCVs']]),
     job() {
@@ -155,21 +148,8 @@ export default {
     this.setVariables()
   },
   methods: {
-    // getJobData() {
-    //   let jobUrl = '/jobby.idjson=' + this.$route.query.id
-    //   this.$axios
-    //     .get(jobUrl, null, {headers: {'Content-Type' : 'application/json' }})
-    //     .then(response => {
-    //       console.log('cpJJ1', response.data)
-    //       this.job = response.data
-    //       this.setVariables()
-    //     })
-    // },
     setVariables() {
       this.currency = this.$t('App.currencyDic')[this.job.currency]
-      //this.salary_subtitle = this.job.salary_max ? `<p style="font-size: 20px">${this.job.salary_max} ${this.currency}</p>` : ''
-      //this.jcategory = jcatdic[this.job.jcategory]
-
       if (this.job.salary_min < 1) {
         if (this.job.salary_max < 1) {
           this.salary_deriv = this.$t('jobPage.salaryNone')
@@ -286,5 +266,6 @@ section
 .bdscolored
   color var(--main-borders-color)
   margin-top -2px
-  margin-right 3px
+  margin-right 2px
+  margin-left 10px
 </style>
