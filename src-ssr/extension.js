@@ -12,6 +12,7 @@
  */
 
 const db = require('./db/pgqueries')
+const adm = require('./db/pgadmin')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 
@@ -24,6 +25,8 @@ module.exports.extendApp = function ({ app, ssr }) {
 
      Example: app.use(), app.get() etc
   */
+
+
 
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
@@ -58,9 +61,48 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/companyupdpic.json', db.updateOneCompanyPic)
   app.post('/companyUpdate.json', db.updateOneCompany)
 
+  app.post('/getresps', db.getResps)
+  app.post('/viewhit', db.viewHit)
+  
   app.post('/oneJob', db.addOneJob)
   app.post('/updateJob', db.updateJob)
 
+  app.post('/closeJobBy.id', db.closeJobById)
+  app.post('/delJobBy.id', db.deleteJobById)
+  app.post('/reopenJobBy.id', db.reopenJobById)
+
+  app.post('/entrance', db.addJobs)
+
+
+  app.get('/forgottenx2.json', db.forgottenx2)//u come here to confirm the pw regen request
+  app.get('/forgotten.json', db.forgotten)
+  app.post('/forgottenx.json', db.forgottenx)
+  app.get('/resend.json', db.resend)
+  app.post('/resender.json', db.resender)
+
+
+  //CPSTART
+  app.get('/cp.json', adm.adminPanel)
+  app.get('/cplogin.json', adm.adminLogin)
+  app.post('/cploginep.json', adm.cpLoginEndpoint)
+  app.get('/allfb.json', adm.getAllFB)
+  app.get('/adminusers.json', adm.adminUsers)
+  app.get('/adminjobs.json', adm.adminJobs)
+  app.get('/adminstats.json', adm.adminStatsRoute)
+  app.get('/cpsuper.json', adm.superAdmin)
+  app.get('/u2out.json', adm.u2out)
+  app.post('/newu2.json', adm.adminNew)
+  //CPEND
+
+  //admin actions
+  app.post('/fbaction.json', adm.fbaction)
+  app.post('/admnjobclo.json', adm.closeJobByIdAdmin)
+  app.post('/admnjobdel.json', adm.deleteJobByIdAdmin)
+  app.post('/admnjobapr.json', adm.approveJobByIdAdmin)
+  app.post('/auaction.json', adm.auaction)
+  app.post('/userstatregen.json', adm.userStatRegen)
+  //aa end
+  
   //ssr stuff
   //0 -- wait! on what route is this? on any first route?
   //0 -- think this trhourh
@@ -196,6 +238,19 @@ module.exports.extendApp = function ({ app, ssr }) {
     if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
       req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
         console.log('getUserAuthByCookies. addjob', error)
+        return 'error1'
+      })
+    } else {
+      //empty or not valid auth data
+      req.userData = 'noauth'
+    }
+    next()
+  })
+  app.get('/uploads', async function (req, res, next) {
+    //only auth here
+    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+        console.log('getUserAuthByCookies. uploads', error)
         return 'error1'
       })
     } else {

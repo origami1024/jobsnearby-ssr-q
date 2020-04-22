@@ -1,5 +1,14 @@
 export default {
-  
+  reopenJobById(state, jid) {
+    state.user.ownJobs.find(val=>val.job_id == jid).is_closed = false
+  },
+  deleteJobById(state, jid) {
+    let indx = state.user.ownJobs.findIndex(val=>val.job_id == jid)
+    state.user.ownJobs.splice(indx, 1)
+  },
+  closeJobById(state, jid) {
+    state.user.ownJobs.find(val=>val.job_id == jid).is_closed = true
+  },
   setOwnJobs(state, jobs) {
     state.user.ownJobs = jobs
   },

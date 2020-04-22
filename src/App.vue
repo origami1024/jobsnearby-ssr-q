@@ -225,43 +225,33 @@ export default {
         if (retry === true) this.$store.dispatch('refreshjobs', {})
       }
     },
-    deleteJobById(jid) {//CHANGE THIS
-      //console.log('cpcpcp ', jid)
-      let indx = this.ownJobs.indexOf(this.ownJobs.find(val=>val.job_id == jid))
-      //console.log(indx)
-      this.ownJobs.splice(indx, 1)
-      let url = config.jobsUrl + '/delJobBy.id?jid=' + jid
-      this.ajaxLoading = true
-      axios
-        .post(url, [], {withCredentials: true,})
-        .then(response => {
-          this.ajaxLoading = false
-        })
-    },
-    reopenJobById(jid) {//CHANGE THIS
-      //console.log('cpcpcp ', jid)
-      this.ownJobs.find(val=>val.job_id == jid).is_closed = false
-      //console.log(indx)
-      let url = config.jobsUrl + '/reopenJobBy.id?jid=' + jid
-      this.ajaxLoading = true
-      axios
-        .post(url, [], {withCredentials: true,})
-        .then(response => {
-          this.ajaxLoading = false
-        })
-    },
-    closeJobById(jid) {//CHANGE THIS
-      //console.log('cpcpcp ', jid)
-      this.ownJobs.find(val=>val.job_id == jid).is_closed = true
-      //console.log(indx)
-      let url = config.jobsUrl + '/closeJobBy.id?jid=' + jid
-      this.ajaxLoading = true
-      axios
-        .post(url, [], {withCredentials: true,})
-        .then(response => {
-          this.ajaxLoading = false
-        })
-    },
+    // deleteJobById(jid) {//CHANGE THIS
+    //   let indx = this.ownJobs.indexOf(this.ownJobs.find(val=>val.job_id == jid))
+    //   this.ownJobs.splice(indx, 1)
+    //   let url = '/delJobBy.id?jid=' + jid
+    //   axios
+    //     .post(url, [], {withCredentials: true,})
+    //     .then(response => {
+    //     })
+    // },
+    // reopenJobById(jid) {//CHANGE THIS
+    //   this.ownJobs.find(val=>val.job_id == jid).is_closed = false
+    //   let url = '/reopenJobBy.id?jid=' + jid
+    //   this.ajaxLoading = true
+    //   axios
+    //     .post(url, [], {withCredentials: true,})
+    //     .then(response => {
+    //       this.ajaxLoading = false
+    //     })
+    // },
+    // closeJobById(jid) {//CHANGE THIS
+    //   this.ownJobs.find(val=>val.job_id == jid).is_closed = true
+    //   let url = '/closeJobBy.id?jid=' + jid
+    //   axios
+    //     .post(url, [], {withCredentials: true,})
+    //     .then(response => {
+    //     })
+    // },
     scrollTo(yyy) {//Ok?
       let el = document.documentElement
       const target = getScrollTarget(el)

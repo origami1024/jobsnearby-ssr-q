@@ -50,6 +50,38 @@ export default function (/* { ssrContext } */) {
     },
     mutations,
     actions: {
+      reopenJobById (context, jid) {
+        context.commit('reopenJobById', jid)
+        let url = '/reopenJobBy.id?jid=' + jid
+        axiosInstance
+          .post(url, null, {withCredentials: true,})
+          .then(response => {
+            if (response.data == 'OK'){}
+          })
+      },
+      deleteJobById (context, {jid, notifier}) {
+        context.commit('deleteJobById', jid)
+        let url = '/delJobBy.id?jid=' + jid
+        axiosInstance
+          .post(url, null, {withCredentials: true,})
+          .then(response => {
+            if (response.data == 'OK'){
+              notifier('Вакансия удалена')
+            }
+          })
+      },
+      closeJobById (context, {jid, notifier}) {
+        context.commit('closeJobById', jid)
+        let url = '/closeJobBy.id?jid=' + jid
+        axiosInstance
+          .post(url, null, {withCredentials: true,})
+          .then(response => {
+            if (response.data == 'OK'){
+              notifier('Вакансия закрыта')
+            }
+          })
+      },
+
       newJobInitAJ (context) {
         context.commit('newJobInitAJ')
       },

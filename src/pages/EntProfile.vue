@@ -15,7 +15,7 @@
       >
         <q-tab-panel name="published" class="entprofile__published entprofile__mid">
           <h4 class="entprofile__header">{{$t('entProfile.publishedHeader')}}({{user.ownJobs.length}}):</h4>
-          <JobsStats @reopenJob="reopenJob" @closeJob="closeJob" @delJob="delJob"/>
+          <JobsStats/>
         </q-tab-panel>
         <q-tab-panel name="responses" class="entprofile__mid" style="display: flex">
           <div class="line" style="width: 100%;">
@@ -65,7 +65,6 @@
                       @click="viewHit(hit)"
                     />
                   </div>
-                    <!-- </q-item> -->
                 </li>
               </ul>
               
@@ -157,7 +156,6 @@ import ProfileNav from 'components/molecules/ProfileNav.vue'
 
 import { mapState } from 'vuex'
 
-// let domainsAll = ["Автомобильный бизнес", "Гостиницы, рестораны, общепит, кейтеринг", "Государственные организации", "Добывающая отрасль", "ЖКХ", "Информационные технологии, системная интеграция, интернет", "Искусство, культура", "Лесная промышленность, деревообработка", "Медицина, фармацевтика, аптеки", "Металлургия, металлообработка", "Нефть и газ", "Образовательные учреждения", "Общественная деятельность, партии, благотворительность, НКО", "Перевозки, логистика, склад, ВЭД", "Продукты питания", "Промышленное оборудование, техника, станки и комплектующие", "Розничная торговля", "СМИ, маркетинг, реклама, BTL, PR, дизайн", "Сельское хозяйство", "Строительство, эксплуатация, проектирование", "Недвижимость", "Телекоммуникации, связь", "Товары народного потребления (непищевые)", "Тяжелое машиностроение", "Управление многопрофильными активами", "Услуги для бизнеса", "Услуги для населения", "Финансовый сектор", "Химическое производство, удобрения", "Электроника, приборостроение, бытовая техника, компьютеры и оргтехника", "Энергетика"]
 
 export default {
   name: 'EntProfile',
@@ -232,14 +230,12 @@ export default {
           })
       }
     },
-    viewHit(hit) {
-      console.log(hit)
+    viewHit(hit) {//ok
       if (this.resps.find(val=>val.cvhit_id == hit).date_checked == null) {
-        let url = config.jobsUrl + '/viewhit'
-        axios
+        let url = '/viewhit'
+        this.$axios
           .post(url, [hit], {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
           .then(response => {
-            //console.log('viewHit', response.data)
             if (response.data == 'OK') {
               this.resps.find(val=>val.cvhit_id == hit).date_checked = Date.now()
               //this.$q.notify('Пароль изменен')
@@ -252,13 +248,12 @@ export default {
       let d = new Date(e)
       return d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear()
     },
-    getResps() {
-      let url = config.jobsUrl + '/getresps'
-      axios
+    getResps() {//ok
+      let url = '/getresps'
+      this.$axios
         .post(url, null, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
         .then(response => {
           if (response.data && response.data.rows) {
-            //console.log('getResps', response.data.rows)
             this.resps = response.data.rows
             let dic1 = { 
             }
@@ -267,21 +262,16 @@ export default {
               dic1[x.cvjob_id]['cvhits'] = []
               dic1[x.cvjob_id]['hasNew'] = 0
             }
-            //console.log(response.data.rows)
+            
             for (let x of response.data.rows) {
               dic1[x.cvjob_id]['cvhits'].push(x.cvhit_id)
               //console.log(JSON.stringify(x))
               if (x.date_checked == null) {
                 dic1[x.cvjob_id]['hasNew'] += 1
               }
-              //console.log(x.cvhit_id)
             }
             this.respsJreformat = dic1
-            //console.log(JSON.stringify(dic1))
-            //console.log(response.data.rows)
           }
-          
-          //this.$q.notify('Ошибка чот')
       })
     },
     tryChangePw() {//ok
@@ -316,9 +306,9 @@ export default {
           } else this.$q.notify(this.$t('entProfile.dataError'))
       })
     },
-    changeTabs(newT) {
+    changeTabs(newT) {//ok
       //if (newT == 'published') this.$emit('getOwnJobs')
-      newT != 'published' || this.$emit('getOwnJobs')
+      newT != 'published' || this.$store.dispatch('getOwnJobs')
     },
     setLocalRoute(rou) {
       if (rou == 'cabout') {
@@ -330,17 +320,8 @@ export default {
       }
       this.tab = rou
     },
-    reopenJob(jid) {
-      this.$emit('reopenJob', jid)
-    },
-    delJob(jid) {
-      this.$emit('delJob', jid)
-    },
-    closeJob(jid) {
-      this.$emit('closeJob', jid)
-    },
   },
-  mounted(){//dodelat' getOwnJOBS i getResps
+  mounted(){
     //без этого дропать файлы нельзя
     window.addEventListener("dragover",function(e){
       e = e || event;
@@ -351,7 +332,7 @@ export default {
       e.preventDefault()
     },false)
     this.$store.dispatch('getOwnJobs')
-    // setTimeout(()=>{this.getResps()},100)
+    setTimeout(()=>{this.getResps()},100)
   },
   watch: {//ok
     $route (to, from){
@@ -369,7 +350,6 @@ export default {
 .qtpans
   width 100%
   min-height 75vh
-  //border 1px solid #eee
   box-shadow 0 0 4px 1px var(--main-borders-color)
   border-radius 4px
   background-color transparent

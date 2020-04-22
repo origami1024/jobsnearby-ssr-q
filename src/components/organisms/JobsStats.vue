@@ -54,7 +54,7 @@
               size="sm"
               color="blue"
               glossy
-              @click="$emit('reopenJob', item.job_id)"
+              @click="$store.dispatch('reopenJobById',item.job_id)"
             >
               <q-tooltip>
                 <p style="font-size: 15px;margin: 0">{{$t('jobsStats.reopenHint')}}</p>
@@ -66,7 +66,7 @@
               size="sm"
               color="purple"
               glossy
-              @click="$emit('reopenJob', item.job_id)"
+              @click="$store.dispatch('reopenJobById',item.job_id)"
             >
               <q-tooltip>
                 <p style="font-size: 15px;margin: 0">{{$t('jobsStats.resendHint')}}</p>
@@ -80,7 +80,7 @@
               size="sm"
               color="orange"
               glossy
-              @click="closeThis(item.job_id)"
+              @click="$store.dispatch('closeJobById',{jid: item.job_id, notifier: $q.notify})"
             >
               <q-tooltip>
                 <p style="font-size: 15px;margin: 0">{{$t('jobsStats.closeHint')}}</p>
@@ -96,7 +96,7 @@
               size="sm"
               color="red"
               glossy
-              @click="delThis(item.job_id)"
+              @click="$store.dispatch('deleteJobById',{jid: item.job_id, notifier: $q.notify})"
             >
               <q-tooltip>
                 <p style="font-size: 15px;margin: 0">{{$t('jobsStats.deleteHint')}}</p>
@@ -120,13 +120,7 @@ export default {
     },
   },
   methods: {
-    delThis(jid) {
-      this.$emit('delJob', jid)
-    },
-    closeThis(jid) {
-      this.$emit('closeJob', jid)
-    },
-    editJob(jid) {//
+    editJob(jid) {//Ok
       this.$store.dispatch('setAJNewJobsPageType', 'edit')
       let tmpObj = Object.assign({}, this.jobslist.find(j => j.job_id == jid))
       let jcatOptions = this.$t('App.jcats')

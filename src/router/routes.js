@@ -28,7 +28,11 @@ const routes = [
   },
   {
     path: '/addjob',
-    component: () => import('pages/NewJob.vue')
+    component: () => import('pages/AddJob.vue')
+  },
+  {
+    path: '/uploads',
+    component: () => import('pages/Uploads.vue')
   },
   {
     path: '/feedback',
