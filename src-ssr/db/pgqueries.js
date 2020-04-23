@@ -518,8 +518,6 @@ async function addJobs (req, res) {
         ]
       }
       que2nd = que2nd.substring(0, que2nd.length - 1);
-      console.log(que2nd)
-      console.log(params2nd)
       pool.query(que2nd, params2nd, (error2, results2) => {
         if (error2) {
           console.log('addJobs err2', error2)

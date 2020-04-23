@@ -171,7 +171,7 @@ export default {
         
         let lastLineIndex = tmp["!ref"].split(':')
         lastLineIndex = Math.min(lastLineIndex[lastLineIndex.length - 1].replace(/\D/g,''), 15)
-        console.log('ccc', lastLineIndex)
+        // console.log('ccc', lastLineIndex)
         function getjtype(val) {
           //console.log('gettype cp1: ', val)
           return (val == localVue.$t('upl.perm')) ? 'c' : (val == localVue.$t('upl.temp')) ? 'v' : ''
