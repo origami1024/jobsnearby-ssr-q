@@ -30,10 +30,10 @@ const routes = [
     path: '/addjob',
     component: () => import('pages/AddJob.vue')
   },
-  // {
-  //   path: '/uploads',
-  //   component: () => import('pages/Uploads.vue')
-  // },
+  {
+    path: '/uploads',
+    component: () => import('pages/Uploads.vue')
+  },
   {
     path: '/feedback',
     component: () => import('pages/Feedback.vue')
