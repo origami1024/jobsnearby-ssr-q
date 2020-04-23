@@ -24,8 +24,7 @@
     "pg": "^8.0.2",
     "quasar": "^1.0.0",
     "vue-i18n": "^8.0.0",
-    "vue2-editor": "^2.10.2",
-    "xlsx": "^0.15.6"
+    "vue2-editor": "^2.10.2"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0",

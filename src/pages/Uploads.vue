@@ -16,8 +16,9 @@
           :done="step > 1"
         >
           {{$t('upl.chooseFile')}} <a href="/Vacancy_V5.xlsx">{{$t('upl.fileExample')}}</a>
+          <!-- @change="parseFile" -->
           <q-input
-            @change="parseFile"
+            
             outlined
             dense
             style="max-width: 250px"
@@ -102,8 +103,7 @@
 </template>
 
 <script>
-// const xlsx = require('assets/xlsx.mini.min.js')
-import xlsx from 'xlsx'
+// import xlsx from 'xlsx'
 
 import { mapState } from 'vuex'
 
@@ -159,68 +159,68 @@ export default {
         
       } else {this.uploadStatus = this.$t('upl.getData')}
     },
-    parseFile: function (e) {
-      this.files = e.target.files
-      let reader = new FileReader()
-      let localVue = this
-      reader.onload = function(e) {
-        var data = new Uint8Array(e.target.result);
-        var workbook = xlsx.read(data, {type: 'array'});
+    // parseFile: function (e) {
+    //   this.files = e.target.files
+    //   let reader = new FileReader()
+    //   let localVue = this
+    //   reader.onload = function(e) {
+    //     var data = new Uint8Array(e.target.result);
+    //     var workbook = xlsx.read(data, {type: 'array'});
         
-        let tmp = workbook.Sheets[workbook.SheetNames[0]]
+    //     let tmp = workbook.Sheets[workbook.SheetNames[0]]
         
-        let lastLineIndex = tmp["!ref"].split(':')
-        lastLineIndex = Math.min(lastLineIndex[lastLineIndex.length - 1].replace(/\D/g,''), 15)
-        console.log('ccc', lastLineIndex)
-        function getjtype(val) {
-          //console.log('gettype cp1: ', val)
-          return (val == localVue.$t('upl.perm')) ? 'c' : (val == localVue.$t('upl.temp')) ? 'v' : ''
-        }
+    //     let lastLineIndex = tmp["!ref"].split(':')
+    //     lastLineIndex = Math.min(lastLineIndex[lastLineIndex.length - 1].replace(/\D/g,''), 15)
+    //     console.log('ccc', lastLineIndex)
+    //     function getjtype(val) {
+    //       //console.log('gettype cp1: ', val)
+    //       return (val == localVue.$t('upl.perm')) ? 'c' : (val == localVue.$t('upl.temp')) ? 'v' : ''
+    //     }
 
         
-        let entries = [
-          'title', 'salary_min', 'salary_max', 'currency', 'contact_tel', 'contact_mail', 'description',
-          'age1', 'age2', 'worktime1', 'worktime2', 'schedule', 'edu', 'experience', 'city'
-        ]
-        let len = lastLineIndex
-        lastLineIndex = 0
-        let newData = []
-        let alpha = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split('')
-        let alphaIndex = 0
-        let newl = (entryname) => {
-          //console.log(lastLineIndex)
-          //console.log(alpha[alphaIndex] + lastLineIndex)
-          if (alpha[alphaIndex] + lastLineIndex in tmp) newData[lastLineIndex][entryname] = tmp[alpha[alphaIndex] + lastLineIndex].v
-          alphaIndex += 1
-        }
-        while (lastLineIndex <= len) {
-          alphaIndex = 0
-          newData.push({})
-          entries.forEach(val => newl(val))
-          console.log((alpha[alphaIndex] + lastLineIndex in tmp && getjtype(tmp[alpha[alphaIndex] + lastLineIndex].v) != ''))
-          if (alpha[alphaIndex] + lastLineIndex in tmp && getjtype(tmp[alpha[alphaIndex] + lastLineIndex].v) != '') newData[lastLineIndex].jtype = getjtype(tmp[alpha[alphaIndex] + lastLineIndex].v)
-          alphaIndex += 1
+    //     let entries = [
+    //       'title', 'salary_min', 'salary_max', 'currency', 'contact_tel', 'contact_mail', 'description',
+    //       'age1', 'age2', 'worktime1', 'worktime2', 'schedule', 'edu', 'experience', 'city'
+    //     ]
+    //     let len = lastLineIndex
+    //     lastLineIndex = 0
+    //     let newData = []
+    //     let alpha = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split('')
+    //     let alphaIndex = 0
+    //     let newl = (entryname) => {
+    //       //console.log(lastLineIndex)
+    //       //console.log(alpha[alphaIndex] + lastLineIndex)
+    //       if (alpha[alphaIndex] + lastLineIndex in tmp) newData[lastLineIndex][entryname] = tmp[alpha[alphaIndex] + lastLineIndex].v
+    //       alphaIndex += 1
+    //     }
+    //     while (lastLineIndex <= len) {
+    //       alphaIndex = 0
+    //       newData.push({})
+    //       entries.forEach(val => newl(val))
+    //       console.log((alpha[alphaIndex] + lastLineIndex in tmp && getjtype(tmp[alpha[alphaIndex] + lastLineIndex].v) != ''))
+    //       if (alpha[alphaIndex] + lastLineIndex in tmp && getjtype(tmp[alpha[alphaIndex] + lastLineIndex].v) != '') newData[lastLineIndex].jtype = getjtype(tmp[alpha[alphaIndex] + lastLineIndex].v)
+    //       alphaIndex += 1
 
-          newData[lastLineIndex].langs = []
-          if (alpha[alphaIndex] + lastLineIndex in tmp) newData[lastLineIndex].langs.push(tmp[alpha[alphaIndex] + lastLineIndex].v)
-          alphaIndex += 1
-          if (alpha[alphaIndex] + lastLineIndex in tmp) newData[lastLineIndex].langs.push(tmp[alpha[alphaIndex] + lastLineIndex].v)
-          alphaIndex += 1
-          if (alpha[alphaIndex] + lastLineIndex in tmp) newData[lastLineIndex].langs.push(tmp[alpha[alphaIndex] + lastLineIndex].v)
-          alphaIndex += 1
-          lastLineIndex++
-        }
-        console.log(newData)
-        newData.shift()
-        newData.shift()
+    //       newData[lastLineIndex].langs = []
+    //       if (alpha[alphaIndex] + lastLineIndex in tmp) newData[lastLineIndex].langs.push(tmp[alpha[alphaIndex] + lastLineIndex].v)
+    //       alphaIndex += 1
+    //       if (alpha[alphaIndex] + lastLineIndex in tmp) newData[lastLineIndex].langs.push(tmp[alpha[alphaIndex] + lastLineIndex].v)
+    //       alphaIndex += 1
+    //       if (alpha[alphaIndex] + lastLineIndex in tmp) newData[lastLineIndex].langs.push(tmp[alpha[alphaIndex] + lastLineIndex].v)
+    //       alphaIndex += 1
+    //       lastLineIndex++
+    //     }
+    //     console.log(newData)
+    //     newData.shift()
+    //     newData.shift()
         
-        localVue.parsed = newData
-        //localVue.$refs.stepper.next()
-        localVue.step = 2
-      }
-      reader.readAsArrayBuffer(this.files[0])
+    //     localVue.parsed = newData
+    //     //localVue.$refs.stepper.next()
+    //     localVue.step = 2
+    //   }
+    //   reader.readAsArrayBuffer(this.files[0])
       
-    },
+    // },
     
   },
 
