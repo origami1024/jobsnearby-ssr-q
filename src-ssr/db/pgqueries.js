@@ -1833,44 +1833,44 @@ async function getJobDataSSR(id, addr) {
 async function getJobsUserStatsSSR() {
   //get JOBS and USERSTATS in one
   
-  // console.log('cpdebug1.51')
-  // let perpage = '25'
-  // let sort = 'ORDER BY (jobs.time_updated, jobs.job_id) DESC'
+  console.log('cpdebug1.51')
+  let perpage = '25'
+  let sort = 'ORDER BY (jobs.time_updated, jobs.job_id) DESC'
 
-  // let que =  `SELECT jobs.author_id, users.company as author, jobs.job_id, jobs.city, jobs.experience, jobs.title, jobs.currency, jobs.salary_min, jobs.salary_max, jobs.description, jobs.time_updated as updated, jobs.contact_mail, contact_tel
-  //             FROM jobs, users
-  //             WHERE jobs.author_id = users.user_id AND
-  //               jobs.is_published = TRUE AND
-  //               jobs.is_closed = FALSE
-  //               AND jobs.time_updated > now() - interval '1 month'
-  //             ${sort}
-  //             LIMIT $1`
-  // let qparams = [perpage]
+  let que =  `SELECT jobs.author_id, users.company as author, jobs.job_id, jobs.city, jobs.experience, jobs.title, jobs.currency, jobs.salary_min, jobs.salary_max, jobs.description, jobs.time_updated as updated, jobs.contact_mail, contact_tel
+              FROM jobs, users
+              WHERE jobs.author_id = users.user_id AND
+                jobs.is_published = TRUE AND
+                jobs.is_closed = FALSE
+                AND jobs.time_updated > now() - interval '1 month'
+              ${sort}
+              LIMIT $1`
+  let qparams = [perpage]
 
-  // let r1 = await pool.query(que, qparams).catch(error => {
-  //   console.log('getJobsForSSR 1. ', error)
-  //   return 'erra1'
-  // })
-
-  // let countque =  `SELECT count(*) AS full_count
-  //   FROM jobs, users
-  //   WHERE jobs.author_id = users.user_id AND
-  //     jobs.is_published = TRUE AND
-  //     jobs.is_closed = FALSE
-  //     AND jobs.time_updated > now() - interval '1 month'`
-  // let r2 = await pool.query(countque, null).catch(error => {
-  //   console.log('getJobsForSSR 2. ', error)
-  //   return 'erra2'
-  // })
-  // console.log('cpdebug1.52')
-  // let usque =  `SELECT * FROM cached_salary_stats`
-  // let r3 = await pool.query(usque, null).catch(error => {
-  //   console.log('getJobsForSSR 3. ', error)
-  //   return 'erra3'
-  // })
-  // console.log('cpdebug1.53')
-  // return {...r2.rows[0], 'page': 1, 'perpage': perpage, rows: r1.rows, stats: r3.rows}
-  return {}
+  let r1 = await pool.query(que, qparams).catch(error => {
+    console.log('getJobsForSSR 1. ', error)
+    return 'erra1'
+  })
+  console.log('cpdebug1.515')
+  let countque =  `SELECT count(*) AS full_count
+    FROM jobs, users
+    WHERE jobs.author_id = users.user_id AND
+      jobs.is_published = TRUE AND
+      jobs.is_closed = FALSE
+      AND jobs.time_updated > now() - interval '1 month'`
+  let r2 = await pool.query(countque, null).catch(error => {
+    console.log('getJobsForSSR 2. ', error)
+    return 'erra2'
+  })
+  console.log('cpdebug1.52')
+  let usque =  `SELECT * FROM cached_salary_stats`
+  let r3 = await pool.query(usque, null).catch(error => {
+    console.log('getJobsForSSR 3. ', error)
+    return 'erra3'
+  })
+  console.log('cpdebug1.53')
+  return {...r2.rows[0], 'page': 1, 'perpage': perpage, rows: r1.rows, stats: r3.rows}
+  
 }
 
 // async function testAsyncSSR(req, res) {
