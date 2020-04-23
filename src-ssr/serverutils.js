@@ -1,5 +1,6 @@
 
 const jwt = require('jsonwebtoken')
+const pageParts = require('./pageParts')
 
 const SupremeValidator = {
   isValidEmail(email) {
@@ -20,5 +21,5 @@ const SupremeValidator = {
 
 module.exports = {
   SupremeValidator,
-
+  pageParts,
 }

@@ -9,7 +9,7 @@ const bcrypt = require('bcryptjs')
 // const jwt = require('jsonwebtoken')
 
 let nodeMailer = require('nodemailer')
-const pageParts = require('./../pageParts')
+
 
 function authPreValidation(session, mail) {
   if (
@@ -21,6 +21,8 @@ function authPreValidation(session, mail) {
 }
 
 const SupremeValidator = require('./../serverutils').SupremeValidator
+const pageParts = require('./../serverutils').pageParts
+// const pool = require('./../serverutils').pool
 
 function hashSome() {
   let base = String(Number(new Date()))
@@ -1852,16 +1854,17 @@ async function getJobsUserStatsSSR() {
     return 'erra1'
   })
   console.log('cpdebug1.515')
-  let countque =  `SELECT count(*) AS full_count
-    FROM jobs, users
-    WHERE jobs.author_id = users.user_id AND
-      jobs.is_published = TRUE AND
-      jobs.is_closed = FALSE
-      AND jobs.time_updated > now() - interval '1 month'`
-  let r2 = await pool.query(countque, null).catch(error => {
-    console.log('getJobsForSSR 2. ', error)
-    return 'erra2'
-  })
+  // let countque =  `SELECT count(*) AS full_count
+  //   FROM jobs, users
+  //   WHERE jobs.author_id = users.user_id AND
+  //     jobs.is_published = TRUE AND
+  //     jobs.is_closed = FALSE
+  //     AND jobs.time_updated > now() - interval '1 month'`
+  // let r2 = await pool.query(countque, null).catch(error => {
+  //   console.log('getJobsForSSR 2. ', error)
+  //   return 'erra2'
+  // })
+  let r2 = {rows: [{full_count: 165}]}
   console.log('cpdebug1.52')
   let usque =  `SELECT * FROM cached_salary_stats`
   let r3 = await pool.query(usque, null).catch(error => {

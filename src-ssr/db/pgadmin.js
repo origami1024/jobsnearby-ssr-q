@@ -3,14 +3,14 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL || `postgres://postgres:123456@localhost:5433/jobsnearby`
 })
 
-// const titleRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\+\$\%\(\)\№\:\#\/]*$/
 
 const bcrypt = require('bcryptjs')
 
 
-const pageParts = require('./../pageParts')
+
 // let nodeMailer = require('nodemailer')
 const SupremeValidator = require('./../serverutils').SupremeValidator
+const pageParts = require('./../serverutils').pageParts
 
 //Добавить лог
 async function addLog (action, body, author_id, author_mail) {
