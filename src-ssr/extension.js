@@ -71,14 +71,14 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/delJobBy.id', db.deleteJobById)
   app.post('/reopenJobBy.id', db.reopenJobById)
 
-  app.post('/entrance', db.addJobs)
+  // app.post('/entrance', db.addJobs)
 
 
-  app.get('/forgottenx2.json', db.forgottenx2)//u come here to confirm the pw regen request
-  app.get('/forgotten.json', db.forgotten)
-  app.post('/forgottenx.json', db.forgottenx)
-  app.get('/resend.json', db.resend)
-  app.post('/resender.json', db.resender)
+  // app.get('/forgottenx2.json', db.forgottenx2)//u come here to confirm the pw regen request
+  // app.get('/forgotten.json', db.forgotten)
+  // app.post('/forgottenx.json', db.forgottenx)
+  // app.get('/resend.json', db.resend)
+  // app.post('/resender.json', db.resender)
 
 
   // //CPSTART

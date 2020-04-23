@@ -131,401 +131,401 @@ function validateOneJob (data) {
 }
 
 
-async function resend(req, res) {
-  //page with form to request a resend
-  let body = `
-    <main style="width: 100%; display: flex; justify-content: center;">
-      <form action="/resender.json" method="POST" style="padding:10px; background-color: #dfd; width: auto; display: inline-block; font-size: 18px; font-family: sans-serif;">
-        <p>Письмо верификации не дошло? (в папке спам тоже нет?)</p>
-        <label for="mail1">Введите Email</label>
-        <input id="mail1" name="mail" />
-        <input type="submit" value="Отправить еще раз"/>
-      </form>
-    </main>
-  `
-  let page = `<!DOCTYPE html>
-  <html lang="en"><head><style>
-  section {
-    width: 100%;
-  }
-  .detailed__line {
-    display: flex;
-  }
-  </style></head><body>` + body + `<footer></footer>`
-  res.send(page)
-}
+// async function resend(req, res) {
+//   //page with form to request a resend
+//   let body = `
+//     <main style="width: 100%; display: flex; justify-content: center;">
+//       <form action="/resender.json" method="POST" style="padding:10px; background-color: #dfd; width: auto; display: inline-block; font-size: 18px; font-family: sans-serif;">
+//         <p>Письмо верификации не дошло? (в папке спам тоже нет?)</p>
+//         <label for="mail1">Введите Email</label>
+//         <input id="mail1" name="mail" />
+//         <input type="submit" value="Отправить еще раз"/>
+//       </form>
+//     </main>
+//   `
+//   let page = `<!DOCTYPE html>
+//   <html lang="en"><head><style>
+//   section {
+//     width: 100%;
+//   }
+//   .detailed__line {
+//     display: flex;
+//   }
+//   </style></head><body>` + body + `<footer></footer>`
+//   res.send(page)
+// }
 
-async function getVerificationEntry(mail) {
-  //mail should be prechecked for validity outside this
-  //just get the whole entry by mail
-  let que = `
-  SELECT uid, url, mail, EXTRACT(EPOCH FROM time_created - 'now()'::timestamptz) AS time_passed
-  FROM "verifications" WHERE mail = $1
-  `
-  let params = [mail]
-  let result = await pool.query(que, params).catch(error => {
-    console.log(error)
-    throw new Error('getVerificationEntry failed')
-  })
-  if (result && result.rows && result.rows.length == 1) return result.rows
-  else return undefined
-}
+// async function getVerificationEntry(mail) {
+//   //mail should be prechecked for validity outside this
+//   //just get the whole entry by mail
+//   let que = `
+//   SELECT uid, url, mail, EXTRACT(EPOCH FROM time_created - 'now()'::timestamptz) AS time_passed
+//   FROM "verifications" WHERE mail = $1
+//   `
+//   let params = [mail]
+//   let result = await pool.query(que, params).catch(error => {
+//     console.log(error)
+//     throw new Error('getVerificationEntry failed')
+//   })
+//   if (result && result.rows && result.rows.length == 1) return result.rows
+//   else return undefined
+// }
 
-async function veriUpdTime(mail) {
-  //mail should be prechecked for validity outside this
-  let que = `
-    UPDATE "verifications"
-    SET time_created = NOW()
-    WHERE mail = $1
-  `
-  let params = [mail]
-  let result = await pool.query(que, params).catch(error => {
-    console.log(error)
-    throw new Error('veriUpdTime')
-  })
-}
+// async function veriUpdTime(mail) {
+//   //mail should be prechecked for validity outside this
+//   let que = `
+//     UPDATE "verifications"
+//     SET time_created = NOW()
+//     WHERE mail = $1
+//   `
+//   let params = [mail]
+//   let result = await pool.query(que, params).catch(error => {
+//     console.log(error)
+//     throw new Error('veriUpdTime')
+//   })
+// }
 
 
-async function resender(req, res) {
-  let mail = req.body.mail
+// async function resender(req, res) {
+//   let mail = req.body.mail
 
-  //check the mail's by regex and length
-  if (SupremeValidator.isValidEmail(mail)) {
-    let veri = await getVerificationEntry(mail).catch(error => {
-      //res.send('step2')
-      return undefined
-    })
-    if (veri) {
-      if (veri[0].time_passed < -300) {
-        console.log('time in', veri[0].time_passed)
-        //send mail if ok, and send the user, that its resent, or that u shall wait so much  
-        testMail(veri[0].url, mail)
-        let upd = await veriUpdTime(mail).catch(error => {
-          //res.send('step2')
-          return undefined
-        })
-        let baseUrl = process.env.NODE_ENV ? 'https://jobsnearby.herokuapp.com' : 'http://127.0.0.1:8080'
-        //res.send('Повторное письмо с ссылкой для активации учетной записи отправлено. <a href="' + baseUrl + '/registration?login=1">Войти</a> на сайт.')
-        res.send('<html><body><script>window.location.replace("' + baseUrl + '/registration?login=1&resender=1")</script></body></html>')
-      } else {
-        res.send('Повторная отправка верификации возможна не реже чем раз в 5 минут. Прошло ' + -Math.round(veri[0].time_passed/60) + ' минут')
-      }
-    } else res.send('Неправильный email')
-  } else res.send('error 1')
-}
+//   //check the mail's by regex and length
+//   if (SupremeValidator.isValidEmail(mail)) {
+//     let veri = await getVerificationEntry(mail).catch(error => {
+//       //res.send('step2')
+//       return undefined
+//     })
+//     if (veri) {
+//       if (veri[0].time_passed < -300) {
+//         console.log('time in', veri[0].time_passed)
+//         //send mail if ok, and send the user, that its resent, or that u shall wait so much  
+//         testMail(veri[0].url, mail)
+//         let upd = await veriUpdTime(mail).catch(error => {
+//           //res.send('step2')
+//           return undefined
+//         })
+//         let baseUrl = process.env.NODE_ENV ? 'https://jobsnearby.herokuapp.com' : 'http://127.0.0.1:8080'
+//         //res.send('Повторное письмо с ссылкой для активации учетной записи отправлено. <a href="' + baseUrl + '/registration?login=1">Войти</a> на сайт.')
+//         res.send('<html><body><script>window.location.replace("' + baseUrl + '/registration?login=1&resender=1")</script></body></html>')
+//       } else {
+//         res.send('Повторная отправка верификации возможна не реже чем раз в 5 минут. Прошло ' + -Math.round(veri[0].time_passed/60) + ' минут')
+//       }
+//     } else res.send('Неправильный email')
+//   } else res.send('error 1')
+// }
 
-async function verifiedMailExists(mail) {
-  //check if its verified too!!!
-  //but need to return the result if it exists but is not verified, like verify first
-  let que = `
-    SELECT email_confirmed
-    FROM users
-    WHERE email = $1
-  `
-  let params = [mail]
-  let result = await pool.query(que, params).catch(error => {
-    console.log(error)
-    throw new Error('verifiedMailExists failed')
-  })
-  if (result && result.rows && result.rows.length == 1 && result.rows[0].email_confirmed == true) return true
-  else return undefined
-}
+// async function verifiedMailExists(mail) {
+//   //check if its verified too!!!
+//   //but need to return the result if it exists but is not verified, like verify first
+//   let que = `
+//     SELECT email_confirmed
+//     FROM users
+//     WHERE email = $1
+//   `
+//   let params = [mail]
+//   let result = await pool.query(que, params).catch(error => {
+//     console.log(error)
+//     throw new Error('verifiedMailExists failed')
+//   })
+//   if (result && result.rows && result.rows.length == 1 && result.rows[0].email_confirmed == true) return true
+//   else return undefined
+// }
 
-async function insertForgottenEntry(mail, url) {
-  let que = `
-    INSERT INTO "forgotten"
-    ("mail", "url", "time_created") VALUES ($1, $2, NOW())
-  `
-  let params = [mail, url]
-  let result = await pool.query(que, params).catch(error => {
-    console.log(error)
-    throw new Error('insertForgottenEntry failed')
-  })
-  if (result) return true
-  else return undefined
-}
+// async function insertForgottenEntry(mail, url) {
+//   let que = `
+//     INSERT INTO "forgotten"
+//     ("mail", "url", "time_created") VALUES ($1, $2, NOW())
+//   `
+//   let params = [mail, url]
+//   let result = await pool.query(que, params).catch(error => {
+//     console.log(error)
+//     throw new Error('insertForgottenEntry failed')
+//   })
+//   if (result) return true
+//   else return undefined
+// }
 
-async function forgottenMail(url, mail) {
-  let transporter = nodeMailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-        // should be replaced with real sender's account
-        user: 'jobsnearby1000@gmail.com',
-        pass: 'g789451bb'
-    }
-  })
-  console.log('sending letter')
-  let baseUrl = process.env.NODE_ENV ? 'https://jobsnearby.herokuapp.com' : 'http://127.0.0.1:7777'
-  let url1 = baseUrl + '/forgottenx2.json?n=' + url
-  let mailOptions = {
-    // should be replaced with real recipient's account
-    to: mail, //'origami1024@gmail.com',
-    subject: 'Восстановление пароля на jobsnearby',
-    text: 'Для получения нового пароля нужно подтвердить восстановление, перейдя по ссылке ' + url1 + '. После этого вы получите второе письмо с новым паролем. Эта ссылка действительна в течении 2 часов.'
-  }
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      //res.send('NOT OK')
-      return 'ERR'
-    }
-    //res.send('OK')
-    console.log('Message2 %s sent: %s', info.messageId, info.response);
-    return 'OK'
-  })
-}
-async function forgottenRequest1stCheck(mail) {
-  let que = `
-    SELECT url, mail, EXTRACT(EPOCH FROM time_created - 'now()'::timestamptz) AS time_passed
-    FROM forgotten
-    WHERE mail = $1
-  `
-  let params = [mail]
-  let result = await pool.query(que, params).catch(error => {
-    console.log(error)
-    throw new Error('forgottenRequest1stCheck failed')
-  })
-  if (result && result.rows && result.rows.length == 1) return result.rows[0]
-  else return undefined
-}
+// async function forgottenMail(url, mail) {
+//   let transporter = nodeMailer.createTransport({
+//     host: 'smtp.gmail.com',
+//     port: 465,
+//     secure: true,
+//     auth: {
+//         // should be replaced with real sender's account
+//         user: 'jobsnearby1000@gmail.com',
+//         pass: 'g789451bb'
+//     }
+//   })
+//   console.log('sending letter')
+//   let baseUrl = process.env.NODE_ENV ? 'https://jobsnearby.herokuapp.com' : 'http://127.0.0.1:7777'
+//   let url1 = baseUrl + '/forgottenx2.json?n=' + url
+//   let mailOptions = {
+//     // should be replaced with real recipient's account
+//     to: mail, //'origami1024@gmail.com',
+//     subject: 'Восстановление пароля на jobsnearby',
+//     text: 'Для получения нового пароля нужно подтвердить восстановление, перейдя по ссылке ' + url1 + '. После этого вы получите второе письмо с новым паролем. Эта ссылка действительна в течении 2 часов.'
+//   }
+//   transporter.sendMail(mailOptions, (error, info) => {
+//     if (error) {
+//       //res.send('NOT OK')
+//       return 'ERR'
+//     }
+//     //res.send('OK')
+//     console.log('Message2 %s sent: %s', info.messageId, info.response);
+//     return 'OK'
+//   })
+// }
+// async function forgottenRequest1stCheck(mail) {
+//   let que = `
+//     SELECT url, mail, EXTRACT(EPOCH FROM time_created - 'now()'::timestamptz) AS time_passed
+//     FROM forgotten
+//     WHERE mail = $1
+//   `
+//   let params = [mail]
+//   let result = await pool.query(que, params).catch(error => {
+//     console.log(error)
+//     throw new Error('forgottenRequest1stCheck failed')
+//   })
+//   if (result && result.rows && result.rows.length == 1) return result.rows[0]
+//   else return undefined
+// }
 
-async function updateForgottenEntry(mail,url) {
-  let que = `
-    UPDATE "forgotten"
-    SET ("url", "time_created") = ($1, NOW())
-    WHERE mail = $2
-  `
-  let params = [url, mail]
-  let result = await pool.query(que, params).catch(error => {
-    console.log(error)
-    throw new Error('updateForgottenEntry failed')
-  })
-  if (result) return true
-  else return undefined
-}
+// async function updateForgottenEntry(mail,url) {
+//   let que = `
+//     UPDATE "forgotten"
+//     SET ("url", "time_created") = ($1, NOW())
+//     WHERE mail = $2
+//   `
+//   let params = [url, mail]
+//   let result = await pool.query(que, params).catch(error => {
+//     console.log(error)
+//     throw new Error('updateForgottenEntry failed')
+//   })
+//   if (result) return true
+//   else return undefined
+// }
 
-async function forgottenx(req, res) {
-  let mail = req.body.mail
-  if (SupremeValidator.isValidEmail(mail)) {
-    let veri = await verifiedMailExists(mail).catch(error => {
-      return undefined
-    })
-    if (veri) {
-      //check if there is already a request for new pw in the table first
-      //need to check if mail in the forgotten basically
-      //just get all that info
-      let firstCheck = await forgottenRequest1stCheck(mail).catch(error => {
-        return undefined
-      })
-      if (firstCheck == undefined) {
-        let hash1 = String(hashSome()) + parseInt(Math.random()*100000000000, 11)
+// async function forgottenx(req, res) {
+//   let mail = req.body.mail
+//   if (SupremeValidator.isValidEmail(mail)) {
+//     let veri = await verifiedMailExists(mail).catch(error => {
+//       return undefined
+//     })
+//     if (veri) {
+//       //check if there is already a request for new pw in the table first
+//       //need to check if mail in the forgotten basically
+//       //just get all that info
+//       let firstCheck = await forgottenRequest1stCheck(mail).catch(error => {
+//         return undefined
+//       })
+//       if (firstCheck == undefined) {
+//         let hash1 = String(hashSome()) + parseInt(Math.random()*100000000000, 11)
 
-        let dbEntry = await insertForgottenEntry(mail, hash1).catch(error => {
-          return undefined
-        })
-        if (dbEntry) {
-          //send mail
-          forgottenMail(hash1, mail)
-          //send page that its sent
-          res.send('Письмо подтверждения восстановления пароля отправлено на вашу почту. Оно будет действительно в течении 2 часов')
-        } else res.send('Ошибка базы данных 1')
-      } else if (firstCheck && firstCheck.time_passed <= -1200) {//1200 = 20 min?
-        //rewrite old
-        //use the old url
-        let hash1 = firstCheck.url
-        //rewrite the record
-        let dbEntry = await updateForgottenEntry(mail, hash1).catch(error => {
-          return undefined
-        })
-        if (dbEntry) {
-          //send mail
-          forgottenMail(hash1, mail)
-          //send page that its sent
-          res.send('Письмо подтверждения восстановления пароля отправлено на вашу почту')
-        } else res.send('Ошибка базы данных 2')
-      } else if (firstCheck && firstCheck.time_passed > -1200) {
-        //send back that time hasnt passed
-        res.send('Вы уже запрашивали восстановление пароля ' + Math.round(firstCheck.time_passed / -60) + ' минут назад. Минимальное время между сбросами 20 минут')
-      } else res.send('Ошибка на сервере')
-    } else res.send('Несуществующий, либо не верифицированный mail')
-  } else res.send('Неправильный формат адреса')
-}
+//         let dbEntry = await insertForgottenEntry(mail, hash1).catch(error => {
+//           return undefined
+//         })
+//         if (dbEntry) {
+//           //send mail
+//           forgottenMail(hash1, mail)
+//           //send page that its sent
+//           res.send('Письмо подтверждения восстановления пароля отправлено на вашу почту. Оно будет действительно в течении 2 часов')
+//         } else res.send('Ошибка базы данных 1')
+//       } else if (firstCheck && firstCheck.time_passed <= -1200) {//1200 = 20 min?
+//         //rewrite old
+//         //use the old url
+//         let hash1 = firstCheck.url
+//         //rewrite the record
+//         let dbEntry = await updateForgottenEntry(mail, hash1).catch(error => {
+//           return undefined
+//         })
+//         if (dbEntry) {
+//           //send mail
+//           forgottenMail(hash1, mail)
+//           //send page that its sent
+//           res.send('Письмо подтверждения восстановления пароля отправлено на вашу почту')
+//         } else res.send('Ошибка базы данных 2')
+//       } else if (firstCheck && firstCheck.time_passed > -1200) {
+//         //send back that time hasnt passed
+//         res.send('Вы уже запрашивали восстановление пароля ' + Math.round(firstCheck.time_passed / -60) + ' минут назад. Минимальное время между сбросами 20 минут')
+//       } else res.send('Ошибка на сервере')
+//     } else res.send('Несуществующий, либо не верифицированный mail')
+//   } else res.send('Неправильный формат адреса')
+// }
 
-async function forgCheck(n) {
-  let que = `
-    DELETE FROM "forgotten"
-    WHERE url = $1
-    RETURNING mail, EXTRACT(EPOCH FROM time_created - 'now()'::timestamptz) AS time_passed
-  `
-  let params = [n]
-  let result = await pool.query(que, params).catch(error => {
-    console.log(error)
-    throw new Error('forg check err1')
-  })
-  if (result && result.rowCount === 1) {
-    return result.rows[0]
-  } return undefined
-}
-async function forgChangePw(pwhash, mail) {
-  //mail and hash should be prechecked for validity
-  let que = `
-    UPDATE "users"
-    SET pwhash = $1
-    WHERE email = $2
-  `
-  let params = [pwhash, mail]
-  let result = await pool.query(que, params).catch(error => {
-    console.log('cp forgChangePw: ', error)
-    throw new Error('user update fail')
-  })
-  return true
-}
+// async function forgCheck(n) {
+//   let que = `
+//     DELETE FROM "forgotten"
+//     WHERE url = $1
+//     RETURNING mail, EXTRACT(EPOCH FROM time_created - 'now()'::timestamptz) AS time_passed
+//   `
+//   let params = [n]
+//   let result = await pool.query(que, params).catch(error => {
+//     console.log(error)
+//     throw new Error('forg check err1')
+//   })
+//   if (result && result.rowCount === 1) {
+//     return result.rows[0]
+//   } return undefined
+// }
+// async function forgChangePw(pwhash, mail) {
+//   //mail and hash should be prechecked for validity
+//   let que = `
+//     UPDATE "users"
+//     SET pwhash = $1
+//     WHERE email = $2
+//   `
+//   let params = [pwhash, mail]
+//   let result = await pool.query(que, params).catch(error => {
+//     console.log('cp forgChangePw: ', error)
+//     throw new Error('user update fail')
+//   })
+//   return true
+// }
 
-async function forgottenx2Mail(newpw, mail) {
-  console.log('sending forgotten2: ' + newpw + ' ' + mail)
-  let transporter = nodeMailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-        user: 'jobsnearby1000@gmail.com',
-        pass: 'g789451bb'
-    }
-  })
-  let mailOptions = {
-    // should be replaced with real recipient's account
-    to: mail, //'origami1024@gmail.com',
-    subject: 'Сгенерирован новый пароль на jobsnearby',
-    text: 'Пароль изменен на jobsnearby изменен по процедуре восстановления на: ' + newpw + '. Измените его в профиле на более безопасный.'
-  }
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      //res.send('NOT OK')
-      return 'ERR'
-    }
-    //res.send('OK')
-    console.log('Message3 %s sent: %s', info.messageId, info.response);
-    return 'OK'
-  })
-}
+// async function forgottenx2Mail(newpw, mail) {
+//   console.log('sending forgotten2: ' + newpw + ' ' + mail)
+//   let transporter = nodeMailer.createTransport({
+//     host: 'smtp.gmail.com',
+//     port: 465,
+//     secure: true,
+//     auth: {
+//         user: 'jobsnearby1000@gmail.com',
+//         pass: 'g789451bb'
+//     }
+//   })
+//   let mailOptions = {
+//     // should be replaced with real recipient's account
+//     to: mail, //'origami1024@gmail.com',
+//     subject: 'Сгенерирован новый пароль на jobsnearby',
+//     text: 'Пароль изменен на jobsnearby изменен по процедуре восстановления на: ' + newpw + '. Измените его в профиле на более безопасный.'
+//   }
+//   transporter.sendMail(mailOptions, (error, info) => {
+//     if (error) {
+//       //res.send('NOT OK')
+//       return 'ERR'
+//     }
+//     //res.send('OK')
+//     console.log('Message3 %s sent: %s', info.messageId, info.response);
+//     return 'OK'
+//   })
+// }
 
-async function forgottenx2(req, res) {
-  console.log('fx2: ', req.query.n)
-  let reg = /^\d+$/
-  let n1 = req.query.n
-  //u need to check if link in db
-  if (reg.test(n1) == false || String(n1).length > 25) {
-    console.log('Error: wrong num2')
-    res.status(400).send('WRONG VERIFICATION LINK2')
-    return false
-  }
-  //after that check if its in db, check by deletion//consume the db entry(delete)
-  let forg = await forgCheck(n1).catch(error => {
-    //res.send('step2')
-    return undefined
-  })
-  if (forg) {
-    //check here time, send diff response based on that.
-    //respond that its sent
-    if (forg.time_passed > -7200) {
-      //within the time - send mail, redirect
-      //generate the new pw
-      let pwarr = 'qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNMM'
-      let newpw = ''
-      var i = 10
-      while (i--) {
-        newpw += pwarr[Math.round(Math.random()*62)]
-      }
-      //generate the hash of that pw
-      let hash = bcrypt.hashSync(newpw, bcrypt.genSaltSync(9))
-      //put it into the db
-      let some = await forgChangePw(hash, forg.mail).catch(error => {
-        return undefined
-      })
-      //send letter-2 to the mail in the consumed entry
-      forgottenx2Mail(newpw, forg.mail)
-      let baseUrl = process.env.NODE_ENV ? 'https://jobsnearby.herokuapp.com' : 'http://127.0.0.1:8080'
-      //res.send('Пароль сброшен. Новый пароль отправлен на вашу почту. <a href="' + baseUrl + '/registration?login=1">Войти</a>')
-      res.send('<html><body><script>window.location.replace("' + baseUrl + '/registration?login=1&reset=1")</script></body></html>')
-    } else res.send('Ссылка сброса пароля просрочена (2 часа макс), попробуйте еще раз')
-  } else res.send('Ошибка в адресе верификации')
+// async function forgottenx2(req, res) {
+//   console.log('fx2: ', req.query.n)
+//   let reg = /^\d+$/
+//   let n1 = req.query.n
+//   //u need to check if link in db
+//   if (reg.test(n1) == false || String(n1).length > 25) {
+//     console.log('Error: wrong num2')
+//     res.status(400).send('WRONG VERIFICATION LINK2')
+//     return false
+//   }
+//   //after that check if its in db, check by deletion//consume the db entry(delete)
+//   let forg = await forgCheck(n1).catch(error => {
+//     //res.send('step2')
+//     return undefined
+//   })
+//   if (forg) {
+//     //check here time, send diff response based on that.
+//     //respond that its sent
+//     if (forg.time_passed > -7200) {
+//       //within the time - send mail, redirect
+//       //generate the new pw
+//       let pwarr = 'qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNMM'
+//       let newpw = ''
+//       var i = 10
+//       while (i--) {
+//         newpw += pwarr[Math.round(Math.random()*62)]
+//       }
+//       //generate the hash of that pw
+//       let hash = bcrypt.hashSync(newpw, bcrypt.genSaltSync(9))
+//       //put it into the db
+//       let some = await forgChangePw(hash, forg.mail).catch(error => {
+//         return undefined
+//       })
+//       //send letter-2 to the mail in the consumed entry
+//       forgottenx2Mail(newpw, forg.mail)
+//       let baseUrl = process.env.NODE_ENV ? 'https://jobsnearby.herokuapp.com' : 'http://127.0.0.1:8080'
+//       //res.send('Пароль сброшен. Новый пароль отправлен на вашу почту. <a href="' + baseUrl + '/registration?login=1">Войти</a>')
+//       res.send('<html><body><script>window.location.replace("' + baseUrl + '/registration?login=1&reset=1")</script></body></html>')
+//     } else res.send('Ссылка сброса пароля просрочена (2 часа макс), попробуйте еще раз')
+//   } else res.send('Ошибка в адресе верификации')
   
-}
+// }
 
-async function forgotten(req, res) {
-  let body = `
-    <main>
-      <form action="/forgottenx.json" method="POST">
-        <p>Пароль забыт и утерян?</p>
-        <p>Его можно восстановить получив письмо на оригинальный mail и перейдя по ссылке</p>
-        <br>
-        <label for="mail1">Введите Email</label>
-        <input id="mail1" name="mail"/>
-        <input type="submit" value="Отправить"/>
-      </form>
-    </main>
-  `
-  let page = `<!DOCTYPE html>
-  <html lang="en"><head><style>
-  section {
-    width: 100%;
-  }
-  .detailed__line {
-    display: flex;
-  }
-  </style></head><body>` + body + `<footer></footer>`
-  res.send(page)
-}
+// async function forgotten(req, res) {
+//   let body = `
+//     <main>
+//       <form action="/forgottenx.json" method="POST">
+//         <p>Пароль забыт и утерян?</p>
+//         <p>Его можно восстановить получив письмо на оригинальный mail и перейдя по ссылке</p>
+//         <br>
+//         <label for="mail1">Введите Email</label>
+//         <input id="mail1" name="mail"/>
+//         <input type="submit" value="Отправить"/>
+//       </form>
+//     </main>
+//   `
+//   let page = `<!DOCTYPE html>
+//   <html lang="en"><head><style>
+//   section {
+//     width: 100%;
+//   }
+//   .detailed__line {
+//     display: flex;
+//   }
+//   </style></head><body>` + body + `<footer></footer>`
+//   res.send(page)
+// }
 
 
-async function addJobs (req, res) {
-  //console.log(req.cookies)
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
-    //console.log(req.body)
-    let que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
-    let params1st = [req.cookies.session, req.cookies.mail]
-    pool.query(que1st, params1st, (error, results) => {
-      if (error) {
-        res.send('step2')
-        return false
-      }
-      if (!results.rows || results.rows.length != 1) {
-        res.send('step3')
-        return false
-      }
-      let que2nd = `INSERT INTO "jobs" ("title", "salary_max", "salary_min", "currency", "age1", "age2", "worktime1", "worktime2", "schedule", "langs", "edu", "experience", "jcategory", "city", "jobtype", "description", "contact_tel", "contact_mail", "author_id") VALUES`
-      let params2nd = []
-      let n = 19
-      let iSkipped = 0
-      let processedlength = Math.min(req.body.length, 15)
-      for (let i = 0; i < processedlength; i++) {//Math.min - максимум 15
-        let parsedData = validateOneJob(req.body[i])
-        if (parsedData == false) { iSkipped += 1; continue}
-        //author_id - проверка не нужна
-        parsedData.author_id = results.rows[0].user_id
-        let j = i - iSkipped
-        que2nd += ` ($${(j * n) + 1}, $${(j * n) + 2}, $${(j * n) + 3}, $${(j * n) + 4}, $${(j * n) + 5}, $${(j * n) + 6}, $${(j * n) + 7}, $${(j * n) + 8}, $${(j * n) + 9}, $${(j * n) + 10}, $${(j * n) + 11}, $${(j * n) + 12}, $${(j * n) + 13}, $${(j * n) + 14}, $${(j * n) + 15}, $${(j * n) + 16}, $${(j * n) + 17}, $${(j * n) + 18}, $${(j * n) + 19}),`
-        params2nd = [
-          ...params2nd,
-          ...Object.values(parsedData)
-        ]
-      }
-      que2nd = que2nd.substring(0, que2nd.length - 1);
-      console.log(que2nd)
-      console.log(params2nd)
-      pool.query(que2nd, params2nd, (error2, results2) => {
-        if (error2) {
-          console.log('addJobs err2', error2)
-        }
-        res.send('OK')
-        //Добавление логов
-        addLog('Вакансии добавлены(n)', 'Добавлено ' + processedlength, results.rows[0].user_id, results.rows[0].email)
-      })
-    })
+// async function addJobs (req, res) {
+//   //console.log(req.cookies)
+//   if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+//     //console.log(req.body)
+//     let que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
+//     let params1st = [req.cookies.session, req.cookies.mail]
+//     pool.query(que1st, params1st, (error, results) => {
+//       if (error) {
+//         res.send('step2')
+//         return false
+//       }
+//       if (!results.rows || results.rows.length != 1) {
+//         res.send('step3')
+//         return false
+//       }
+//       let que2nd = `INSERT INTO "jobs" ("title", "salary_max", "salary_min", "currency", "age1", "age2", "worktime1", "worktime2", "schedule", "langs", "edu", "experience", "jcategory", "city", "jobtype", "description", "contact_tel", "contact_mail", "author_id") VALUES`
+//       let params2nd = []
+//       let n = 19
+//       let iSkipped = 0
+//       let processedlength = Math.min(req.body.length, 15)
+//       for (let i = 0; i < processedlength; i++) {//Math.min - максимум 15
+//         let parsedData = validateOneJob(req.body[i])
+//         if (parsedData == false) { iSkipped += 1; continue}
+//         //author_id - проверка не нужна
+//         parsedData.author_id = results.rows[0].user_id
+//         let j = i - iSkipped
+//         que2nd += ` ($${(j * n) + 1}, $${(j * n) + 2}, $${(j * n) + 3}, $${(j * n) + 4}, $${(j * n) + 5}, $${(j * n) + 6}, $${(j * n) + 7}, $${(j * n) + 8}, $${(j * n) + 9}, $${(j * n) + 10}, $${(j * n) + 11}, $${(j * n) + 12}, $${(j * n) + 13}, $${(j * n) + 14}, $${(j * n) + 15}, $${(j * n) + 16}, $${(j * n) + 17}, $${(j * n) + 18}, $${(j * n) + 19}),`
+//         params2nd = [
+//           ...params2nd,
+//           ...Object.values(parsedData)
+//         ]
+//       }
+//       que2nd = que2nd.substring(0, que2nd.length - 1);
+//       console.log(que2nd)
+//       console.log(params2nd)
+//       pool.query(que2nd, params2nd, (error2, results2) => {
+//         if (error2) {
+//           console.log('addJobs err2', error2)
+//         }
+//         res.send('OK')
+//         //Добавление логов
+//         addLog('Вакансии добавлены(n)', 'Добавлено ' + processedlength, results.rows[0].user_id, results.rows[0].email)
+//       })
+//     })
     
-  } else {res.send('step1'); console.log('a trespasser is trying to send xls')}
-}
+//   } else {res.send('step1'); console.log('a trespasser is trying to send xls')}
+// }
 
 
 
