@@ -12,7 +12,7 @@
  */
 
 const db = require('./db/pgqueries')
-const adm = require('./db/pgadmin')
+// const adm = require('./db/pgadmin')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 
