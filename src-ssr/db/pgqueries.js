@@ -1931,13 +1931,13 @@ module.exports = {
 
   addOneJob,
   updateJob,
-  addJobs,
+  // addJobs,
 
-  forgotten,
-  forgottenx,
-  forgottenx2,
-  resend,
-  resender,
+  // forgotten,
+  // forgottenx,
+  // forgottenx2,
+  // resend,
+  // resender,
 
   closeJobById,
   deleteJobById,
