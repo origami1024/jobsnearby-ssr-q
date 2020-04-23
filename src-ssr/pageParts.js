@@ -9,19 +9,20 @@ section {
 </style></head><body>`
 exports.end  = `</body></html>`
 exports.footer = `<footer></footer>`
-exports.foot = exports.footer + exports.end
+// exports.foot = exports.footer + exports.end
 exports.demo = `<h1>somethings</h1>`
-exports.headbody = `<head><style>
-  .detailed__line {
-    display: flex;
-  }
-</style></head><body>`
 
 
-exports.noau = exports.headbody + `<div>
+exports.noau = `
+  <head><style>
+    .detailed__line {
+      display: flex;
+    }
+  </style></head><body>
+  <div>
     Ошибка 505001, страницы не существует, бубубу
   </div>
-` + exports.end
+  </body></html>`
 exports.cplink = () => {
   return (
     `<a href="/cp.json">&lt;Админка</a>`

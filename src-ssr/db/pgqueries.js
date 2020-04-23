@@ -1834,7 +1834,7 @@ async function getJobDataSSR(id, addr) {
 
 async function getJobsUserStatsSSR() {
   //get JOBS and USERSTATS in one
-  
+  console.log(process.env.DATABASE_URL)
   console.log('cpdebug1.51')
   let perpage = '25'
   let sort = 'ORDER BY (jobs.time_updated, jobs.job_id) DESC'
