@@ -133,11 +133,12 @@ module.exports.extendApp = function ({ app, ssr }) {
       //empty or not valid auth data
       req.userData = 'noauth'
     }
-
+    console.log('cp1.5debug')
     req.rawjobs = await db.getJobsUserStatsSSR().catch(error => {
       console.log('getJobsUserStatsSSR. xxx', error)
       return undefined
     })
+    console.log('cp1.6debug')
     next()
   })
   //2

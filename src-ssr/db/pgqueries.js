@@ -181,8 +181,6 @@ async function resender(req, res) {
 
   //check the mail's by regex and length
   if (SupremeValidator.isValidEmail(mail)) {
-    //get data in db on that mail
-    //check the mail in table
     let veri = await getVerificationEntry(mail).catch(error => {
       //res.send('step2')
       return undefined
