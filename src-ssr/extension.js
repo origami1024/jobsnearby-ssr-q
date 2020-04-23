@@ -123,6 +123,7 @@ module.exports.extendApp = function ({ app, ssr }) {
   //1
   app.get('/', async function (req, res, next) {
     //auth first
+    console.log('cp1debug')
     if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
       req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)

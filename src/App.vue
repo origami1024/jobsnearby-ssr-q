@@ -176,6 +176,7 @@ export default {
     window.removeEventListener("storage", this.onStorageUpdate)
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
+    console.log('cp2debug')
     if (ssrContext && typeof ssrContext.req.userData === 'object' && ssrContext.req.userData !== null) {
       return store.dispatch('storeAuth', ssrContext.req.userData)
     }
