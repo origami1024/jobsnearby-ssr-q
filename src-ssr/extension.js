@@ -81,26 +81,26 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/resender.json', db.resender)
 
 
-  //CPSTART
-  app.get('/cp.json', adm.adminPanel)
-  app.get('/cplogin.json', adm.adminLogin)
-  app.post('/cploginep.json', adm.cpLoginEndpoint)
-  app.get('/allfb.json', adm.getAllFB)
-  app.get('/adminusers.json', adm.adminUsers)
-  app.get('/adminjobs.json', adm.adminJobs)
-  app.get('/adminstats.json', adm.adminStatsRoute)
-  app.get('/cpsuper.json', adm.superAdmin)
-  app.get('/u2out.json', adm.u2out)
-  app.post('/newu2.json', adm.adminNew)
-  //CPEND
+  // //CPSTART
+  // app.get('/cp.json', adm.adminPanel)
+  // app.get('/cplogin.json', adm.adminLogin)
+  // app.post('/cploginep.json', adm.cpLoginEndpoint)
+  // app.get('/allfb.json', adm.getAllFB)
+  // app.get('/adminusers.json', adm.adminUsers)
+  // app.get('/adminjobs.json', adm.adminJobs)
+  // app.get('/adminstats.json', adm.adminStatsRoute)
+  // app.get('/cpsuper.json', adm.superAdmin)
+  // app.get('/u2out.json', adm.u2out)
+  // app.post('/newu2.json', adm.adminNew)
+  // //CPEND
 
-  //admin actions
-  app.post('/fbaction.json', adm.fbaction)
-  app.post('/admnjobclo.json', adm.closeJobByIdAdmin)
-  app.post('/admnjobdel.json', adm.deleteJobByIdAdmin)
-  app.post('/admnjobapr.json', adm.approveJobByIdAdmin)
-  app.post('/auaction.json', adm.auaction)
-  app.post('/userstatregen.json', adm.userStatRegen)
+  // //admin actions
+  // app.post('/fbaction.json', adm.fbaction)
+  // app.post('/admnjobclo.json', adm.closeJobByIdAdmin)
+  // app.post('/admnjobdel.json', adm.deleteJobByIdAdmin)
+  // app.post('/admnjobapr.json', adm.approveJobByIdAdmin)
+  // app.post('/auaction.json', adm.auaction)
+  // app.post('/userstatregen.json', adm.userStatRegen)
   //aa end
   
   //ssr stuff
