@@ -10,7 +10,7 @@ const bcrypt = require('bcryptjs')
 
 // let nodeMailer = require('nodemailer')
 const SupremeValidator = require('./../serverutils').SupremeValidator
-const pageParts = require('./../serverutils').pageParts
+const pageParts = require('./../pageParts')
 
 //Добавить лог
 async function addLog (action, body, author_id, author_mail) {

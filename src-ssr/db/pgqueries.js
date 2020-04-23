@@ -21,7 +21,7 @@ function authPreValidation(session, mail) {
 }
 
 const SupremeValidator = require('./../serverutils').SupremeValidator
-const pageParts = require('./../serverutils').pageParts
+// const pageParts = require('./../serverutils').pageParts
 // const pool = require('./../serverutils').pool
 
 function hashSome() {
@@ -143,7 +143,15 @@ async function resend(req, res) {
       </form>
     </main>
   `
-  let page = pageParts.head + body + pageParts.footer
+  let page = `<!DOCTYPE html>
+  <html lang="en"><head><style>
+  section {
+    width: 100%;
+  }
+  .detailed__line {
+    display: flex;
+  }
+  </style></head><body>` + body + `<footer></footer>`
   res.send(page)
 }
 
@@ -458,7 +466,15 @@ async function forgotten(req, res) {
       </form>
     </main>
   `
-  let page = pageParts.head + body + pageParts.footer
+  let page = `<!DOCTYPE html>
+  <html lang="en"><head><style>
+  section {
+    width: 100%;
+  }
+  .detailed__line {
+    display: flex;
+  }
+  </style></head><body>` + body + `<footer></footer>`
   res.send(page)
 }
 
