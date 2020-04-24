@@ -15,6 +15,7 @@ export default function () {
       isagency: false,
       insearch: false,
       cvurl: '',
+      new_jobs_count_today: 0,
       ownJobs: [],
       ownCVs: []
     },

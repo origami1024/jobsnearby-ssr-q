@@ -231,6 +231,7 @@ export default function (/* { ssrContext } */) {
       },
       storeAuth (context, user) {
         // console.log('SA SASDASD')
+        if (parseInt(user.new_jobs_count_today) == NaN) user.new_jobs_count_today == 0
         context.commit('storeAuth', user)
       },
       async loginGo (context, user) {

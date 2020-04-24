@@ -1,4 +1,3 @@
-//postgres config file
 const Pool = require('pg').Pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || `postgres://postgres:123456@localhost:5433/jobsnearby`
@@ -7,18 +6,13 @@ const pool = new Pool({
 const titleRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\+\$\%\(\)\№\:\#\/]*$/
 
 const bcrypt = require('bcryptjs')
-// const jwt = require('jsonwebtoken')
 
 let nodeMailer = require('nodemailer')
 
-
-
+const DAILY_JOBS_LIMIT = 30 //Макс кол-во вакансий в день(86400 сек, что указано ниже)
+const JOBS_LIMIT_DURATION = 86400 //86400 - 24 hours
 
 const SupremeValidator = require('./../serverutils').SupremeValidator
-// const pageParts = require('./../serverutils').pageParts
-// const pool = require('./../serverutils').pool
-
-// const jwt = require('jsonwebtoken')
 
 
 function authPreValidation(session, mail) {
@@ -486,25 +480,41 @@ async function forgotten(req, res) {
 
 
 async function addJobs (req, res) {
-  //console.log(req.cookies)
   if (authPreValidation(req.cookies.session, req.cookies.mail)) {
-    //console.log(req.body)
-    let que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
+    let que1st = `SELECT user_id, email, new_jobs_count_today, EXTRACT(EPOCH FROM new_jobs_count_date - 'now()'::timestamptz) AS last_posted FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
     let params1st = [req.cookies.session, req.cookies.mail]
-    pool.query(que1st, params1st, (error, results) => {
-      if (error) {
-        res.send('step2')
-        return false
-      }
-      if (!results.rows || results.rows.length != 1) {
-        res.send('step3')
-        return false
-      }
+    let results = await pool.query(que1st, params1st).catch(error => {
+      console.log('cp addJobs errX: ', error)
+      return false
+    })
+    if (!results || !results.rows || results.rows.length != 1) {
+      res.send('step3')
+      return false
+    }
+
+    let processedlength = Math.min(req.body.length, 15)
+    let totalLengthReport = processedlength
+    let uid = results.rows[0].user_id
+    let last_posted = results.rows[0].last_posted
+    let limitCount = parseInt(results.rows[0].new_jobs_count_today)
+    if (!limitCount) limitCount = 0
+    console.log('cp77', last_posted)
+    console.log('cp78', limitCount)
+    if (limitCount >= DAILY_JOBS_LIMIT && parseInt(last_posted) != NaN && parseInt(last_posted) < 0 && parseInt(last_posted) > -JOBS_LIMIT_DURATION) {//-86400
+      res.send({msg: 'error limits reached', added: 0, total: req.body.length})
+      return false
+    }
+    if (parseInt(last_posted) < -JOBS_LIMIT_DURATION) {
+      limitCount = 0
+    }
+    if (DAILY_JOBS_LIMIT - limitCount < processedlength) processedlength = DAILY_JOBS_LIMIT - limitCount
+
+    
+    if (processedlength > 0) {
       let que2nd = `INSERT INTO "jobs" ("title", "salary_max", "salary_min", "currency", "age1", "age2", "worktime1", "worktime2", "schedule", "langs", "edu", "experience", "jcategory", "city", "jobtype", "description", "contact_tel", "contact_mail", "author_id") VALUES`
       let params2nd = []
       let n = 19
       let iSkipped = 0
-      let processedlength = Math.min(req.body.length, 15)
       for (let i = 0; i < processedlength; i++) {//Math.min - максимум 15
         let parsedData = validateOneJob(req.body[i])
         if (parsedData == false) { iSkipped += 1; continue}
@@ -517,15 +527,33 @@ async function addJobs (req, res) {
           ...Object.values(parsedData)
         ]
       }
-      que2nd = que2nd.substring(0, que2nd.length - 1);
-      pool.query(que2nd, params2nd, (error2, results2) => {
-        if (error2) {
-          console.log('addJobs err2', error2)
-        }
-        res.send('OK')
-        //Добавление логов
-        addLog('Вакансии добавлены(n)', 'Добавлено ' + processedlength, results.rows[0].user_id, results.rows[0].email)
+      que2nd = que2nd.substring(0, que2nd.length - 1)
+      let result2 = await pool.query(que2nd, params2nd).catch(error2 => {
+        console.log('cp addJobs err2: ', error2)
+        return false
       })
+      if (!result2) {
+        res.send('error39.5')
+        return false
+      }
+    }
+    
+    let que3rd = `UPDATE "users" SET "new_jobs_count_today" = $1 WHERE user_id = $2`
+    let params3rd = [limitCount + processedlength, uid]
+    if (last_posted == null || parseInt(last_posted) == NaN || parseInt(last_posted) < -JOBS_LIMIT_DURATION) {
+      que3rd = `UPDATE "users" SET ("new_jobs_count_today", "new_jobs_count_date") = ($2, NOW()) WHERE user_id = $1`
+      params3rd = [uid, processedlength]
+    }
+    pool.query(que3rd, params3rd, (error3, results3) => {
+      if (error3) {
+        res.send('step4')
+        return false
+      }
+      if (processedlength < totalLengthReport) {
+        res.send({msg: 'error limits reached', added: processedlength, total: req.body.length})
+      } else res.send('OK')
+      //Добавление логов
+      addLog('Вакансии добавлены(n)', 'Добавлено ' + processedlength, results.rows[0].user_id, results.rows[0].email)
     })
     
   } else {res.send('step1'); console.log('a trespasser is trying to send xls')}
@@ -801,7 +829,7 @@ async function updateJob (req, res) {
 
 async function addOneJob (req, res) {
   if (authPreValidation(req.cookies.session, req.cookies.mail)) {
-    let que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
+    let que1st = `SELECT user_id, email, new_jobs_count_today, EXTRACT(EPOCH FROM new_jobs_count_date - 'now()'::timestamptz) AS last_posted FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
     let params1st = [req.cookies.session, req.cookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
@@ -810,6 +838,16 @@ async function addOneJob (req, res) {
       }
       if (!results.rows || results.rows.length != 1) {
         res.send('step3')
+        return false
+      }
+      let uid = results.rows[0].user_id
+      let last_posted = results.rows[0].last_posted
+      let limitCount = parseInt(results.rows[0].new_jobs_count_today)
+      if (!limitCount) limitCount = 0
+      console.log('cp67', last_posted)
+      console.log('cp68', limitCount)
+      if (limitCount >= DAILY_JOBS_LIMIT && parseInt(last_posted) != NaN && parseInt(last_posted) < 0 && parseInt(last_posted) > -JOBS_LIMIT_DURATION) {//-86400
+        res.send('error limits reached')
         return false
       }
 
@@ -833,9 +871,25 @@ async function addOneJob (req, res) {
           return false
         }
         if (results2.rows.length > 0) {
-          //Добавление логов
-          addLog('Вакансия добавлена', parsedData.title, parsedData.author_id, results.rows[0].email)
-          res.send({...results2.rows[0], 'result': 'OK'})
+          let que3rd = `UPDATE "users" SET "new_jobs_count_today" = $1 WHERE user_id = $2`
+          let params3rd = [limitCount + 1, uid]
+          if (last_posted == null || parseInt(last_posted) == NaN || parseInt(last_posted) < -JOBS_LIMIT_DURATION) {
+            //if last_posted(first_posted) if converted from null or 
+            que3rd = `UPDATE "users" SET ("new_jobs_count_today", "new_jobs_count_date") = ('1', NOW()) WHERE user_id = $1`
+            params3rd = [uid]
+          }
+          
+          
+          pool.query(que3rd, params3rd, (error3, results3) => {
+            if (error3) {
+              res.send('step4')
+              return false
+            }
+            //Добавление логов
+            addLog('Вакансия добавлена', parsedData.title, parsedData.author_id, results.rows[0].email)
+            res.send({...results2.rows[0], 'result': 'OK'})
+          })
+          
         } else res.send('error unkn')
         
         
@@ -1159,7 +1213,7 @@ const getJobs = (req, res) => {
   let perpage = '25'
   if (req.query.perpage === '50') perpage = '50'
   else if (req.query.perpage === '100') perpage = '100'
-  console.log('cpGetJobs, txt: ', req.query)
+  // console.log('cpGetJobs, txt: ', req.query)
   let txt
   if (req.query.txt != undefined && 
       req.query.txt.length > 0 && 

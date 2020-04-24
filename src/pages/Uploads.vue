@@ -15,7 +15,7 @@
           icon="settings"
           :done="step > 1"
         >
-          {{$t('upl.chooseFile')}} <a href="/Vacancy_V5.xlsx">{{$t('upl.fileExample')}}</a>
+          {{$t('upl.chooseFile')}} <a href="/statics/vac.xlsx">{{$t('upl.fileExample')}}</a>
           <!-- @change="parseFile" -->
           <q-input
             @change="parseFile"
@@ -151,7 +151,13 @@ export default {
               this.uploadStatus = this.$t('upl.success1')
               this.$q.notify(this.$t('upl.success1'))
               this.$store.dispatch('getOwnJobs')
-            } else {this.uploadStatus = this.$t('upl.err1')}
+            } else {
+              if (response.data && response.data && response.data.msg == 'error limits reached') {
+                this.uploadStatus = this.$t('upl.errLimits1') + response.data.added + this.$t('upl.errLimits2') + response.data.total
+                if (response.data.added > 0) this.$store.dispatch('getOwnJobs')
+              } else this.uploadStatus = this.$t('upl.err1')
+              console.log(response.data)
+            }
             
           })
         this.parsed = []

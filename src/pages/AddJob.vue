@@ -371,8 +371,12 @@
         <q-btn color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
       </div>
       <div v-else-if="props.sent == 'fail'" :key="3" class="jobpage__wrapper">
-        <p>{{$t('addJob.sendJobError1')}}</p>
+        <p style="color: red;">{{$t('addJob.sendJobError1')}}</p>
         <q-btn color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
+      </div>
+      <div v-else-if="props.sent == 'limit'" :key="4" class="jobpage__wrapper">
+        <p style="color: red;">{{$t('addJob.sendJobErrorLimit')}}</p>
+        <!-- <q-btn color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/> -->
       </div>
       <div v-else-if="user.role == 'guestUnau' | user.role == 'guest'" :key="4" class="jobpage__wrapper">
         {{$t('addJob.unauthorized')}}
@@ -471,7 +475,7 @@ export default {
   
   watch: {
     $route (to, from){
-      if (to.name === 'addjob') {
+      if (to.path === '/addjob') {
         console.log('cp route addjob - fields reset')
         this.resetFields()
       }
@@ -619,7 +623,12 @@ export default {
               this.returned.job_id = response.data.job_id
               this.$store.dispatch('setAJSentState', 'goodNew')
               console.log(response)
-            } else {this.$store.dispatch('setAJSentState', 'fail'); console.log('trespasser')}
+            } else {
+              console.log('cp99', response)
+              if (response.data && response.data == 'error limits reached') {
+                this.$store.dispatch('setAJSentState', 'limit')
+              } else this.$store.dispatch('setAJSentState', 'fail')
+            }
           })
       } else {
         return false

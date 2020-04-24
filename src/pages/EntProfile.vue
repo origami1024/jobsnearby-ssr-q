@@ -336,7 +336,7 @@ export default {
   },
   watch: {//ok
     $route (to, from){
-      if (to.name === 'entprofile') {
+      if (to.path === '/entprofile') {
         if (this.tab == 'cabout') {
           this.$store.dispatch('getOwnCAbout')
         }      

@@ -175,7 +175,6 @@ export default {
     window.removeEventListener("storage", this.onStorageUpdate)
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
-    console.log('cp2debug')
     if (ssrContext && typeof ssrContext.req.userData === 'object' && ssrContext.req.userData !== null) {
       return store.dispatch('storeAuth', ssrContext.req.userData)
     }
@@ -242,10 +241,11 @@ export default {
   },
   watch:{
     $route (to, from){//CHANGE THIS TO PREFETCH IF POSSIBLE
-      if (to.name === 'uploads') {
+      if (to.path === '/uploads') {
         this.$store.dispatch('getOwnJobs')
+        console.log('getOwnJobs dispatched')
       } else
-      if (to.name === 'addjob') {
+      if (to.path === '/addjob') {
         this.$store.dispatch('setAJSentState', 'none')
       }
     },
