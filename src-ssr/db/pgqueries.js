@@ -1188,8 +1188,8 @@ const getJobs = (req, res) => {
   }
   let cityN
   if (city != undefined) {
-    if (txt != undefined) cityN = '$3'
-    else cityN = '$2'
+    if (txt != undefined) cityN = 3
+    else cityN = 2
   }
 
   let jcat
@@ -1227,7 +1227,7 @@ const getJobs = (req, res) => {
                 LOWER(jobs.description) LIKE $2 OR
                 LOWER(jobs.city) LIKE $2)` : ''}
                 ${city != undefined ? ` AND 
-                LOWER(jobs.city) LIKE ${cityN}`: ''}
+                LOWER(jobs.city) LIKE $${cityN}`: ''}
                 ${jcat != undefined ? ` AND jobs.jcategory = ${jcat}`: ''}
                 ${exp_line}
                 ${sal_line}
@@ -1235,7 +1235,6 @@ const getJobs = (req, res) => {
               ${sort}
               LIMIT $1 ${'OFFSET ' + offset}`
               
-  //console.log('cp_getJobs2: ', que)
   let qparams = [perpage]
   if (txt) qparams.push(txt)
   if (city) qparams.push(city)
@@ -1244,7 +1243,7 @@ const getJobs = (req, res) => {
       console.log(error)
       return false
     }
-    qparams = txt != undefined ? [qparams[1]] : null
+    qparams.shift()
     let countque =  `SELECT count(*) AS full_count
                     FROM jobs, users
                     WHERE jobs.author_id = users.user_id AND
@@ -1256,22 +1255,21 @@ const getJobs = (req, res) => {
                       LOWER(users.company) LIKE $1 OR
                       LOWER(jobs.description) LIKE $1 OR
                       LOWER(jobs.city) LIKE $1)` : ''}
-                      ${city != undefined ? ` AND 
-                      LOWER(jobs.city) LIKE ${cityN - 1}`: ''}
+                      ${city != undefined ? ` AND
+                      LOWER(jobs.city) LIKE $${cityN - 1}`: ''}
                       ${jcat != undefined ? ` AND jobs.jcategory = ${jcat}`: ''}
                       ${exp_line}
                       ${sal_line}
                       ${curr_line}`
+    
+    
     pool.query(countque, qparams, (error2, results2) => {
       if (error2) {
         console.log('errcp33 ', error2)
         return false
-        //throw error2
       }
       res.status(200).json({...results2.rows[0], 'page': page, 'perpage': perpage, rows: results.rows})
     })
-    //console.log('cp16: ', results.rows)
-    
   })
 }
 async function getSalStats(req, res) {
@@ -1288,7 +1286,7 @@ async function getSalStats(req, res) {
 
 async function feedback(req, res) {
   //check 4 fields
-  if (req.body.topic.length > 25) {
+  if (req.body.topic.length > 75) {
     res.send('error, topic too long')
     return false
   }

@@ -20,7 +20,7 @@
               val => (lazyRulesAll || !!val) || $t('addJob.titleValidationRequired'),
               val => (lazyRulesAll || val.length > 1) || $t('addJob.titleValidationMin'),
               val => val.length < 76 || $t('addJob.titleValidationMax'),
-              val => /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\+\$\%\(\)\№\:\#\/]*$/.test(val) || $t('addJob.titleValidationSymbols'),
+              val => /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\.\,\+\$\%\(\)\№\:\#\/]*$/.test(val) || $t('addJob.titleValidationSymbols'),
               ]"
             :lazy-rules="lazyRulesAll"
             

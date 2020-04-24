@@ -121,7 +121,7 @@
           <h3>О нас</h3>
           <ul>
             <li><a href="#">Наши вакансии</a></li>
-            <li><a href="#">Реклама на сайте</a></li>
+            <li><router-link to="/feedback">Реклама на сайте</router-link></li>
           </ul>
         </li>
         <li>
@@ -151,7 +151,6 @@
           </ul>
         </li>
       </ul>
-      {{$store.state.user}}
     </footer>
 
   </div>
@@ -226,33 +225,6 @@ export default {
         if (retry === true) this.$store.dispatch('refreshjobs', {})
       }
     },
-    // deleteJobById(jid) {//CHANGE THIS
-    //   let indx = this.ownJobs.indexOf(this.ownJobs.find(val=>val.job_id == jid))
-    //   this.ownJobs.splice(indx, 1)
-    //   let url = '/delJobBy.id?jid=' + jid
-    //   axios
-    //     .post(url, [], {withCredentials: true,})
-    //     .then(response => {
-    //     })
-    // },
-    // reopenJobById(jid) {//CHANGE THIS
-    //   this.ownJobs.find(val=>val.job_id == jid).is_closed = false
-    //   let url = '/reopenJobBy.id?jid=' + jid
-    //   this.ajaxLoading = true
-    //   axios
-    //     .post(url, [], {withCredentials: true,})
-    //     .then(response => {
-    //       this.ajaxLoading = false
-    //     })
-    // },
-    // closeJobById(jid) {//CHANGE THIS
-    //   this.ownJobs.find(val=>val.job_id == jid).is_closed = true
-    //   let url = '/closeJobBy.id?jid=' + jid
-    //   axios
-    //     .post(url, [], {withCredentials: true,})
-    //     .then(response => {
-    //     })
-    // },
     scrollTo(yyy) {//Ok?
       let el = document.documentElement
       const target = getScrollTarget(el)

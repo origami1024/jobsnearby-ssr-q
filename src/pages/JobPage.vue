@@ -25,7 +25,7 @@
         style="background-color: var(--violet-btn-color);alignSelf: center; white-space: nowrap; margin-top:4px; margin-left: 10px; padding: 0 10px; font-weight: 700;"
         class="headerBtns1 violetBtns"
         dense :label="$t('jobPage.sendCV')"
-        @click.prevent="$emit('hitcv', job.job_id)"
+        @click.prevent="$store.dispatch('hitcv', job.job_id)"
       />
       <div 
         style="margin-left: 20px; alignSelf: flex-end; color: gray"

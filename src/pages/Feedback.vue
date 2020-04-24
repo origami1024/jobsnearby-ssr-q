@@ -9,7 +9,7 @@
         outlined
         bg-color="white" color="deep-purple-10" :placeholder="$t('fb.topic')"
         counter
-        maxlength="25"
+        maxlength="75"
       />
       <br>
       <q-input

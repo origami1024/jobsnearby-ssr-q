@@ -36,7 +36,7 @@
           </div>
         </div>
       </section>
-      <section style="display: flex; justifyContent: space-between">
+      <section style="display: flex; justify-content: space-between">
         <p>{{$t('companyPage.publishedJobsCountLabel')}}{{cdata.jobs_count > 0 ? cdata.jobs_count : 1}}</p>
         <p>{{$t('companyPage.registrationDate')}}{{timeCreated}}</p>
       </section>
