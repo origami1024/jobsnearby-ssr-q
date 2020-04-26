@@ -1,14 +1,15 @@
 <template>
   <div class="addJob">
+    <p class="pageHeader" v-if="props.newJobsPageType === 'new'">{{$t('addJob.pTypeNewLabel')}}</p>
+    <p class="pageHeader" v-else>{{$t('addJob.pTypeEditLabel')}}</p>
     <transition name="bounce">
-      <div v-if="user.role === 'company' && props.sent == 'none'" class="jobpage__wrapper" :key="1">
-        <p style="fontSize: 20px; marginBottom: 22px" v-if="props.newJobsPageType === 'new'">{{$t('addJob.pTypeNewLabel')}}</p>
-        <p style="fontSize: 20px; marginBottom: 22px" v-else>{{$t('addJob.pTypeEditLabel')}}</p>
-        <div class="line">
-          <p class="star">*</p>
-          <p class="startP" style="min-width: 140px; textAlign: left">{{$t('addJob.titleLabel')}}</p>
+      <div v-if="user.role === 'company' && props.sent == 'none'" class="jobpage__wrapper" :key="1" style="display: flex; flex-direction: column; align-items: center">
+        <div style="width: 586px;">
+          <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+            <!-- <p class="star">*</p> -->
+            <p class="startP reqd">{{$t('addJob.titleLabel')}}</p>
+          </div>
           <q-input
-            square
             dense
             outlined
             bg-color="white" color="deep-purple-10"
@@ -16,6 +17,7 @@
             :hint="null"
             v-model="job.title"
             ref="title"
+            :placeholder="$t('addJob.titlePh')"
             :rules="[
               val => (lazyRulesAll || !!val) || $t('addJob.titleValidationRequired'),
               val => (lazyRulesAll || val.length > 1) || $t('addJob.titleValidationMin'),
@@ -23,74 +25,144 @@
               val => /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\.\,\+\$\%\(\)\№\:\#\/]*$/.test(val) || $t('addJob.titleValidationSymbols'),
               ]"
             :lazy-rules="lazyRulesAll"
-            
           />
         </div>
-        <div class="line">
-          <p class="star">*</p>
-          <p class="startP" style="width: 140px; textAlign: left">{{$t('addJob.salaryLabel')}}</p>
-          <q-input
-            :disable="salaryOn"
-            :style="{width: '110px', marginRight: '10px'}"
-            square dense outlined
-            bg-color="white" color="deep-purple-10"
-            v-model="job.salary_min"
-            ref="salary_min"
-            :placeholder="$t('addJob.salaryMinPH')" :hint="null"
-            @input="salaryValidated = true; $refs.salary_max.validate()"
-            :rules="[sal => (sal >= 0 && String(sal).length < 6 && sal < 100000) || $t('addJob.salaryValidationRange')]"
-          />
-          <q-input
-            :disable="salaryOn"
-            :style="{width: '110px', marginRight: '10px'}"
-            square dense outlined
-            bg-color="white" color="deep-purple-10"
-            v-model="job.salary_max"
-            ref="salary_max"
-            :placeholder="$t('addJob.salaryMaxPH')" :hint="null"
-            @input="salaryValidated = true"
-            :rules="[
-              sal => (sal >= 0 && String(sal).length < 6 && sal < 100000) || $t('addJob.salaryValidationRange'),
-              sal => salaryValidated || $t('addJob.salaryValidationEnter')
-            ]"
-          />
+        <div style="width: 586px;">
+          <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+            <!-- <p class="star"> </p> -->
+            <p class="startP">{{$t('addJob.cityLabel')}}</p>
+          </div>
           <q-select
-            :disable="salaryOn"
-            square
+            :value="job.city"
+            @input="cityUpd"
             dense
             outlined
             bg-color="white" color="deep-purple-10"
-            v-model="job.currency"
-            style="width: 95px; lineHeight: 3.2;color: white !important"
-            :options="[
-              {label: $t('addJob.manat'), value: 'm'},
-              {label: $t('addJob.dollars'), value: '$'},
-            ]"
+            use-input
+            input-debounce="0"
+            fill-input
+            hide-selected
+            ref="city"
+            :options="cityOptions"
+            @filter="filterFn"
             :hint="null"
+            :placeholder="$t('addJob.cityPh')"
+            @keyup="addNewCity"
+            dropdown-icon="none"
+            class="dropdown-padding-adjust"
+            :rules="[
+              val => val.length < 71 || $t('addJob.cityValidationLength'),
+              val => /^[a-zA-Zа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\(\)]*$/.test(val) || $t('addJob.cityValidationFormat')
+            ]"
+            :lazy-rules="lazyRulesAll"
           />
-          <q-checkbox
-            style="marginBottom: 12px; alignSelf: center"
+        </div>
+        <div style="width: 586px;">
+          <div class="sal-curr-wrap" style="display: flex; justify-content: space-between;"> 
+          <div class="sal-wrap">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP reqd">{{$t('addJob.salaryLabel')}}</p>
+            </div>
+            <div class="line">
+              <q-input
+                :disable="salaryOn"
+                :style="{width: '150px', marginRight: '40px'}"
+                dense outlined
+                bg-color="white" color="deep-purple-10"
+                v-model="job.salary_min"
+                ref="salary_min"
+                :placeholder="$t('addJob.salaryMinPH')" :hint="null"
+                @input="salaryValidated = true; $refs.salary_max.validate()"
+                :rules="[sal => (sal >= 0 && String(sal).length < 6 && sal < 100000) || $t('addJob.salaryValidationRange')]"
+              />
+              <q-input
+                :disable="salaryOn"
+                :style="{width: '150px'}"
+                dense outlined
+                bg-color="white" color="deep-purple-10"
+                v-model="job.salary_max"
+                ref="salary_max"
+                :placeholder="$t('addJob.salaryMaxPH')" :hint="null"
+                @input="salaryValidated = true"
+                :rules="[
+                  sal => (sal >= 0 && String(sal).length < 6 && sal < 100000) || $t('addJob.salaryValidationRange'),
+                  sal => salaryValidated || $t('addJob.salaryValidationEnter')
+                ]"
+              />
+              
+            </div>
+            
+          </div>
+          <div>
+              <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+                <p class="startP">{{$t('addJob.currLabel')}}</p>
+              </div>
+              <q-select
+              :disable="salaryOn"
+              dense outlined
+              bg-color="white" color="deep-purple-10"
+              v-model="job.currency"
+              style="width: 150px; lineHeight: 3.2;color: white !important; margin-left: auto;"
+              :options="[
+                {label: $t('addJob.manat'), value: 'm'},
+                {label: $t('addJob.dollars'), value: '$'},
+              ]"
+              dropdown-icon="none"
+              class="dropdown-padding-adjust"
+              :hint="null"
+              />
+            </div>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <q-checkbox
+            for="salcb1"
+            class="salcb1"
+            dense
             color="red-10"
             v-model="salaryOn"
             @input="$refs.salary_min.resetValidation();
             $refs.salary_max.resetValidation();
             salaryValidated = true"
+            
           >
-            <q-tooltip>
-              <p style="font-size: 15px; margin: 0">{{$t('addJob.salaryCB1Hint')}}</p>
-            </q-tooltip>
           </q-checkbox>
+            <label for="salcb1" @click="salaryOn = !salaryOn; $refs.salary_min.resetValidation(); $refs.salary_max.resetValidation(); salaryValidated = true" style="cursor: pointer; color: var(--color1); font-size: 14px; line-height: 17px; user-select: none">
+              {{$t('addJob.salaryCB1Hint')}}
+            </label>
+          </div>
+          
         </div>
-        <div class="line">
-          <p class="star">*</p>
-          <p class="startP" style="width: 140px; textAlign: left">{{$t('addJob.contactsLabel')}}</p>
+
+        <div style="width: 586px">
+          <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+          <p style="color: var(--color1); display: block; font-family: Montserrat; font-size: 14px;line-height: 17px; margin-top: 25px; text-align: left;">
+            {{$t('addJob.descLabel')}}<span style="color: #c10015"> {{descError}}</span>
+          </p>
+          </div>
+          <div class="desc-col-wrap" style="border-radius: 10px; textAlign: left; width: 100%; margin-bottom: 20px;">
+            <q-no-ssr placeholder="Loading Your Editor...">
+              <vue-editor
+                v-model="job.description"
+                @blur="descBlur"
+                @input="descUpd"
+                :editorToolbar="customToolbar"
+                style="background-color: white; border-radius: 10px; box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);"
+              />
+            </q-no-ssr>
+          </div>
+        </div>
+
+        <div style="width: 586px">
+          <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+            <p class="startP reqd" style="textAlign: left">{{$t('addJob.contactsLabel')}}</p>
+          </div>
           <q-input
-            square dense outlined
+            dense outlined
             bg-color="white" color="deep-purple-10"
             v-model="job.contact_mail"
             :placeholder="$t('addJob.emailPH')"
             type="email"
-            style="marginRight: 10px"
+            
             :hint="null"
             ref="contact_mail"
             @input="contactsValidated = true; $refs.contact_mail.validate()"
@@ -102,7 +174,6 @@
             :lazy-rules="lazyRulesAll"
           />
           <q-input
-            square
             dense
             outlined
             bg-color="white" color="deep-purple-10"
@@ -120,68 +191,33 @@
             :lazy-rules="lazyRulesAll"
           />
         </div>
-        <div class="line">
-          <!-- <p class="startP">Город</p> -->
-          <p class="star"> </p>
-          <p class="startP" style="width: 140px; min-width: 140px; textAlign: left">{{$t('addJob.jcatLabel')}}</p>
+        <div style="width: 586px">
+          <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+            <p class="startP">{{$t('addJob.jcatLabel')}}</p>
+          </div>
           <q-select
             v-model="job.jcategory"
             style="width: 100%"
-            square
             dense
             outlined
+            dropdown-icon="none"
+            class="dropdown-padding-adjust"
             bg-color="white" color="deep-purple-10"
             :options="$t('App.jcats')"
             :hint="null"
           />
         </div>
-        <div class="line">
-          <!-- <p class="startP">Город</p> -->
-          <p class="star"> </p>
-          <p class="startP" style="width: 140px; textAlign: left">{{$t('addJob.cityLabel')}}</p>
-          <q-select
-            :value="job.city"
-            @input="cityUpd"
-            square
-            dense
-            outlined
-            bg-color="white" color="deep-purple-10"
-            use-input
-            input-debounce="0"
-            fill-input
-            hide-selected
-            ref="city"
-            :options="cityOptions"
-            @filter="filterFn"
-            :hint="null"
-            @keyup="addNewCity"
-            :rules="[
-              val => val.length < 71 || $t('addJob.cityValidationLength'),
-              val => /^[a-zA-Zа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\(\)]*$/.test(val) || $t('addJob.cityValidationFormat')
-            ]"
-            :lazy-rules="lazyRulesAll"
-          />
-        </div>
-        <p style="fontSize: 16px; marginBottom: 10px">{{$t('addJob.descLabel')}}<span style="color: #c10015"> {{descError}}</span></p>
-        <div class="line">
-          
-          <div class="desc-col-wrap" style="textAlign: left; width: 100%">
-            <q-no-ssr placeholder="Loading Your Editor...">
-              <vue-editor
-                v-model="job.description"
-                @blur="descBlur"
-                @input="descUpd"
-                :editorToolbar="customToolbar"
-              />
-            </q-no-ssr>
-            <div class="hint" :style="{color: job.description.length > 2000 ? '#c10015' : 'inherit'}">{{job.description.length}} / 2000</div>
-          </div>
-        </div>
+        <div style="width: 586px">
         <q-expansion-item
           ref="exp1"
-          expand-separator
+          dense
+          expand-icon="none"
+          class="expansion1"
           :label="$t('addJob.moreLabel')"
-          style="marginBottom: 10px; font-size: 16px;text-align:right;"
+          style="
+            color: var(--violet-btn-color);
+            font-family: Montserrat; font-weight: 500; font-size: 14px; line-height: 17px;
+            marginBottom: 10px; text-align:right; align-self: flex-end;"
         >
         
           <div class="line" style="marginTop: 10px">
@@ -356,8 +392,10 @@
             />
           </div>
         </q-expansion-item>
+        </div>
         <q-btn
-          color="red-10" class="headerBtns1 headerBtnRed" 
+          class="headerBtns1 weight600" 
+          style="align-self: center; background-color: var(--violet-btn-color); color: white; font-size: 12px; font-height: 15px;"
           :label="props.newJobsPageType == 'new' ? $t('addJob.sendJobBtnLabelNew') : $t('addJob.sendJobBtnLabelUpdate')"
           @click="tryAdd"
         />
@@ -669,6 +707,67 @@ export default {
 </script>
 
 <style lang="stylus">
+.addJob .headerBtns1
+  font-weight 500 !important
+.addJob .expansion1 .q-item__section--side
+  display none
+.addJob .expansion1 .q-item__section--main
+  height 22px
+  margin-left auto
+  border-bottom 1px solid var(--violet-btn-color)
+  max-width fit-content
+  padding-right 14px
+  background-image url('~assets/arrow2.png');
+  background-repeat no-repeat
+  background-position right 1px center
+.addJob .expansion1 .q-expansion-item__container .q-link.q-item--dense
+  height 22px !important
+  padding 0
+.addJob .expansion1 .q-expansion-item__container .q-focus-helper
+  height 22px !important
+  padding 0
+
+
+.addJob .q-field--outlined .q-field__control:before
+  border 0 !important
+.addJob .q-field__control
+  // outline 2px solid orange
+  font-size: 12px;
+  line-height: 15px;
+  border-radius 10px
+  box-shadow 0px 2px 15px rgba(0, 0, 0, 0.1)
+  height 36px
+  min-height 36px !important
+.addJob .q-field__native
+  height 36px !important
+  min-height 36px !important
+  padding 0 !important
+.addJob .q-field__native input
+  height 36px
+.addJob .q-field__append
+  height 36px
+.addJob .q-select__dropdown-icon
+  background-image url('~assets/arrow2.png');
+  background-repeat no-repeat
+  background-position center center
+.dropdown-padding-adjust .q-field__control
+  padding-right 4px !important
+
+.addJob .salcb1 .q-checkbox__inner
+  left 0px
+  margin-right 0
+  height 20px
+  width 20px
+  min-width 20px
+  margin-right 8px
+
+//desc field
+.addJob .ql-toolbar.ql-snow
+  border-top-left-radius 10px
+  border-top-right-radius 10px
+.addJob .ql-container.ql-snow
+  border-bottom-left-radius 10px
+  border-bottom-right-radius 10px
 .q-field__bottom
   padding 5px
 div.q-field__messages
@@ -676,9 +775,11 @@ div.q-field__messages
   justify-content center
 </style>
 <style scoped lang="stylus">
+*
+  margin 0
 .addJob
-  max-width 80%
-  width 680px
+  // max-width 80%
+  width 754px
   .hint
     line-height 22px
     font-size 10px
@@ -686,28 +787,51 @@ div.q-field__messages
   .q-field__bottom
     border 1px solid green !important
   .jobpage__wrapper
-    margin-top 15px
-    background-color var(--main-bg-color)//#eee
+    // margin-top 15px
+    max-width 754px
+    width 754px
+    
+    background: #ECEDF0;
+    border: 0.5px solid #C2C2C6
+    box-sizing: border-box;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    
+    // background-color var(--main-bg-color)//#eee
     padding 10px
-    padding-top 20px
-    box-shadow 0 0 3px 1px var(--main-borders-color)
+    padding-top 45px
+    padding-bottom 35px
+    // box-shadow 0 0 3px 1px var(--main-borders-color)
   .line
     display flex
     align-items flex-end
     // margin-bottom 10px
     min-height 52px
   .startP
-    margin-right 10px
-    font-size 15px
-    align-self flex-end
-    padding-bottom 12px
+    font-family: Montserrat;
+    font-size: 14px;
+    line-height: 17px;
+    color var(--color1)
+    position relative
+    text-align left
   .star
-    align-self flex-start
-    margin-right 10px
-    font-weight 900
-    font-size 20px
-    margin-top 5px
-    width 5px
+    // align-self flex-start
+    margin-right 4px
+    font-family: Montserrat, sans-serif
+    font-size: 14px;
+    line-height: 17px;
+    color var(--btn-color)
+    // margin-top 5px
+    width 6px
+  .reqd:before
+    content '*'
+    font-family Montserrat, sans-serif
+    font-size 14px
+    line-height 17px
+    left -10px
+    position absolute
+    width 6px
+    color var(--btn-color)
   .withMargins
     margin 0 10px
     align-self center
