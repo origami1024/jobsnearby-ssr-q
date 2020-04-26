@@ -146,7 +146,13 @@
         <li>
           <h3>Контакты</h3>
           <ul>
-            <li><router-link class="headerBtns1 violetBtns footerLinkFB" to="/feedback">{{$t('App.fbBtnLabel')}}</router-link></li>
+            <li>
+              <q-btn
+                class="headerBtns1 violetBtns footerLinkFB" 
+                to="/feedback"
+                :label="$t('App.fbBtnLabel')"
+              />
+            </li>
             <!-- <li><a href="#">info@gmail.com</a></li> -->
           </ul>
         </li>

@@ -220,78 +220,39 @@
             marginBottom: 10px; text-align:right; align-self: flex-end;"
         >
         
-          <div class="line" style="marginTop: 10px">
-            <p class="star"> </p>
-            <p class="startP" style="width: 140px; textAlign: left">{{$t('addJob.expLabel')}}</p>
+          <div style="width: 586px">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addJob.expLabel')}}</p>
+            </div>
             <q-select
-              v-model="job.experience"
-              style="width: 180px"
-              square
-              dense
-              outlined
-              bg-color="white" color="deep-purple-10"
-              :options="$t('App.expOpts')"
-              :hint="null"
-            />
+                v-model="job.experience"
+                dense
+                outlined
+                bg-color="white" color="deep-purple-10"
+                :options="$t('App.expOpts')"
+                :hint="null"
+              />
           </div>
-          <div class="line">
-            <p class="star"> </p>
-            <p class="startP" style="width: 140px; textAlign: left">{{$t('addJob.jobTypeLabel')}}</p>
+          <div style="width: 586px">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addJob.jobTypeLabel')}}</p>
+            </div>
             <q-select
               v-model="job.jtype"
-              square
               dense
               outlined
               bg-color="white" color="deep-purple-10"
               :options="$t('App.jtypeOptions')"
               :hint="null"
-              style="width: 180px"
             />
           </div>
-          <div class="line">
-            <p class="star"> </p>
-            <p class="startP" style="width: 140px; textAlign: left">{{$t('addJob.ageLabel')}}</p>
+          <div style="width: 586px">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addJob.labelSchedule')}}</p>
+            </div>
+            <div class="line">
             <q-input
-              :style="{width: '110px', marginRight: '10px'}"
-              square
-              dense
-              outlined
-              bg-color="white" color="deep-purple-10"
-              v-model="job.age1"
-              ref="age1"
-              :placeholder="$t('addJob.genericFrom')"
-              :hint="null"
-              :rules="[
-                val => isNaN(val) == false || $t('addJob.genericEnterNumber'),
-                val => (val == undefined || val == '' || val >= 18) || $t('addJob.genericFrom18'),
-                val => val < 100 || $t('addJob.genericTooMuch'),
-              ]"
-              :lazy-rules="lazyRulesAll"
-            />
-            <q-input
-              :style="{width: '110px', marginRight: '10px'}"
-              square
-              dense
-              outlined
-              bg-color="white" color="deep-purple-10"
-              v-model="job.age2"
-              :placeholder="$t('addJob.genericTo')"
-              :hint="null"
-              ref="age2"
-              :rules="[
-                val => isNaN(val) == false || $t('addJob.genericEnterNumber'),
-                val => (val == undefined || val == '' || val >= 18) || $t('addJob.genericFrom18'),
-                val => val < 100 || $t('addJob.genericTooMuch'),
-              ]"
-              :lazy-rules="lazyRulesAll"
-            />
-          </div>
-          <div class="line">
-            <p class="star"> </p>
-            <p class="startP" style="width: 140px; textAlign: left">{{$t('addJob.labelSchedule')}}</p>
-            <q-input
-              :style="{width: '110px', marginRight: '10px'}"
-              square
+              :style="{width: '150px', marginRight: '40px'}"
               dense
               outlined
               bg-color="white" color="deep-purple-10"
@@ -308,8 +269,7 @@
               :lazy-rules="lazyRulesAll"
             />
             <q-input
-              :style="{width: '110px', marginRight: '10px'}"
-              square
+              :style="{width: '150px', marginRight: '10px'}"
               dense
               outlined
               bg-color="white" color="deep-purple-10"
@@ -328,11 +288,10 @@
             <q-select
               :value="job.schedule"
               @input="scheduleUpd"
-              square
               dense
               outlined
               bg-color="white" color="deep-purple-10"
-              style="max-width: 110px"
+              style="width: 150px; margin-left: auto;"
               use-input
               input-debounce="0"
               fill-input
@@ -350,16 +309,55 @@
               :lazy-rules="lazyRulesAll"
             />
           </div>
-          <div class="line">
-            <p class="star"> </p>
-            <p class="startP" style="width: 140px; textAlign: left">{{$t('addJob.eduLabel')}}</p>
+          </div>
+          <div style="width: 586px">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addJob.ageLabel')}}</p>
+            </div>
+            <div class="line">
+              <q-input
+                :style="{width: '150px', marginRight: '40px'}"
+                dense
+                outlined
+                bg-color="white" color="deep-purple-10"
+                v-model="job.age1"
+                ref="age1"
+                :placeholder="$t('addJob.genericFrom')"
+                :hint="null"
+                :rules="[
+                  val => isNaN(val) == false || $t('addJob.genericEnterNumber'),
+                  val => (val == undefined || val == '' || val >= 18) || $t('addJob.genericFrom18'),
+                  val => val < 100 || $t('addJob.genericTooMuch'),
+                ]"
+                :lazy-rules="lazyRulesAll"
+              />
+              <q-input
+                :style="{width: '150px', marginRight: '10px'}"
+                dense
+                outlined
+                bg-color="white" color="deep-purple-10"
+                v-model="job.age2"
+                :placeholder="$t('addJob.genericTo')"
+                :hint="null"
+                ref="age2"
+                :rules="[
+                  val => isNaN(val) == false || $t('addJob.genericEnterNumber'),
+                  val => (val == undefined || val == '' || val >= 18) || $t('addJob.genericFrom18'),
+                  val => val < 100 || $t('addJob.genericTooMuch'),
+                ]"
+                :lazy-rules="lazyRulesAll"
+              />
+            </div>
+          </div>
+          <div style="width: 586px">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addJob.eduLabel')}}</p>
+            </div>
             <q-input
-              square
               dense
               outlined
               bg-color="white" color="deep-purple-10"
               v-model="job.edu"
-              style="marginRight: 10px"
               :hint="null"
               ref="edu"
               :rules="[
@@ -372,19 +370,18 @@
                 <p style="font-size: 15px; margin: 0">{{$t('addJob.eduTooltip')}}</p>
               </q-tooltip>
             </q-input>
-            
           </div>
-          <div class="line">
-            <p class="star"> </p>
-            <p class="startP" style="width: 140px; textAlign: left">{{$t('addJob.langsLabel')}}</p>
+          <div style="width: 586px">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addJob.langsLabel')}}</p>
+            </div>
             <q-select
               multiple
               use-chips
-              square
               dense
               outlined
               bg-color="white" color="deep-purple-10"
-              :style="{width: '400px'}"
+              
               max-values="3"
               v-model="job.langs"
               :options="$t('addJob.langOptions')"
