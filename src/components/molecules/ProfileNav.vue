@@ -63,7 +63,7 @@ export default {
   background-color var(--menubg-color)
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
   border-radius 10px
-  margin-bottom 30px
+  margin-bottom 15px
   font-family: Montserrat, sans-serif
   font-size: 16px;
   line-height: 20px;

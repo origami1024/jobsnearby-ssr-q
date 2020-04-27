@@ -396,9 +396,11 @@ export default {
     cvNotSeen: 'Просмотрено: нет',
     cname: 'Название компании',
     dragLogo: 'Логотип',
-    sitePH: 'Сайт',
+    siteLabel: 'Сайт компании',
+    sitePh: 'https://jobsnearby.herokuapp.com',
     catPH: 'Сфера деятельности',
-    descPH: 'Описание',
+    descLabel: 'Описание',
+    descPh: 'Строительная компания , надежный застройщик',
     sendChanges: 'Отправить изменения',
     settingsLabel: 'Компания',
     emailLabel: 'Email',
@@ -412,7 +414,8 @@ export default {
     dataError: 'Ошибка',
     picLoaded: 'Изображение загружено',
     picTooBig: 'Картинка больше 400кб',
-    picUploaded: 'Картинка установлена'
+    picUploaded: 'Картинка установлена',
+    cPh: 'ООО “Машиностроительный завод Буран”',
   },
   jobsStats: {
     title: 'Название',
