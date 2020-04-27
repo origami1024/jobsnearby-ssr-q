@@ -228,6 +228,8 @@
                 v-model="job.experience"
                 dense
                 outlined
+                dropdown-icon="none"
+                class="dropdown-padding-adjust"
                 bg-color="white" color="deep-purple-10"
                 :options="$t('App.expOpts')"
                 :hint="null"
@@ -241,6 +243,8 @@
               v-model="job.jtype"
               dense
               outlined
+              dropdown-icon="none"
+              class="dropdown-padding-adjust"
               bg-color="white" color="deep-purple-10"
               :options="$t('App.jtypeOptions')"
               :hint="null"
@@ -290,6 +294,8 @@
               @input="scheduleUpd"
               dense
               outlined
+              dropdown-icon="none"
+              class="dropdown-padding-adjust"
               bg-color="white" color="deep-purple-10"
               style="width: 150px; margin-left: auto;"
               use-input
@@ -381,7 +387,8 @@
               dense
               outlined
               bg-color="white" color="deep-purple-10"
-              
+              dropdown-icon="none"
+              class="dropdown-padding-adjust"
               max-values="3"
               v-model="job.langs"
               :options="$t('addJob.langOptions')"
@@ -756,7 +763,7 @@ export default {
   height 20px
   width 20px
   min-width 20px
-  margin-right 8px
+  margin-right 8px !important
 
 //desc field
 .addJob .ql-toolbar.ql-snow
@@ -771,6 +778,7 @@ div.q-field__messages
   display flex
   justify-content center
 </style>
+
 <style scoped lang="stylus">
 *
   margin 0
@@ -788,11 +796,11 @@ div.q-field__messages
     max-width 754px
     width 754px
     
-    background: #ECEDF0;
+    background var(--menubg-color)
     border: 0.5px solid #C2C2C6
-    box-sizing: border-box;
+    box-sizing: border-box
     border-radius: 10px;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
     
     // background-color var(--main-bg-color)//#eee
     padding 10px
@@ -807,6 +815,7 @@ div.q-field__messages
   .startP
     font-family: Montserrat;
     font-size: 14px;
+    font-weight 500
     line-height: 17px;
     color var(--color1)
     position relative

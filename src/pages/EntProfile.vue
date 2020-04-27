@@ -17,56 +17,59 @@
           <h4 class="entprofile__header">{{$t('entProfile.publishedHeader')}}({{user.ownJobs.length}}):</h4>
           <JobsStats/>
         </q-tab-panel>
-        <q-tab-panel name="responses" class="entprofile__mid" style="display: flex">
-          <div class="line" style="width: 100%;">
+        <q-tab-panel name="responses" class="entprofile__mid" style="display: flex; padding: 60px 80px;">
+          <div class="line" style="width: 100%; border-radius: 10px;">
+            <!-- expand-icon="none" -->
             <q-expansion-item
               v-for="item in Object.keys(respsJreformat)"
               :key="item"
-              
-              style="line-height: 30px; font-size: 16px;text-align:left;"
-              
+              class="respExps"
+              style="background-color: white; border-radius: 10px; margin-bottom: 10px;"
             >
               <template v-slot:header>
+                <div style="display: flex; align-items: center;">
                 <a class="responseLinkLvl1" :href="'/jobpage?id=' + item" target="_blank" style="display: flex;">
                   {{resps.find(val=>val.cvjob_id == item).title}}
-                  <q-badge v-if="respsJreformat[item].hasNew > 0" style="background-color: var(--violet-btn-color); align-self: start;"  :label="respsJreformat[item].hasNew + ' новых'"/>
                 </a>
-                ({{respsJreformat[item].cvhits.length}})
-                
+                <span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 17px;">({{respsJreformat[item].cvhits.length}})</span>
+                <q-badge v-if="respsJreformat[item].hasNew > 0" style="background-color: transparent; font-family: Montserrat, sans-serif; font-weight: bold; font-size: 14px; line-height: 17px; color: var(--btn-color); align-self: start;"  :label="respsJreformat[item].hasNew"/>
+                </div>
               </template>
               
-              <ul style="list-style-type:none; padding: 0 15px;">
-                <li style="display: flex; padding-left: 10px;" v-for="hit in respsJreformat[item].cvhits" :key="hit" :style="{backgroundColor: resps.find(val=>val.cvhit_id == hit).date_checked == null ? 'var(--color-graypink)' : 'rgba(1,1,1,0.03)'}">
-                  <a style="width: 35%" class="responseLinkLvl2" @click="viewHit(hit)" :href="'https://docs.google.com/viewerng/viewer?url=' + resps.find(val=>val.cvhit_id == hit).cv_url" target="_blank">
-                    {{
-                      resps.find(val=>val.cvhit_id == hit).name + ' ' + 
-                      resps.find(val=>val.cvhit_id == hit).surname
-                    }}
-                  </a>
-                  <div style="width: 30%">
+              <ol style="padding: 8px 15px; padding-bottom: 15px; margin: 0 28px; font-family: Montserrat, sans-serif; font-size: 14px; line-height: 17px;">
+                <li style="background-color: white !important; text-align: left; margin-bottom: 7px;" v-for="hit in respsJreformat[item].cvhits" :key="hit" :style="{backgroundColor: resps.find(val=>val.cvhit_id == hit).date_checked == null ? 'var(--color-graypink)' : 'white'}">
+                  <span style="display: block">
+                    <a class="responseLinkLvl2" @click="viewHit(hit)" :href="'https://docs.google.com/viewerng/viewer?url=' + resps.find(val=>val.cvhit_id == hit).cv_url" target="_blank">
+                      {{
+                        resps.find(val=>val.cvhit_id == hit).name + ' ' + 
+                        resps.find(val=>val.cvhit_id == hit).surname
+                      }}
+                    </a>
+                    <span class="newhit" v-if="resps.find(val=>val.cvhit_id == hit).date_checked == null">*</span>
+                  </span>
+                  <div style="margin-bottom: 5px;">
                     {{
                       $t('entProfile.cvSent') + ' ' +
                       formatDate(resps.find(val=>val.cvhit_id == hit).date_created)
-                      + '.'
                     }}
                   </div>
-                  <div style="width: 35%">
+                  <div>
                     {{
                       resps.find(val=>val.cvhit_id == hit).date_checked != null
                         ? $t('entProfile.cvSeen') + ' ' + formatDate(resps.find(val=>val.cvhit_id == hit).date_checked)
                         : $t('entProfile.cvNotSeen')
                     }}
-                    <q-btn
+                    <!-- <q-btn
                       style="margin-left: 5px; background-color: var(--violet-btn-color); color: white;"
                       v-if="resps.find(val=>val.cvhit_id == hit).date_checked == null"
                       round
                       size="sm"
                       icon="visibility"
                       @click="viewHit(hit)"
-                    />
+                    /> -->
                   </div>
                 </li>
-              </ul>
+              </ol>
               
             </q-expansion-item>
             <div v-if="resps.length == 0">Пока нет ни одного отклика</div>
@@ -350,9 +353,13 @@ export default {
 .qtpans
   width 100%
   min-height 75vh
-  box-shadow 0 0 4px 1px var(--main-borders-color)
-  border-radius 4px
-  background-color transparent
+  // box-shadow 0 0 4px 1px var(--main-borders-color)
+  // border-radius 4px
+  background var(--menubg-color)
+  border: 0.5px solid #C2C2C6
+  box-sizing: border-box
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
 .entprofile
   max-width 900px
   padding 20px 0px
@@ -410,18 +417,27 @@ export default {
     box-sizing border-box
     transition-duration 0.3s
   .responseLinkLvl1
-    color #248CEC//var(--color1)
-    margin-right 5px
+    color var(--color1)
     text-decoration none
+    // margin-right 10px
     white-space nowrap
     overflow hidden
     text-overflow ellipsis
+    font-family: Montserrat, sans-serif
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 17px;
     &:hover
       color var(--btn-color) !important
   .responseLinkLvl2
-    color var(--main-borders-color)
-    text-decoration none
+    color var(--violet-btn-color)
+    text-align left
+    font-family: Montserrat, sans-serif
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 17px;
     margin-right 5px
+    margin-bottom 5px
     &:hover
       color var(--btn-color) !important
   *
@@ -445,4 +461,36 @@ export default {
   &:hover>.logo-placeholder
     outline 1px solid var(--color1)
     //border-color var(--color1)
+
+.newhit
+  color red
+
+</style>
+<style lang="stylus">
+.q-tab-panel .q-item.q-focusable
+  // background-color transparent !important
+  // color red !important
+.q-tab-panel .q-item.q-focusable .q-focus-helper
+  border-radius 10px
+  &:hover
+    background-color var(--violet-light) !important
+.respExps .q-item
+  display flex
+  justify-content space-between
+  &:hover
+    background-color var(--violet-light) !important
+    border-radius 10px
+.respExps .q-item .q-item__section
+  padding-right 0
+  border-radius 10px
+.respExps .q-item
+  padding 10px 10px 10px 17px !important
+  min-height 37px
+  border-radius 10px
+.respExps .q-expansion-item__toggle-icon
+  height 17px
+.respExps.q-expansion-item--expanded a.responseLinkLvl1
+  font-weight bold !important
+  
+
 </style>
