@@ -491,9 +491,6 @@ export default {
 
 </style>
 <style lang="stylus">
-.q-tab-panel .q-item.q-focusable
-  // background-color transparent !important
-  // color red !important
 .q-tab-panel .q-item.q-focusable .q-focus-helper
   border-radius 10px
   &:hover

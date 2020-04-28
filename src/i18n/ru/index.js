@@ -37,7 +37,9 @@ export default {
     cvDeleted: 'Резюме удалено',
     cvTooBig: 'Резюме больше 100кб',
     wrongData: 'Неправильные данные',
-    pwChanged: 'Пароль изменен'
+    pwChanged: 'Пароль изменен',
+    namePh: 'Василий',
+    surnamePh: 'Иванов',
   },
   upl: {
     header: 'Добавление нескольких вакансий',

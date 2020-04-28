@@ -14,7 +14,7 @@
         transition-prev="jump-up"
         transition-next="jump-up"
       >
-        <q-tab-panel name="cv" class="subprofile__cv">
+        <q-tab-panel name="cv" class="subprofile__cv" style="padding: 60px 80px 35px 80px;">
           
           <div class="line" style="display: flex; width: 100%;">
             <div style="width:300px; margin-bottom: 20px;">
@@ -33,43 +33,51 @@
               </div>
             </div>
           </div>
-          {{user.cvurl}}
-          <q-btn class="headerBtns1" v-if="user.cvurl != null && user.cvurl != ''" color="red-10" :label="$t('sub.deleteCVBtn')" @click="cvdel" />
+          <div style="margin-bottom: 15px;">{{user.cvurl}}</div>
+          <q-btn style="align-self:flex-end;" dense class="headerBtns1" v-if="user.cvurl != null && user.cvurl != ''" color="red-10" :label="$t('sub.deleteCVBtn')" @click="cvdel" />
         </q-tab-panel>
         <q-tab-panel name="sentCVS">
           <HitsList
             :cvhitsHistory="cvhitsHistory"
           />
         </q-tab-panel>
-        <q-tab-panel class="subprofile__settings" name="personal">
-          
+        <q-tab-panel class="subprofile__settings" name="personal" style="padding: 60px 80px 35px 80px;">
+          <label for="subprofile__uname" class="input-label">{{$t('sub.name')}}</label>
           <q-input
+            for="subprofile__uname"
             class="subprofile__inp"
             color="deep-purple-10"
-            square outlined bottom-slots 
-            v-model="userdata.username" :label="$t('sub.name')"
+            dense outlined bottom-slots
+            v-model="userdata.username"
+            :placeholder="$t('sub.namePh')"
             counter maxlength="35"  />
+          <label for="subprofile__usurname" class="input-label">{{$t('sub.surname')}}</label>
           <q-input
+            for="subprofile__usurname"
             class="subprofile__inp"
             color="deep-purple-10"
-            square outlined bottom-slots
-            v-model="userdata.surname" :label="$t('sub.surname')"
+            dense outlined bottom-slots
+            v-model="userdata.surname"
+            :placeholder="$t('sub.surnamePh')"
             counter maxlength="35"  />
           <q-btn class="headerBtns1" color="red-10" @click="tryChangeUData" :label="$t('sub.change')"/>
         </q-tab-panel>
 
 
-        <q-tab-panel class="subprofile__settings" name="settings">
+        <q-tab-panel class="subprofile__settings" name="settings" style="padding: 60px 80px 35px 80px;">
+          <label for="subprofile__email" class="input-label">{{$t('sub.email')}}</label>
           <q-input
+            for="subprofile__email"
             type="email" class="subprofile__inp" 
-            square outlined bottom-slots
+            dense outlined bottom-slots
             color="deep-purple-10" 
             :value="user.identity"
-            :label="$t('sub.email')"
             readonly
+            placeholder="aa@bb.cc"
             counter maxlength="50"
           />
-          <q-input square color="deep-purple-10"  :type="isPwd ? 'password' : 'text'" class="subprofile__inp" outlined bottom-slots v-model="mailpw.oldpw" :label="$t('sub.oldPW')" counter maxlength="25" >
+          <label for="subprofile__oldPW" class="input-label">{{$t('sub.oldPW')}}</label>
+          <q-input for="subprofile__oldPW" placeholder="******" dense color="deep-purple-10" :type="isPwd ? 'password' : 'text'" class="subprofile__inp" outlined bottom-slots v-model="mailpw.oldpw" counter maxlength="25" >
             <template v-slot:append>
               <q-icon
                 :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -78,11 +86,15 @@
               />
             </template>
           </q-input>
-          <q-input 
-            square color="deep-purple-10" 
+          <label for="subprofile__newPW" class="input-label">{{$t('sub.newPW')}}</label>
+          <q-input
+            for="subprofile__newPW"
+            color="deep-purple-10"
+            dense
+            placeholder="******"
             :type="isPwd ? 'password' : 'text'" 
             class="subprofile__inp" outlined bottom-slots 
-            v-model="mailpw.newpw" :label="$t('sub.newPW')" counter maxlength="25" >
+            v-model="mailpw.newpw" counter maxlength="25" >
           </q-input>
           <q-btn class="headerBtns1" color="red-10" @click="tryChangePw" :label="$t('sub.change')"/>
         </q-tab-panel>
@@ -261,9 +273,12 @@ export default {
 <style scoped lang="stylus">
 .qtpans
   width 100%
-  min-height 75vh
-  box-shadow 0 0 4px 1px var(--main-borders-color)
-  border-radius 4px
+  min-height 60vh
+  background var(--menubg-color)
+  border: 0.5px solid #C2C2C6
+  box-sizing: border-box
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
 .subprofile
   max-width 900px
   padding 0 10px
@@ -306,6 +321,8 @@ export default {
   border 1px solid rgba(0,0,0,0.24)
   padding 12px
   transition-duration 0.3s
+  border 1px dashed gray
+  border-radius 10px
   min-width 300px
   margin-bottom 15px
   cursor pointer
@@ -316,8 +333,47 @@ export default {
     box-shadow inset 0px 0px 0px 2px var(--color1) !important
   &:hover
     border-color var(--color1)
+    color var(--color1)
     // background-color var(--violet-btn-color)
   &:hover>.logo-placeholder
     outline 1px solid var(--color1)
     //border-color var(--color1)
+
+.input-label
+  color var(--color1)
+  font-family: Montserrat, sans-serif
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: left;
+  margin-bottom: 7px;
+  display: block
+.subprofile__inp
+  width 100%
+
+</style>
+<style lang="stylus">
+.subprofile__inp .q-field--outlined .q-field__control:before
+  border 0 !important
+.subprofile__inp .q-field__control
+  // outline 2px solid orange
+  font-size: 12px;
+  line-height: 15px;
+  border-radius 10px
+  box-shadow 0px 2px 15px rgba(0, 0, 0, 0.1)
+  height 36px
+  min-height 36px !important
+.subprofile__inp .q-field__native
+  height 36px !important
+  min-height 36px !important
+  padding 0 !important
+.subprofile__inp .q-field__native input
+  height 36px
+.subprofile__inp .q-field__append
+  height 36px
+.subprofile__inp .q-field__bottom
+  padding-right 0
+
+.subprofile__inp .q-input
+  margin-bottom 0px !important
 </style>

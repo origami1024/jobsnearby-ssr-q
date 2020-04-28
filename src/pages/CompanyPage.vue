@@ -103,7 +103,8 @@ export default {
     font-family: 'Montserrat', sans-serif;
   }
 .jobpage
-  padding-top 50px
+  padding-top 40px
+  padding-bottom 40px
 .detailed__main
   width: 80%;
   max-width: 850px;
@@ -117,7 +118,12 @@ export default {
   
   margin 0 auto
   margin-top 15px
-  //border 1px solid black
+  
+  background var(--menubg-color)
+  border: 0.5px solid #C2C2C6
+  box-sizing: border-box
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
   .titleHeader
     font-size 24px !important
     margin-top 8px
