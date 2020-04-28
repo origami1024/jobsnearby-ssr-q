@@ -119,11 +119,11 @@ export default {
   margin 0 auto
   margin-top 15px
   
-  background var(--menubg-color)
-  border: 0.5px solid #C2C2C6
-  box-sizing: border-box
-  border-radius: 10px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
+  // background var(--menubg-color)
+  // border: 0.5px solid #C2C2C6
+  // box-sizing: border-box
+  // border-radius: 10px;
+  // box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
   .titleHeader
     font-size 24px !important
     margin-top 8px

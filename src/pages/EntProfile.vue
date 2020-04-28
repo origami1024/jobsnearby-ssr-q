@@ -1,5 +1,6 @@
 <template>
   <div v-if="user.role === 'company'" class="entprofile">
+    <p class="pageHeader" >{{$t('entProfile.entProfileTitle')}}</p>
     <div class="entprofile__inner">
       <ProfileNav
         :localRoute="tab"
@@ -370,7 +371,7 @@ export default {
 .entprofile
   max-width 900px
   padding 20px 0px
-  //padding-top 20px
+  padding-top 5px
   display flex
   flex-direction column
   justify-content center

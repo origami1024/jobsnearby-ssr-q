@@ -96,7 +96,7 @@
                 ? Math.min(pages, 3) 
                 : Math.min(pages, page_current + 1)
             )" :key="i"
-            @click="switchPage(i)"
+            @click="$store.dispatch('refreshjobs', {param: 'page', param2: i})"
             v-show="(i >= (page_current != pages ? page_current - 1 : page_current - 2))"
           >
             {{i}}
@@ -119,7 +119,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'Jobs',
   props: {
-    pages: {type: Number, default: 1},
+    // pages: {type: Number, default: 1},
     // page_current: {type: Number, default: 1},
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
@@ -140,10 +140,8 @@ export default {
     page_current() {
       return this.$store.state.jobs.page_current
     },
-  },
-  methods: {
-    switchPage(newV) {//CHANGE THIS, WOTS THIS REFRESH????
-      this.$emit('refresh', 'page', newV)
+    pages() {
+      return this.$store.getters.pages
     },
   },
 }

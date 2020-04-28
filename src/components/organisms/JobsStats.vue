@@ -21,17 +21,17 @@
           <td style="text-align: left"><a class="link1" target="_blank" :href="'/jobpage?id=' + item.job_id">{{item.title}}</a></td>
           <td>{{Number(item.hits_all)}}</td>
           <td>{{item.hits_uniq}}</td>          
-          <td>
+          <td style="font-size:15px">
             {{
               (item.is_published === true && item.is_closed === false)
                 ? $t('jobsStats.published')
                 : (item.is_published === true && item.is_closed === true)
-                  ? 'Закрыта пользователем' 
+                  ? $t('jobsStats.closedByUser')
                   : (item.is_published === false && item.is_closed === false)
-                    ? 'Ожидает проверки модератора' 
+                    ? $t('jobsStats.awaitsAdmin')
                     : (item.closed_why !== null && item.closed_why.length > 0)
-                      ? 'Закрыта модератором: "' +  item.closed_why + '"'
-                      : 'Закрыта модератором'
+                      ? $t('jobsStats.closedByAdmin') + ': "' +  item.closed_why + '"'
+                      : $t('jobsStats.closedByAdmin')
             }}
           </td>
           <td>
@@ -197,4 +197,5 @@ export default {
     text-decoration none
     color #248CEC
     transition-duration 0.6s
+    font-weight 500
 </style>

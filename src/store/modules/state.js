@@ -32,7 +32,8 @@ export default function () {
     jobs: {
       jobsFullcount: 0,
       perpage: 25,
-      page_current: 1
+      page_current: 1,
+      pages: 1,
     },
     uStats: { //user stats - статистика по зп справа на главной
       salMin: "",

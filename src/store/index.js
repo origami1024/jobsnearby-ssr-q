@@ -16,6 +16,10 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     state,
     getters: {
+      pages(state) {
+        if (parseInt(state.jobs.jobsFullcount) < 1) return 1
+        else return Math.ceil(state.jobs.jobsFullcount / state.jobs.perpage)
+      },
       ownCVj_ids(state) {
         return state.user.ownCVs.map(v=>v.cvjob_id)
       },
@@ -105,7 +109,6 @@ export default function (/* { ssrContext } */) {
         context.commit('setAJNewJobsPageType', value)
       },
       caboutPropUpd (context, {prop, value}) {
-        // console.log('codscsd: ', value)
         context.commit('setCAboutProp', {prop, value})
       },
       async getOwnCAbout (context) {
@@ -125,7 +128,6 @@ export default function (/* { ssrContext } */) {
         if (context.state.user.role == 'subscriber') {
           if (!context.state.user.cvurl || context.state.user.cvurl.length < 5) {
             this.$router.push("/subprofile")
-            this.$q.notify(this.$t('App.firstCVNote'))
             return false
           }
           let hitcvUrl = '/hitjobcv?jid=' + job_id
@@ -167,9 +169,8 @@ export default function (/* { ssrContext } */) {
           if (param !== 'init') {
             // console.log('cp55, ', context)
             jobslistUrl += context.getters.query
-            // console.log(context.getters.query)
             if (param === 'page') {
-              jobslistUrl += context.state.jFilters.query.length > 0 ? '&page=' : '?page='
+              jobslistUrl += context.getters.query.length > 0 ? '&page=' : '?page='
               jobslistUrl += param2
             }
           }
@@ -211,7 +212,7 @@ export default function (/* { ssrContext } */) {
         context.commit('setJobDetails', job)
       },
       async fetchJobDetails (context, id) {
-        console.log(id)
+        // console.log(id)
         let jobUrl = '/jobby.idjson=' + id
         return axiosInstance.get(jobUrl, null, {headers: {'Content-Type' : 'application/json' }})
           .then(({ data }) => {
@@ -222,7 +223,7 @@ export default function (/* { ssrContext } */) {
         context.commit('setCompanyDetails', company)
       },
       async fetchCompanyDetails (context, id) {
-        console.log(id)
+        // console.log(id)
         let jobUrl = '/companyby.idjson=' + id
         return axiosInstance.get(jobUrl, null, {headers: {'Content-Type' : 'application/json' }})
           .then(({ data }) => {

@@ -126,7 +126,7 @@
             
           >
           </q-checkbox>
-            <label for="salcb1" @click="salaryOn = !salaryOn; $refs.salary_min.resetValidation(); $refs.salary_max.resetValidation(); salaryValidated = true" style="cursor: pointer; color: var(--color1); font-size: 14px; line-height: 17px; user-select: none">
+            <label for="salcb1" @click="salaryOn = !salaryOn; $refs.salary_min.resetValidation(); $refs.salary_max.resetValidation(); salaryValidated = true" style="cursor: pointer; color: var(--color1); font-size: 14px; line-height: 17px; user-select: none; font-weight: 500;">
               {{$t('addJob.salaryCB1Hint')}}
             </label>
           </div>
@@ -135,7 +135,7 @@
 
         <div style="width: 586px">
           <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
-          <p style="color: var(--color1); display: block; font-family: Montserrat; font-size: 14px;line-height: 17px; margin-top: 25px; text-align: left;">
+          <p style="color: var(--color1); font-weight: 500; display: block; font-family: Montserrat; font-size: 14px;line-height: 17px; margin-top: 25px; text-align: left;">
             {{$t('addJob.descLabel')}}<span style="color: #c10015"> {{descError}}</span>
           </p>
           </div>
@@ -405,19 +405,19 @@
         />
       </div>
       <div v-else-if="props.sent == 'goodNew'" :key="2" class="jobpage__wrapper">
-        <p>{{$t('addJob.sendJobSuccess1')}}<a :href="'/jobpage?id=' + returned.job_id" target="_blank">{{returned.title}}</a>{{$t('addJob.sendJobSuccess2')}}</p>
-        <q-btn color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
+        <p style="font-size: 16px;">{{$t('addJob.sendJobSuccess1')}}<a :href="'/jobpage?id=' + returned.job_id" target="_blank">{{returned.title}}</a>{{$t('addJob.sendJobSuccess2')}}</p>
+        <q-btn style="margin-top: 12px;" color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
       </div>
       <div v-else-if="props.sent == 'goodEdited'" :key="2" class="jobpage__wrapper">
-        <p>{{$t('addJob.sendJobSuccess1x')}}<a :href="'/jobpage?id=' + returned.job_id" target="_blank">{{returned.title}}</a>{{$t('addJob.sendJobSuccess2x')}}</p>
-        <q-btn color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
+        <p style="font-size: 16px;">{{$t('addJob.sendJobSuccess1x')}}<a :href="'/jobpage?id=' + returned.job_id" target="_blank">{{returned.title}}</a>{{$t('addJob.sendJobSuccess2x')}}</p>
+        <q-btn style="margin-top: 12px;" color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
       </div>
       <div v-else-if="props.sent == 'fail'" :key="3" class="jobpage__wrapper">
-        <p style="color: red;">{{$t('addJob.sendJobError1')}}</p>
-        <q-btn color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
+        <p style="color: red; font-size: 16px;">{{$t('addJob.sendJobError1')}}</p>
+        <q-btn style="margin-top: 12px;" color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
       </div>
       <div v-else-if="props.sent == 'limit'" :key="4" class="jobpage__wrapper">
-        <p style="color: red;">{{$t('addJob.sendJobErrorLimit')}}</p>
+        <p style="color: red; font-size: 16px;">{{$t('addJob.sendJobErrorLimit')}}</p>
         <!-- <q-btn color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/> -->
       </div>
       <div v-else-if="user.role == 'guestUnau' | user.role == 'guest'" :key="4" class="jobpage__wrapper">
@@ -640,7 +640,7 @@ export default {
               this.returned.title = response.data.title
               this.returned.job_id = response.data.job_id
               this.$store.dispatch('setAJSentState', 'goodEdited')
-              console.log('cp editJob: OK')
+              // console.log('cp editJob: OK')
             } else {this.$store.dispatch('setAJSentState', 'fail'); console.log('trespasser')}
             
           })
@@ -736,7 +736,7 @@ export default {
   border 0 !important
 .addJob .q-field__control
   // outline 2px solid orange
-  font-size: 12px;
+  font-size: 16px;
   line-height: 15px;
   border-radius 10px
   box-shadow 0px 2px 15px rgba(0, 0, 0, 0.1)

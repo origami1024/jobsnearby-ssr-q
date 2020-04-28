@@ -33,7 +33,7 @@
               </div>
             </div>
           </div>
-          <div style="margin-bottom: 15px;">{{user.cvurl}}</div>
+          <!-- <div style="margin-bottom: 15px;">{{user.cvurl}}</div> -->
           <q-btn style="align-self:flex-end;" dense class="headerBtns1" v-if="user.cvurl != null && user.cvurl != ''" color="red-10" :label="$t('sub.deleteCVBtn')" @click="cvdel" />
         </q-tab-panel>
         <q-tab-panel name="sentCVS">
@@ -47,6 +47,7 @@
             for="subprofile__uname"
             class="subprofile__inp"
             color="deep-purple-10"
+            bg-color="white"
             dense outlined bottom-slots
             v-model="userdata.username"
             :placeholder="$t('sub.namePh')"
@@ -56,6 +57,7 @@
             for="subprofile__usurname"
             class="subprofile__inp"
             color="deep-purple-10"
+            bg-color="white"
             dense outlined bottom-slots
             v-model="userdata.surname"
             :placeholder="$t('sub.surnamePh')"
@@ -70,14 +72,15 @@
             for="subprofile__email"
             type="email" class="subprofile__inp" 
             dense outlined bottom-slots
-            color="deep-purple-10" 
+            color="deep-purple-10"
+            bg-color="white"
             :value="user.identity"
             readonly
             placeholder="aa@bb.cc"
             counter maxlength="50"
           />
           <label for="subprofile__oldPW" class="input-label">{{$t('sub.oldPW')}}</label>
-          <q-input for="subprofile__oldPW" placeholder="******" dense color="deep-purple-10" :type="isPwd ? 'password' : 'text'" class="subprofile__inp" outlined bottom-slots v-model="mailpw.oldpw" counter maxlength="25" >
+          <q-input for="subprofile__oldPW" placeholder="******" dense color="deep-purple-10" bg-color="white" :type="isPwd ? 'password' : 'text'" class="subprofile__inp" outlined bottom-slots v-model="mailpw.oldpw" counter maxlength="25" >
             <template v-slot:append>
               <q-icon
                 :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -90,6 +93,7 @@
           <q-input
             for="subprofile__newPW"
             color="deep-purple-10"
+            bg-color="white"
             dense
             placeholder="******"
             :type="isPwd ? 'password' : 'text'" 

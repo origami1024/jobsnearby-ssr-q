@@ -62,9 +62,9 @@ export default {
   },
   refreshJobs (state, rawjobs) {
     state.jobslist = rawjobs.rows
-    state.jobsFullcount = Number(rawjobs.full_count)
-    state.perpage = Number(rawjobs.perpage)
-    state.page_current = Number(rawjobs.page)
+    state.jobs.jobsFullcount = Number(rawjobs.full_count)
+    state.jobs.perpage = Number(rawjobs.perpage)
+    state.jobs.page_current = Number(rawjobs.page)
   },
   refreshUStats (state, stats) {//user stats
     for (let index = 0; index < stats.length; index++) {

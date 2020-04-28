@@ -418,6 +418,7 @@ export default {
     picTooBig: 'Картинка больше 400кб',
     picUploaded: 'Картинка установлена',
     cPh: 'ООО “Машиностроительный завод Буран”',
+    entProfileTitle: 'Личный кабинет',
   },
   jobsStats: {
     title: 'Название',
@@ -440,5 +441,8 @@ export default {
     resendHint: 'На проверку модератору для открытия',
     closeHint: 'Закрыть',
     deleteHint: 'Удалить',
+    closedByUser: 'Закрыта пользователем',
+    closedByAdmin: 'Закрыта админом',
+    awaitsAdmin: 'Ожидает проверки модератора',
   }
 }

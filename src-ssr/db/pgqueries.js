@@ -1210,6 +1210,7 @@ async function getCVHitsHistory(req, res) {
 }
 
 const getJobs = (req, res) => {
+  console.log(req.query)
   let perpage = '25'
   if (req.query.perpage === '50') perpage = '50'
   else if (req.query.perpage === '100') perpage = '100'
@@ -1226,7 +1227,6 @@ const getJobs = (req, res) => {
   else if (req.query.sort === 'saldesc') sort = 'ORDER BY (jobs.salary_max::int, jobs.job_id) DESC'
   //console.log('cp_getJobs1: ', perpage)
   let timerange = ` AND jobs.time_updated > now() - interval '1 month'`
-
   let page = 1
   if (req.query.page && Number(req.query.page) > 0 && Number(req.query.page) < 11) page = req.query.page
   let offset = (page - 1) * Number(perpage)

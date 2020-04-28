@@ -47,8 +47,8 @@ export default {
 .badge1
   background-color var(--btn-color)
   border-radius 100%
-  width 34px
-  height 34px
+  width 28px
+  height 28px
   text-align center
   justify-content center
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)
