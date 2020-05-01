@@ -1,6 +1,6 @@
 <template>
   <div class="jobscard">
-    <div class="line lowres_twolines cityAndCompany">
+    <div class="line cityAndCompany">
       <div class="line" style="align-items: center;">
         <p class="city" :class="job.city.length > 0 ? 'cityOK' : ''" v-html="filteredCity"></p>
         <a :href="'/companypage?id=' + job.author_id" target="_blank">
@@ -43,9 +43,12 @@
     </div>
     
     <div class="line">
-      <div class="line spbtw lowres_twolines" style="width: 100%">
-        <a class="showContactsLink" @click.prevent="isContactsShown = !isContactsShown" href="#">
+      <div class="line spbtw" style="width: 100%">
+        <a class="showContactsLink noshow-below550" @click.prevent="isContactsShown = !isContactsShown" href="#">
           {{$t('jc.contactsLabel')}}
+        </a>
+        <a class="showContactsLink show550" @click.prevent="isContactsShown = !isContactsShown" href="#">
+          {{$t('jc.contactsLabel_mobile')}}
         </a>
         <a v-if="user.role != 'company' && !cved" class="sendCVLink" @click.prevent="$store.dispatch('hitcv', job.job_id)" href="#">
           {{$t('jc.sendCVLabel')}}
@@ -170,8 +173,10 @@ export default {
     margin-bottom 10px
     padding 10px 12px
   @media screen and (max-width 550px)
-    padding 6px
+    // padding 6px
+    padding 18px 15px 20px 15px
     width 100% //calc(100% - 5px)
+    margin-bottom 15px
   &:hover
     box-shadow 0 0 2px 1px var(--violet-btn-color)//#bbb
   a
@@ -197,7 +202,11 @@ export default {
     line-height: 25px
     margin-right: 10px
     @media screen and (max-width 550px)
-      width 50%
+      // width 50%
+      padding-right: 3px
+      margin-right: 7px
+      font-size: 9px;
+      line-height: 20px
   .cityOK
     &:before
       content 'г.'
@@ -206,6 +215,8 @@ export default {
     font-size: 12px;
     line-height: 15px;
     color var(--color1)
+    @media screen and (max-width 550px)
+      font-size 9px
   .updated__label
     margin-right 5px
     margin-left auto
@@ -214,6 +225,7 @@ export default {
   .updated__value
     @media screen and (max-width 550px)
       margin-left auto
+      font-size 9px
   .salary__outer-wrap
     margin-left 15px
     min-width 100px
@@ -231,11 +243,11 @@ export default {
       margin-bottom 0
   .linej
     display flex
-  .line50
-    display flex
-    align-items center
-    min-width 120px
-    max-width 50%
+  // .line50
+  //   display flex
+  //   align-items center
+  //   min-width 120px
+  //   max-width 50%
   .lowres_twolines
     @media screen and (max-width 550px)
       flex-direction column
@@ -270,14 +282,21 @@ export default {
     font-size: 14px
     max-width 116px
   @media screen and (max-width: 550px)
-    max-width 100%
-    font-size 15px
+    // max-width 100%
+    // font-size 15px
+    font-size: 12px !important
+    line-height: 15px !important
     margin-right auto
-    order 2
+    max-width none
+    border-bottom 1px solid var(--violet-btn-color)
+    // order 2
   &:hover
     color var(--violet-btn-color)
     background-image url('~assets/arrow3.png')
-
+.show550
+  display none
+  @media screen and (max-width: 550px)
+    display inline-block
 .sendCVLink
   background-color var(--color-graypink)
   color var(--color1)
@@ -298,9 +317,12 @@ export default {
     padding-right 8px
     line-height: 26px;
   @media screen and (max-width 550px)
-    order 1
-    margin-bottom 6px
+    // order 1
+    // margin-bottom 6px
     align-self flex-start
+    font-size: 12px !important
+    line-height: 15px !important
+    padding 8px
   &:hover
     //color var(--violet-btn-color)
     background-color var(--violet-btn-color)
@@ -331,6 +353,9 @@ export default {
   font-size: 18px;
   line-height: 22px;
   color var(--violet-btn-color)
+  @media screen and (max-width 550px)
+    font-size: 14px;
+    line-height: 17px;
 .descFormats
   height 21px
   line-height 20px
@@ -356,11 +381,21 @@ export default {
   @media screen and (max-width: 950px)
     margin-top 5px
     margin-bottom 10px
+  @media screen and (max-width 550px)
+    font-size: 12px;
+    line-height: 130%;
+    margin-bottom 5px
+    margin-top 8px
 .joblink
   color var(--color1)
   overflow-wrap: anywhere;
+  max-width 150px
+  min-width 150px
   &:hover
     color var(--violet-btn-color)
+  @media screen and (max-width 550px)
+    font-size: 14px;
+    line-height: 17px;
 .cvSentSpan
   align-self center
   @media screen and (max-width 550px)

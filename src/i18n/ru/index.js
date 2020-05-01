@@ -216,36 +216,21 @@ export default {
   },
   jobs: {
     sortOpts: {
-      new: 'По Дате',
-      saldesc: 'По ЗП ↓',
-      salasc: 'По ЗП ↑'
+      new: 'По дате',
+      saldesc: 'По зп ↓',
+      salasc: 'По зп ↑'
     },
     dateOpts: {
-      mon: 'За Месяц',
-      wee: 'За Неделю',
-      day: 'За Сутки'
+      mon: 'За месяц',
+      wee: 'За неделю',
+      day: 'За сутки'
     },
     perpageOpts: {
+      '10': '10 вакансий',
       '25': '25 вакансий',
       '50': '50 вакансий',
       '100': '100 вакансий'
-    },
-    // sortOpts: [
-    //   {label: 'По Дате', value: 'new'},
-    //   {label: 'По ЗП ↓', value: 'saldesc'},
-    //   {label: 'По ЗП ↑', value: 'salasc'}
-    // ],
-    // dateOpts: [
-    //   {label: 'За Месяц', value: 'mon'},
-    //   {label: 'За Неделю', value: 'wee'},
-    //   {label: 'За Сутки', value: 'day'}
-    // ],
-    // perpageOpts: [
-    //   {label: '25 вакансий', value: '25'},
-    //   {label: '50 вакансий', value: '50'},
-    //   {label: '100 вакансий', value: '100'}
-    // ],
-    
+    },    
   },
   jc: {
     salaryNone: 'По итогам собеседования',
@@ -259,6 +244,7 @@ export default {
     tooltipSeen: 'Просмотрено',
     tooltipNotseen: 'Не просмотрено',
     contactsLabel: 'Контакты работодателя',
+    contactsLabel_mobile: 'Контакты',
     today: 'Сегодня',
     yesterday: 'Вчера',
     daysAgo: 'дня назад',

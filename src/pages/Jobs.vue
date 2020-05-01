@@ -7,23 +7,29 @@
           <h2 class="banner__header">Найди подходящую вакансию уже сегодня!</h2>
         </div>
         <div class="jobs__top-search">
-        <button class="filtersHamburgerBtn" @click="filtersToggle = !filtersToggle">Ф</button>
-        <input
-          class="searchInput"
-          type="text"
-          @keyup.enter="$store.dispatch('refreshjobs', {})"
-          :value="jFilters.txt"
-          @input="$store.dispatch('filterUpd', {prop: 'txt', value: $event.target.value})"
-          placeholder="Введите ключевые слова"
-        >
-        <q-btn 
-          @click="$store.dispatch('refreshjobs', {})"
-          class="headerBtns1 searchBtn"
-          style="background-color: var(--violet-btn-color); margin-left: -15px; padding: 0 12px;"
-          text-color="white"
-          :label="$t('filters.searchBtn')"
-        />
-      </div>
+          <button class="filtersHamburgerBtn" @click="filtersToggle = !filtersToggle"/>
+          <input
+            class="searchInput"
+            type="text"
+            @keyup.enter="$store.dispatch('refreshjobs', {})"
+            :value="jFilters.txt"
+            @input="$store.dispatch('filterUpd', {prop: 'txt', value: $event.target.value})"
+            placeholder="Введите ключевые слова"
+          >
+          <!-- <q-btn 
+            @click="$store.dispatch('refreshjobs', {})"
+            class="headerBtns1 searchBtn"
+            style="background-color: var(--violet-btn-color); margin-left: -15px; padding: 0 12px;"
+            text-color="white"
+            :label="$t('filters.searchBtn')"
+          /> -->
+          <button
+            @click="$store.dispatch('refreshjobs', {})"
+            class="headerBtns1 searchBtn"
+          >
+            <span class="noshow-below550">{{$t('filters.searchBtn')}}</span>
+          </button>
+        </div>
       </div>
     </div>
     <div class="jobs__main">
@@ -35,7 +41,7 @@
       </div>
       <div class="jobs__contents">
         <div class="line jobs_prefilters">
-          <div class="prefilters-leftwrap">
+          <!-- <div class="prefilters-leftwrap"> -->
             <span class="jobs__prefilters-label">Сортировка:</span>
             <button class="orderLink">
               {{$t('jobs.dateOpts')[jFilters.timerange]}}
@@ -67,8 +73,8 @@
                 </q-item>
               </q-menu>
             </button>
-          </div>
-          <div class="prefilters-rightwrap">
+          <!-- </div>
+          <div class="prefilters-rightwrap"> -->
             <span class="jobs__prefilters-label">Отображать:</span>
             <button class="orderLink">
               {{$t('jobs.perpageOpts')[jFilters.perpage]}}
@@ -85,7 +91,7 @@
                 </q-item>
               </q-menu>
             </button>
-          </div>
+          <!-- </div> -->
         </div>
         <JobsList/>
         <div v-if="pages && pages > 0" class="paginationWrap">
@@ -153,7 +159,7 @@ export default {
   display flex
   flex-direction column
   position relative
-  padding 0px 0px
+  padding 0px 20px
   .jobs__banner
     display flex
     text-align left
@@ -166,6 +172,7 @@ export default {
       margin-bottom 20px
     @media screen and (max-width 550px)
       justify-content center
+      padding-top 0
   .banner__pic
     --bsize 68px
     width var(--bsize)
@@ -191,6 +198,7 @@ export default {
       margin-bottom 6px
     @media screen and (max-width 550px)
       display none
+      height auto
   .banner__header
     margin-left: 30px
     color: var(--color1)
@@ -202,10 +210,16 @@ export default {
     @media screen and (max-width 800px)
       margin-left 6px
       line-height: 130% !important
+  .jobs__banner-right
+    @media screen and (max-width 550px)
+      width 100%
+      // padding 0 20px
   .jobs__top-search
     display flex
     @media screen and (max-width 550px)
-      margin-top 15px
+      margin-top 0px
+      width 100%
+      position relative
   .jobsfilter__search
     box-sizing border-box
     width 100%
@@ -231,7 +245,7 @@ export default {
     @media screen and (max-width 550px)
       //margin 0 5px
       margin 0
-      padding 0 5px
+      padding 0px
       //width calc(100% - 30px)
       
     // @media screen and (max-width 800px)
@@ -269,6 +283,9 @@ export default {
       outline none
     &:hover
       color var(--color1)
+    @media screen and (max-width 550px)
+      font-size: 13px;
+      line-height: 16px;
   .currentPage
     font-weight bold
   .orderLink
@@ -286,17 +303,34 @@ export default {
     background-position right 3px center
     padding-right 18px
     &:nth-of-type(1)
-      padding-left 16px
-      @media screen and (max-width: 950px)
+      // padding-left 16px
+      margin-right auto
+      @media screen and (max-width 950px)
         padding-left 0px
+    &:nth-of-type(2)
+      margin-right auto
     &:hover
       color var(--color1)
+    @media screen and (max-width 550px)
+      border: 0.5px solid #8645FF;
+      box-sizing: border-box;
+      box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.15);
+      border-radius: 5px;
+      background-image none
+      font-weight: 500 !important;
+      font-size: 10px;
+      line-height: 12px;
+      height 22px
+      width 99px
+      padding 0
   .paginationWrap
     padding 22px 0
     padding-bottom 10px//32
     @media screen and (max-width: 1160px)
       padding 12px 0
       padding-bottom 6px//22
+    @media screen and (max-width 550px)
+      padding-top 7px
 .searchInput
   width 822px
   padding 0 26px
@@ -321,34 +355,69 @@ export default {
     width calc(72vw - 16px)
     height: 36px !important
   @media screen and (max-width 550px)
-    padding 0 8px
-    width calc(72vw - 40px)
-    letter-spacing -1px
+    padding 0 60px 0 42px
+    width 100%//calc(72vw - 40px)
+    // letter-spacing -1px
+    font-size: 10px !important
+    line-height: 12px !important
+    height: 35px !important
 .searchBtn
+  background-color: var(--violet-btn-color) !important
+  margin-left: -15px
+  padding: 0 15px !important
+  border 0
+  color white
+  text-transform uppercase
+  cursor pointer
+  &:hover
+    background-color var(--violet2) !important
+  &:focus
+    outline none
   @media screen and (max-width 550px)
     padding 0 4px !important
+    background-color transparent !important
+    width 20px
+    height 20px !important
+    background url('/statics/search-mobile.png')
+    background-repeat no-repeat
+    background-position center
+    position absolute
+    right 8px
+    top calc(50% - 10px)
+    &:hover
+      background-color transparent !important
+      filter: brightness(1.5)
 .filtersHamburgerBtn
   display none
   border 0
-  color white
-  background-color var(--btn-color)
+  background-color transparent
+  // background-color var(--btn-color)
+  background url('/statics/filter-burger.png')
+  background-repeat no-repeat
+  background-position center
   align-self center
-  padding 5px
   cursor pointer
-  margin 0 5px
-  border-radius 10px
-  min-width 28px
-  height 36px
-  font-size 20px
+  // margin 0 5px
+  margin-left 12px
+  min-width 14px
+  height 15px
+  position absolute
   &:hover
-    background-color var(--btn-color1) !important
+    // background-color var(--btn-color1) !important
+    filter: brightness(1.5)
   &:active
-    background-color var(--btn-color1) !important
-    box-shadow 0 2px 3px 1px #bbb
+    // background-color var(--btn-color1) !important
+    // box-shadow 0 2px 3px 1px #bbb
+    filter: brightness(1.5)
   &:focus
     outline none
   @media screen and (max-width 550px)
     display block
+.prefilters-leftwrap
+  @media screen and (max-width 550px)
+    width 63%
+    display flex
+    justify-content space-between
 .jobs__prefilters-label
   color black
   font-family: Montserrat, sans-serif !important
@@ -360,6 +429,8 @@ export default {
     display none
   @media screen and (max-width: 800px)
     display inline
+  @media screen and (max-width 550px)
+    display none
 
 
 </style>

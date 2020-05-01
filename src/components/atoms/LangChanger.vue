@@ -41,6 +41,14 @@ export default {
     outline-color var(--violet-btn-color)
   @media screen and (max-width 800px)
     margin-left 20px
+  @media screen and (max-width 550px)
+    font-family: Montserrat;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 12px;
+    background-image url('~assets/arrow1-mobile.png')
+    padding-right 12px
+    margin-left 0
 .lang-item
   line-height 2.2
   color var(--color1)

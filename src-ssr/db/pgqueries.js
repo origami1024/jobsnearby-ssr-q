@@ -1212,7 +1212,8 @@ async function getCVHitsHistory(req, res) {
 const getJobs = (req, res) => {
   console.log(req.query)
   let perpage = '25'
-  if (req.query.perpage === '50') perpage = '50'
+  if (req.query.perpage === '10') perpage = '10'
+  else if (req.query.perpage === '50') perpage = '50'
   else if (req.query.perpage === '100') perpage = '100'
   // console.log('cpGetJobs, txt: ', req.query)
   let txt

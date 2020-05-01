@@ -11,10 +11,10 @@
           </span>
           <q-tooltip transition-show="rotate"
           transition-hide="rotate">
-            <p style="font-size: 15px; margin: 0">{{$t('App.logoTooltip')}}</p>
+            <p style="font-size: 14px; margin: 0">{{$t('App.logoTooltip')}}</p>
           </q-tooltip>
         </router-link>
-        <div class="lowres__header-right">
+        <!-- <div class="lowres__header-right"> -->
           <div id="nav">
             <router-link
               class="headerBtn"
@@ -30,7 +30,7 @@
               @click.native="$store.dispatch('newJobInitAJ')"
               v-if="user.role == 'company'"
               class="headerBtns1 headerBtnRed"
-              text-color="white" 
+              text-color="white"
               :label="$t('App.newJobHint')"
               rounded
               to="/addJob"
@@ -46,7 +46,7 @@
           </div>
           <div id="authmenu">
             <div class="colx user-status-bar">
-              <q-btn 
+              <!-- <q-btn 
                 style="background-color: var(--violet-btn-color);"
                 class="headerBtns1 violetBtns"
                 text-color="white"
@@ -54,7 +54,17 @@
                 @click.native="regState='login'"
                 v-if="user.role && user.role.startsWith('guest')"
                 to="/registration"
-              />
+              /> -->
+              <router-link 
+                style="font-family: Montserrat, sans-serif; padding: 0 20px; font-weight: 600; font-size: 14px;
+                  color: #fff; line-height: 40px; text-transform: uppercase; text-decoration: none;"
+                class="headerBtns1 violetBtns loginbtn"
+                @click.native="regState='login'"
+                v-if="user.role && user.role.startsWith('guest')"
+                to="/registration"
+              >
+                <span class="noshow-below550">{{$t('App.login')}}</span>
+              </router-link>
               <router-link
                 v-if="user.role && user.role === 'subscriber'"
                 class="headerBtn marginLeft30pxOnBig"
@@ -103,8 +113,8 @@
               </router-link>
             </div>
           </div>
-          <LangChanger/>
-        </div>
+          <LangChanger class="header__langchanger" />
+        <!-- </div> -->
         <q-ajax-bar
           position="bottom"
           color="red"
@@ -117,20 +127,20 @@
     </keep-alive>
     <footer class="main__footer">
       <ul class="footer__ul-top">
-        <li>
+        <li class="li1">
           <h3>О нас</h3>
           <ul>
             <li><a href="#">Наши вакансии</a></li>
             <li><router-link to="/feedback">Реклама на сайте</router-link></li>
           </ul>
         </li>
-        <li>
+        <li class="li2">
           <h3>Соискателю</h3>
           <ul>
             <li><a href="#">Рассылка вакансий</a></li>
           </ul>
         </li>
-        <li>
+        <li class="li3">
           <h3>Работодателю</h3>
           <ul>
             <li>
@@ -143,8 +153,8 @@
             </li>
           </ul>
         </li>
-        <li>
-          <h3>Контакты</h3>
+        <li class="li4">
+          <h3 class="noshow-below550">Контакты</h3>
           <ul>
             <li>
               <q-btn
