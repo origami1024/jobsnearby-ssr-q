@@ -29,7 +29,7 @@
             <q-btn 
               @click.native="$store.dispatch('newJobInitAJ')"
               v-if="user.role == 'company'"
-              class="headerBtns1 headerBtnRed"
+              class="headerBtns1 headerBtnRed addJobMargin550"
               text-color="white"
               :label="$t('App.newJobHint')"
               rounded
@@ -38,7 +38,7 @@
             <q-btn
               @click.native="authPls"
               v-else-if="user.role != 'subscriber'"
-              class="headerBtns1 headerBtnRed"
+              class="headerBtns1 headerBtnRed addJobMargin550"
               text-color="white" 
               :label="$t('App.newJobHint')"
               to="/registration"
@@ -158,7 +158,7 @@
           <ul>
             <li>
               <q-btn
-                class="headerBtns1 violetBtns footerLinkFB" 
+                class="headerBtns1 violetBtns footerLinkFB"
                 to="/feedback"
                 :label="$t('App.fbBtnLabel')"
               />

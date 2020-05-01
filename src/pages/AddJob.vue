@@ -1,10 +1,12 @@
 <template>
   <div class="addJob">
-    <p class="pageHeader" v-if="props.newJobsPageType === 'new'">{{$t('addJob.pTypeNewLabel')}}</p>
-    <p class="pageHeader" v-else>{{$t('addJob.pTypeEditLabel')}}</p>
+    <p class="pageHeader noshow-below550" v-if="props.newJobsPageType === 'new'">{{$t('addJob.pTypeNewLabel')}}</p>
+    <p class="pageHeader noshow-below550" v-else>{{$t('addJob.pTypeEditLabel')}}</p>
     <transition name="bounce">
       <div v-if="user.role === 'company' && props.sent == 'none'" class="jobpage__wrapper" :key="1" style="display: flex; flex-direction: column; align-items: center">
-        <div style="width: 586px;">
+        <p class="pageHeader displayblock-only550" v-if="props.newJobsPageType === 'new'">{{$t('addJob.pTypeNewLabel')}}</p>
+        <p class="pageHeader displayblock-only550" v-else>{{$t('addJob.pTypeEditLabel')}}</p>
+        <div class="w586">
           <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
             <!-- <p class="star">*</p> -->
             <p class="startP reqd">{{$t('addJob.titleLabel')}}</p>
@@ -27,7 +29,7 @@
             :lazy-rules="lazyRulesAll"
           />
         </div>
-        <div style="width: 586px;">
+        <div class="w586">
           <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
             <!-- <p class="star"> </p> -->
             <p class="startP">{{$t('addJob.cityLabel')}}</p>
@@ -57,7 +59,7 @@
             :lazy-rules="lazyRulesAll"
           />
         </div>
-        <div style="width: 586px;">
+        <div class="w586">
           <div class="sal-curr-wrap" style="display: flex; justify-content: space-between;"> 
           <div class="sal-wrap">
             <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
@@ -133,7 +135,7 @@
           
         </div>
 
-        <div style="width: 586px">
+        <div class="w586">
           <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
           <p style="color: var(--color1); font-weight: 500; display: block; font-family: Montserrat; font-size: 14px;line-height: 17px; margin-top: 25px; text-align: left;">
             {{$t('addJob.descLabel')}}<span style="color: #c10015"> {{descError}}</span>
@@ -152,7 +154,7 @@
           </div>
         </div>
 
-        <div style="width: 586px">
+        <div class="w586">
           <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
             <p class="startP reqd" style="textAlign: left">{{$t('addJob.contactsLabel')}}</p>
           </div>
@@ -191,7 +193,7 @@
             :lazy-rules="lazyRulesAll"
           />
         </div>
-        <div style="width: 586px">
+        <div class="w586">
           <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
             <p class="startP">{{$t('addJob.jcatLabel')}}</p>
           </div>
@@ -207,7 +209,7 @@
             :hint="null"
           />
         </div>
-        <div style="width: 586px">
+        <div class="w586">
         <q-expansion-item
           ref="exp1"
           dense
@@ -220,7 +222,7 @@
             marginBottom: 10px; text-align:right; align-self: flex-end;"
         >
         
-          <div style="width: 586px">
+          <div class="w586">
             <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
               <p class="startP">{{$t('addJob.expLabel')}}</p>
             </div>
@@ -235,7 +237,7 @@
                 :hint="null"
               />
           </div>
-          <div style="width: 586px">
+          <div class="w586">
             <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
               <p class="startP">{{$t('addJob.jobTypeLabel')}}</p>
             </div>
@@ -250,7 +252,7 @@
               :hint="null"
             />
           </div>
-          <div style="width: 586px">
+          <div class="w586">
             <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
               <p class="startP">{{$t('addJob.labelSchedule')}}</p>
             </div>
@@ -316,7 +318,7 @@
             />
           </div>
           </div>
-          <div style="width: 586px">
+          <div class="w586">
             <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
               <p class="startP">{{$t('addJob.ageLabel')}}</p>
             </div>
@@ -355,7 +357,7 @@
               />
             </div>
           </div>
-          <div style="width: 586px">
+          <div class="w586">
             <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
               <p class="startP">{{$t('addJob.eduLabel')}}</p>
             </div>
@@ -377,7 +379,7 @@
               </q-tooltip>
             </q-input>
           </div>
-          <div style="width: 586px">
+          <div class="w586">
             <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
               <p class="startP">{{$t('addJob.langsLabel')}}</p>
             </div>
@@ -782,9 +784,16 @@ div.q-field__messages
 <style scoped lang="stylus">
 *
   margin 0
+.w586
+  width 586px
+  @media screen and (max-width 550px)
+    width 100%
 .addJob
   // max-width 80%
   width 754px
+  @media screen and (max-width 550px)
+    width 100%
+    padding 0 20px
   .hint
     line-height 22px
     font-size 10px
@@ -795,18 +804,18 @@ div.q-field__messages
     // margin-top 15px
     max-width 754px
     width 754px
-    
     background var(--menubg-color)
     border: 0.5px solid #C2C2C6
     box-sizing: border-box
     border-radius: 10px;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
-    
-    // background-color var(--main-bg-color)//#eee
     padding 10px
     padding-top 45px
     padding-bottom 35px
-    // box-shadow 0 0 3px 1px var(--main-borders-color)
+    @media screen and (max-width 550px)
+      width 100%
+      max-width none
+      padding 26px 34px
   .line
     display flex
     align-items flex-end

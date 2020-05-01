@@ -1,51 +1,53 @@
 <template>
   <div class="feedback">
     <div v-if="state == 'ready'" class="fb_inner">
-      <br>
-      <q-input 
-        v-model="fbData.topic"
-        square
-        dense
-        outlined
-        bg-color="white" color="deep-purple-10" :placeholder="$t('fb.topic')"
-        counter
-        maxlength="75"
-      />
-      <br>
-      <q-input
-        square
-        dense
-        counter
-        maxlength="25"    
-        bg-color="white" color="deep-purple-10" v-model="fbData.name" outlined
-        :placeholder="$t('fb.yourname')"/>
-      <br>
-      <q-input
-        square
-        dense
-        bg-color="white" color="deep-purple-10" v-model="fbData.mail" outlined
-        :placeholder="$t('fb.hyphenMail')"
-        counter
-        maxlength="70"
-        :rules="[
-          val => !!val || $t('fb.mailValReq'),
-          val => mailregex.test(val) || $t('fb.mailValFormat')
-        ]"
-      />        
-      <br>
-      <q-input 
-        maxlength="500"
-        counter
-        square
-        dense
-        outlined
-        bg-color="white" color="deep-purple-10"
-        v-model="fbData.body"
-        type="textarea"
-        :placeholder="$t('fb.textLabel')"
-      />
-      <q-btn class="headerBtns1 headerBtnRed" color="red-10" :label="$t('fb.btnSend')" @click="sendFB" />
-      <!-- unelevated -->
+      <!-- <br> -->
+      <p class="fb__header">{{$t('fb.header')}}</p>
+      <div class="fb__core">
+        <label for="fb_topicInp1" class="fb-label">{{$t('fb.topic')}}</label>
+        <q-input 
+          for="fb_topicInp1"
+          v-model="fbData.topic"
+          dense
+          outlined
+          bg-color="white" color="deep-purple-10"
+          counter
+          maxlength="75"
+        />
+        <label for="fb_yn1" class="fb-label">{{$t('fb.yourname')}}</label>
+        <q-input
+          for="fb_yn1"
+          dense
+          counter
+          maxlength="25"    
+          bg-color="white" color="deep-purple-10" v-model="fbData.name" outlined
+        />
+        <label for="fb_mail" class="fb-label">{{$t('fb.hyphenMail')}}</label>
+        <q-input
+          for="fb_mail"
+          dense
+          bg-color="white" color="deep-purple-10" v-model="fbData.mail" outlined
+          counter
+          maxlength="70"
+          :rules="[
+            val => !!val || $t('fb.mailValReq'),
+            val => mailregex.test(val) || $t('fb.mailValFormat')
+          ]"
+        />        
+        <label for="fb_mail" class="fb-label">{{$t('fb.textLabel')}}</label>
+        <q-input 
+          maxlength="500"
+          counter
+          dense
+          outlined
+          bg-color="white" color="deep-purple-10"
+          v-model="fbData.body"
+          class="fb_textarea"
+          type="textarea"
+        />
+        <q-btn style="margin-top: 15px; min-width: 180px; background-color: var(--violet-btn-color) !important;" class="headerBtns1 headerBtnRed" color="red-10" :label="$t('fb.btnSend')" @click="sendFB" />
+        <!-- unelevated -->
+      </div>
     </div>
     <div v-else class="fb_inner">
       <p>{{
@@ -117,9 +119,83 @@ export default {
   max-width 620px
   width 620px
   min-height 70vh
+  @media screen and (max-width 550px)
+    width 100%
+    max-width none
   .fb_inner
     box-shadow 0 0 3px 1px var(--main-borders-color)
     margin-top 15px
-    
+    background: #EDEEF2;
+    border: 0.5px solid rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
+    border-radius 10px
+    @media screen and (max-width 550px)
+      width calc(100% - 40px)
+      margin 0 20px
+  .fb__core
+    padding 15px 34px
+    padding-bottom 36px
+  .fb__header
+    margin 0
     padding 10px
+    border-bottom 1px solid rgba(134, 69, 255, 0.2) //var(--violet-light)
+    font-family: Montserrat, sans-serif
+    font-size 16px
+    font-weight: bold;
+    color var(--btn-color)
+    text-transform uppercase
+    @media screen and (max-width 550px)
+      font-size: 12px !important
+      line-height: 15px !important
+
+.fb-label
+  color var(--color1)
+  font-family: Montserrat, sans-serif
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: left;
+  margin-bottom: 7px;
+  display: block
+  @media screen and (max-width 550px)
+    margin-bottom: 6px;
+
+</style>
+<style lang="stylus">
+  .feedback .q-field--outlined .q-field__control:before
+    border 0 !important
+  .feedback .q-field__control
+    // outline 2px solid orange
+    font-size: 12px;
+    line-height: 15px;
+    border-radius 10px
+    box-shadow 0px 2px 15px rgba(0, 0, 0, 0.1)
+    height 36px
+    min-height 36px !important
+  .feedback .q-field__native
+    height 36px !important
+    min-height 36px !important
+    padding 0 !important
+  .feedback .q-field__native input
+    height 36px
+  .feedback .q-field__append
+    height 36px
+  .feedback .q-field__bottom
+    padding-right 0
+  .feedback .q-input
+    margin-bottom 0px !important
+
+  .feedback .fb_textarea .q-field__native
+    height 100px !important
+    min-height none !important
+    padding 5px 0 !important
+  .feedback .fb_textarea .q-field__control
+    height auto
+  .feedback .fb_textarea .q-field__native input
+    height auto
+  .feedback .fb_textarea .q-field__append input
+    height auto
+  .feedback .fb_textarea .q-field__control input
+    height auto
 </style>

@@ -360,6 +360,7 @@ export default {
 <style scoped lang="stylus">
 .qtpans
   width 100%
+  min-width 864px
   min-height 60vh
   // box-shadow 0 0 4px 1px var(--main-borders-color)
   // border-radius 4px

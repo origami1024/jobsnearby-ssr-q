@@ -39,7 +39,7 @@
           @toggleFilters="filtersToggle = !filtersToggle"
         />
       </div>
-      <div class="jobs__contents">
+      <div class="jobs__contents" v-if="!filtersToggle">
         <div class="line jobs_prefilters">
           <!-- <div class="prefilters-leftwrap"> -->
             <span class="jobs__prefilters-label">Сортировка:</span>
@@ -159,7 +159,10 @@ export default {
   display flex
   flex-direction column
   position relative
-  padding 0px 20px
+  padding 0px 10px
+  @media screen and (max-width 550px)
+    padding 0px 20px
+    width 100%
   .jobs__banner
     display flex
     text-align left
@@ -286,6 +289,7 @@ export default {
     @media screen and (max-width 550px)
       font-size: 13px;
       line-height: 16px;
+      margin 0 10px
   .currentPage
     font-weight bold
   .orderLink

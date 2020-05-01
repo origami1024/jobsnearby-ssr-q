@@ -174,7 +174,7 @@ export default {
     padding 10px 12px
   @media screen and (max-width 550px)
     // padding 6px
-    padding 18px 15px 20px 15px
+    padding 18px 15px 10px 15px
     width 100% //calc(100% - 5px)
     margin-bottom 15px
   &:hover
@@ -190,7 +190,7 @@ export default {
   .cityAndCompany
     margin-bottom 15px
     @media screen and (max-width 550px)
-      margin-bottom 0
+      margin-bottom 5px
   .city
     //font-size 0.85em
     font-weight: 500;
@@ -203,8 +203,8 @@ export default {
     margin-right: 10px
     @media screen and (max-width 550px)
       // width 50%
-      padding-right: 3px
-      margin-right: 7px
+      padding-right: 5px
+      margin-right: 5px
       font-size: 9px;
       line-height: 20px
   .cityOK
@@ -217,6 +217,7 @@ export default {
     color var(--color1)
     @media screen and (max-width 550px)
       font-size 9px
+      line-height 20px
   .updated__label
     margin-right 5px
     margin-left auto
@@ -229,7 +230,7 @@ export default {
   .salary__outer-wrap
     margin-left 15px
     min-width 100px
-    max-width 150px
+    max-width 145px
     @media screen and (max-width 550px)
       margin-left 0
       margin-top 5px
@@ -289,6 +290,7 @@ export default {
     margin-right auto
     max-width none
     border-bottom 1px solid var(--violet-btn-color)
+    align-self center
     // order 2
   &:hover
     color var(--violet-btn-color)
@@ -383,6 +385,8 @@ export default {
     margin-bottom 10px
   @media screen and (max-width 550px)
     font-size: 12px;
+    line-height: 15px;
+    max-height 30px
     line-height: 130%;
     margin-bottom 5px
     margin-top 8px
@@ -395,7 +399,7 @@ export default {
     color var(--violet-btn-color)
   @media screen and (max-width 550px)
     font-size: 14px;
-    line-height: 17px;
+    line-height 20px
 .cvSentSpan
   align-self center
   @media screen and (max-width 550px)

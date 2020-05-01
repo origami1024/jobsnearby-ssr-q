@@ -277,6 +277,7 @@ export default {
 <style scoped lang="stylus">
 .qtpans
   width 100%
+  min-width 864px
   min-height 60vh
   background var(--menubg-color)
   border: 0.5px solid #C2C2C6

@@ -94,6 +94,7 @@ export default {
     reqMail: 'Поле email обязательное',
     fbSuccess: 'Фидбэк отправлен',
     fbError: 'Ошибка на сервере',
+    header: 'Написать нам',
   },
   companyPage: {
     categoriesHeader: 'Сферы деятельности компании',
