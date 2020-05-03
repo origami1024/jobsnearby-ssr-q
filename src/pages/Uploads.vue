@@ -240,6 +240,7 @@ export default {
 <style scoped lang="stylus">
 .uploads
   max-width 1280px
+  margin-bottom 20px !important
   &__header
     margin-top 16px
     margin-bottom 8px

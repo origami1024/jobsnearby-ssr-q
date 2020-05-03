@@ -7,32 +7,42 @@
       <div v-if="job.is_published != true" style="color: gray; font-size: 14px">
         ({{$t('jobPage.jobNotPublishedYet')}})
       </div>
-      <section class="detailed__line" style="marginBottom: 5px">
-        <div class="detailed__col">
-          <h1 class="titleHeader">{{job.title}}</h1>
-          <p class="salary-deriv" style="font-size: 16px; font-weight: 700; color: #000">{{salary_deriv}}</p>
+      <h1 class="titleHeader">{{job.title}}</h1>
+      <section style="margin-top: -10px; display: flex; justify-content: space-between; marginBottom: 15px;">
+        <div class="detailed__col" style="display: flex; flex-direction: column; justify-content: flex-end">
+          <p class="salary-deriv">{{salary_deriv}}</p>
+          <p class="jobpage__city_company">{{(job.city && job.city.length > 0) ? $t('jobPage.cityWordStart') + job.city : $t('jobPage.cityNotSet')}}</p>
         </div>
-        <div v-if="job.logo_url" class="detailed__logo1" :style="{'background-image': 'url(' + job.logo_url + ')'}" >{{job.logo_url == '' || !job.logo_url ? 'logo placeholder' : ''}}</div>
+        <div class="detailed__col" style="">
+          <img class="detailed__logo1" :src="(job.logo_url && job.logo_url.length > 1) ? job.logo_url : '/statics/logoph.png'">
+          <p class="author-link-wrapper"><a :href="'/companypage?id=' + job.author_id" target="_blank" class="detailed__author-link1 jobpage__city_company">{{job.author}}</a></p>  
+        </div>
+        
       </section>
-      <section style="display: flex; justify-content: space-between">
-        <p>{{job.city}}</p>
-        <p class="author-link-wrapper"><a :href="'/companypage?id=' + job.author_id" target="_blank" class="detailed__author-link1">{{job.author}}</a></p>
-      </section>
+      <!-- <section style="display: flex; justify-content: space-between"></section> -->
       <section v-if="user.role != 'company'">
-        <q-btn
+        <!-- <q-btn
         v-if="!user.ownCVs.find(val=>val.cvjob_id == job.job_id)"
         text-color="white"
         style="background-color: var(--violet-btn-color);alignSelf: center; white-space: nowrap; margin-top:4px; margin-left: 10px; padding: 0 10px; font-weight: 700;"
-        class="headerBtns1 violetBtns"
+        class="sendCVLink"
         dense :label="$t('jobPage.sendCV')"
         @click.prevent="$store.dispatch('hitcv', job.job_id)"
-      />
-      <div 
-        style="margin-left: 20px; alignSelf: flex-end; color: gray"
-        v-else-if="user.role == 'subscriber'"
-      >
-        ({{$t('jobPage.cvAlreadySent')}})
-      </div>
+        /> -->
+        <a
+          v-if="!user.ownCVs.find(val=>val.cvjob_id == job.job_id)"
+          class="sendCVLink"
+          @click.prevent="$store.dispatch('hitcv', job.job_id)"
+          href="#"
+        >
+          {{$t('jobPage.sendCV')}}
+        </a>
+        <div 
+          style="margin-left: 20px; alignSelf: flex-end; color: gray"
+          v-else-if="user.role == 'subscriber'"
+        >
+          ({{$t('jobPage.cvAlreadySent')}})
+        </div>
       </section>
       <section>
         <div>
@@ -103,12 +113,13 @@
       </section>
       <section style="display: flex; justify-content: space-between;">
         <p>{{$t('jobPage.publishedDate')}} {{published}}</p>
-        <p style="font-size: 17px">
-          <svg width="20" height="12" class="bdscolored">
+        <p style="font-size: 17px; display: flex;">
+          <span style="font-size: 10px; line-height: 130%; align-self: center;margin-right: 3px;">{{job.hits_all > 0 ? job.hits_all : 1}}</span>
+          <img src="/statics/eye1.png">
+          <!-- <svg width="20" height="12" class="bdscolored">
             <rect width="18" x="1" y="1" height="10" fill="transparent" stroke-width="2" style="stroke:var(--violet-btn-color)" rx="15"/>
             <circle cx="50%" cy="50%" r="4" style="fill:var(--violet-btn-color)" />
-          </svg>
-          <span>{{job.hits_all > 0 ? job.hits_all : 1}}</span>
+          </svg> -->
         </p>
       </section>
     </main>
@@ -171,24 +182,42 @@ export default {
 *
   margin: 0;
   font-family: 'Montserrat', sans-serif;
+.jobpage
+  padding 20px 0px
+  width 100%
+  @media screen and (max-width 550px)
+    padding 20px 20px
+    padding-top 0
 .detailed__main1
   width: 80%;
   max-width: 850px;
-  background-color: white;
-  padding: 0 15px;
-  padding-top: 10px;
-  border-radius 5px
-  box-sizing border-box
-  box-shadow 0 0 3px 2px var(--main-borders-color)
+  // background-color: white;
+  padding: 20px 15px;
+  // padding-top: 10px;
+  // border-radius 5px
+  // box-sizing border-box
+  // box-shadow 0 0 3px 2px var(--main-borders-color)
   display flex
   flex-direction column
-  
   margin 0 auto
   margin-top 15px
-  //border 1px solid black
+  margin-bottom 20px
+  background: #FFFFFF;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  @media screen and (max-width 550px)
+    width 100%
+    margin-top 0
   .titleHeader
-    font-size 24px !important
-    margin-top 8px
+    text-align left
+    color var(--color1)
+    font-family: Montserrat;
+    font-weight: bold;
+    font-size 20px !important
+    line-height: 150% !important
+    @media screen and (max-width 550px)
+      font-size 14px !important
+      // line-height: 150.4%;
 section
   margin-bottom 15px
   text-align left
@@ -213,38 +242,54 @@ section
   &:hover
     color var(--violet-btn-color)
 .author-link-wrapper
-  min-width var(--logoWidth)
+  // min-width var(--logoWidth)
   
 .detailed__line {
   display: flex;
   justify-content: space-between;
 }
-.detailed__col{
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+// .detailed__col{
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: flex-end;
   
-}
+// }
 .detailed__logo1{
-  text-align center
-  width var(--logoWidth)
-  min-width var(--logoWidth)
-  height 65px
-  // background-size 100% 100%
-  // background-color coral
-  line-height 50px
+  // text-align center
+  width auto //var(--logoWidth)
+  // max-width var(--logoWidth)
+  max-height 65px
+  // line-height 50px
   margin-left 5px
-  // width 180px
-  // height 80px
-  background-size contain
-  background-repeat no-repeat
-  background-position center
+  // background-size contain
+  // background-repeat no-repeat
+  // background-position center
 }
 .detailed__header1
-  color var(--btn-color)
+  color var(--color1)
   margin 10px 0px
   margin-bottom 5px
-  font-size 20px
+  font-family: Montserrat, sans-serif
+  font-weight: bold;
+  line-height: 130%;
+  font-size: 16px;
+  @media screen and (max-width 550px)
+    font-size: 12px;
+  
+.salary-deriv
+  font-size: 16px;
+  font-weight: 700;
+  color var(--violet-btn-color)
+  @media screen and (max-width 550px)
+    font-family: Montserrat, sans-serif
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+.jobpage__city_company
+  @media screen and (max-width 550px)
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 12px;
 .padleft
   padding-left 10px
 .descriptionHTML
@@ -252,6 +297,8 @@ section
   line-height 1.1
   word-wrap break-word
   max-width 100%
+  @media screen and (max-width 550px)
+    font-size: 12px;
 .ql-size-small
   font-size 12px
 .ql-size-large
@@ -263,9 +310,47 @@ section
   padding-bottom 5px
   padding-top 5px
   font-size 14px
+  line-height: 130%;
+  font-weight 500
+  color var(--color1)
+  @media screen and (max-width 550px)
+    font-size: 12px;
+    
+  
 .bdscolored
   color var(--main-borders-color)
   margin-top -2px
   margin-right 2px
   margin-left 10px
+
+.sendCVLink
+  background-color var(--color-graypink)
+  color var(--color1)
+  text-decoration none
+  border: 2px solid var(--violet-btn-color)
+  box-sizing: border-box;
+  border-radius: 10px;
+  font-family: Montserrat, sans-serif
+  font-style: normal;
+  font-weight: 500 !important;
+  font-size: 15px;
+  line-height: 18px;
+  padding 9px 20px
+  padding-right 17px
+  transition-duration 0.25s
+  @media screen and (max-width: 950px)
+    padding 5px 10px
+    padding-right 8px
+    line-height: 26px;
+  @media screen and (max-width 550px)
+    align-self flex-start
+    font-size: 12px !important
+    line-height: 15px !important
+    padding 8px
+    width 100%
+    display block
+    text-align center
+  &:hover
+    background-color var(--violet-btn-color)
+    color white
 </style>

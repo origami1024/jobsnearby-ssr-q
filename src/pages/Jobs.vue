@@ -7,11 +7,12 @@
           <h2 class="banner__header">Найди подходящую вакансию уже сегодня!</h2>
         </div>
         <div class="jobs__top-search">
-          <button class="filtersHamburgerBtn" @click="filtersToggle = !filtersToggle"/>
+          <button class="filtersHamburgerBtn" @click="$store.dispatch('filtersToggle')"/>
           <input
+            style="border:none;"
             class="searchInput"
             type="text"
-            @keyup.enter="$store.dispatch('refreshjobs', {})"
+            @keyup.enter="$store.dispatch('refreshjobs', {}); $store.dispatch('filtersOff')"
             :value="jFilters.txt"
             @input="$store.dispatch('filterUpd', {prop: 'txt', value: $event.target.value})"
             placeholder="Введите ключевые слова"
@@ -24,7 +25,7 @@
             :label="$t('filters.searchBtn')"
           /> -->
           <button
-            @click="$store.dispatch('refreshjobs', {})"
+            @click="$store.dispatch('refreshjobs', {}); $store.dispatch('filtersOff')"
             class="headerBtns1 searchBtn"
           >
             <span class="noshow-below550">{{$t('filters.searchBtn')}}</span>
@@ -34,12 +35,9 @@
     </div>
     <div class="jobs__main">
       <div class="jobs__filterpart">
-        <JobsFilter
-          :filtersToggle="filtersToggle"
-          @toggleFilters="filtersToggle = !filtersToggle"
-        />
+        <JobsFilter/>
       </div>
-      <div class="jobs__contents" v-if="!filtersToggle">
+      <div class="jobs__contents" v-if="!$store.state.jfiltersToggle">
         <div class="line jobs_prefilters">
           <!-- <div class="prefilters-leftwrap"> -->
             <span class="jobs__prefilters-label">Сортировка:</span>
@@ -133,9 +131,9 @@ export default {
       return store.dispatch('refreshJobsData', ssrContext.req.rawjobs)
     }
   },
-  data() {return {
-    filtersToggle: false,
-  }},
+  // data() {return {
+  //   filtersToggle: false,
+  // }},
   components: {
     JobsFilter,
     JobsList,
@@ -330,6 +328,7 @@ export default {
   .paginationWrap
     padding 22px 0
     padding-bottom 10px//32
+    margin-bottom 20px
     @media screen and (max-width: 1160px)
       padding 12px 0
       padding-bottom 6px//22
@@ -338,10 +337,12 @@ export default {
 .searchInput
   width 822px
   padding 0 26px
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+  -webkit-appearance: none;
+  -webkit-box-shadow 0px 0px 15px rgba(0, 0, 0, 0.15) !important
+  box-shadow 0px 0px 15px rgba(0, 0, 0, 0.15) !important
   border-radius: 10px;
   height: 40px !important
-  border: 0
+  border none
   font-family: Montserrat, sans-serif
   font-weight: normal
   font-size: 14px !important
@@ -365,6 +366,7 @@ export default {
     font-size: 10px !important
     line-height: 12px !important
     height: 35px !important
+    // box-shadow: 0px 0px 15px gray
 .searchBtn
   background-color: var(--violet-btn-color) !important
   margin-left: -15px

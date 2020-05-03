@@ -49,6 +49,7 @@ export default {
     background-image url('~assets/arrow1-mobile.png')
     padding-right 12px
     margin-left 0
+    padding-left 0
 .lang-item
   line-height 2.2
   color var(--color1)

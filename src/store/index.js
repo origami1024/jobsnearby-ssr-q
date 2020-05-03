@@ -54,6 +54,12 @@ export default function (/* { ssrContext } */) {
     },
     mutations,
     actions: {
+      filtersOff(context) {
+        context.commit('filtersOff')
+      },
+      filtersToggle(context) {
+        context.commit('filtersToggle')
+      },
       reopenJobById (context, jid) {
         context.commit('reopenJobById', jid)
         let url = '/reopenJobBy.id?jid=' + jid

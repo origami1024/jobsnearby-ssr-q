@@ -4,8 +4,8 @@
     <p class="pageHeader noshow-below550" v-else>{{$t('addJob.pTypeEditLabel')}}</p>
     <transition name="bounce">
       <div v-if="user.role === 'company' && props.sent == 'none'" class="jobpage__wrapper" :key="1" style="display: flex; flex-direction: column; align-items: center">
-        <p class="pageHeader displayblock-only550" v-if="props.newJobsPageType === 'new'">{{$t('addJob.pTypeNewLabel')}}</p>
-        <p class="pageHeader displayblock-only550" v-else>{{$t('addJob.pTypeEditLabel')}}</p>
+        <p style="margin-top: 0; margin-bottom: 16px;" class="pageHeader displayblock-only550" v-if="props.newJobsPageType === 'new'">{{$t('addJob.pTypeNewLabel')}}</p>
+        <p style="margin-top: 0; margin-bottom: 16px;" class="pageHeader displayblock-only550" v-else>{{$t('addJob.pTypeEditLabel')}}</p>
         <div class="w586">
           <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
             <!-- <p class="star">*</p> -->
@@ -68,7 +68,7 @@
             <div class="line">
               <q-input
                 :disable="salaryOn"
-                :style="{width: '150px', marginRight: '40px'}"
+                class="salInputsAdaptable salInput1"
                 dense outlined
                 bg-color="white" color="deep-purple-10"
                 v-model="job.salary_min"
@@ -79,7 +79,7 @@
               />
               <q-input
                 :disable="salaryOn"
-                :style="{width: '150px'}"
+                class="salInputsAdaptable"
                 dense outlined
                 bg-color="white" color="deep-purple-10"
                 v-model="job.salary_max"
@@ -104,13 +104,13 @@
               dense outlined
               bg-color="white" color="deep-purple-10"
               v-model="job.currency"
-              style="width: 150px; lineHeight: 3.2;color: white !important; margin-left: auto;"
+              style="lineHeight: 3.2;color: white !important; margin-left: auto;"
               :options="[
                 {label: $t('addJob.manat'), value: 'm'},
                 {label: $t('addJob.dollars'), value: '$'},
               ]"
               dropdown-icon="none"
-              class="dropdown-padding-adjust"
+              class="salInputsAdaptable dropdown-padding-adjust"
               :hint="null"
               />
             </div>
@@ -737,7 +737,6 @@ export default {
 .addJob .q-field--outlined .q-field__control:before
   border 0 !important
 .addJob .q-field__control
-  // outline 2px solid orange
   font-size: 16px;
   line-height: 15px;
   border-radius 10px
@@ -788,9 +787,18 @@ div.q-field__messages
   width 586px
   @media screen and (max-width 550px)
     width 100%
+.salInputsAdaptable
+  width 150px
+  @media screen and (max-width 550px)
+    width 70px
+.salInput1
+  margin-right 40px
+  @media screen and (max-width 550px)
+    margin-right 14px
 .addJob
   // max-width 80%
   width 754px
+  margin-bottom 70px !important
   @media screen and (max-width 550px)
     width 100%
     padding 0 20px
@@ -816,6 +824,7 @@ div.q-field__messages
       width 100%
       max-width none
       padding 26px 34px
+      margin-bottom 90px
   .line
     display flex
     align-items flex-end

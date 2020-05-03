@@ -319,14 +319,11 @@ export default {
     padding-right 8px
     line-height: 26px;
   @media screen and (max-width 550px)
-    // order 1
-    // margin-bottom 6px
     align-self flex-start
     font-size: 12px !important
     line-height: 15px !important
     padding 8px
   &:hover
-    //color var(--violet-btn-color)
     background-color var(--violet-btn-color)
     color white
 .contactsPanel

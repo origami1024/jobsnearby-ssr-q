@@ -81,6 +81,7 @@ body
         order 4
         width 100%
         justify-content center
+        align-items flex-end !important
       .addJobMargin550
         @media screen and (max-width 550px)
           margin-top 21px
@@ -122,7 +123,7 @@ body
     max-width var(--maxW)
     min-height calc(100vh - 150px - 1.5px - 200px)
     box-sizing border-box
-    margin auto
+    margin 0 auto
   // .logo
   //   //margin-right 10px
   //   font-weight 700
@@ -233,11 +234,11 @@ body
         background-color transparent
         filter: brightness(1.5)
   .noshow-below550
-    @media screen and (max-width: 550px)
+    @media screen and (max-width 550px)
       display none
   .displayblock-only550
     display none
-    @media screen and (max-width: 550px)
+    @media screen and (max-width 550px)
       display block
   .scrollTopBtn
     position fixed
@@ -249,14 +250,18 @@ body
     display flex
     justify-content flex-end
     margin 0 auto
-    margin-top 20px
+    // margin-top 20px
+    margin-top: auto;
     padding-top 30px
     box-sizing border-box
     height 200px
-    max-width var(--maxW)
+    //width 720px
+    width var(--maxW)
     padding 30px 200px 12px 100px
     @media screen and (max-width 950px)
       padding 25px 75px 12px 50px
+      width auto
+      max-width var(--maxW)
     @media screen and (max-width 800px)
       padding 20px 15px 12px 15px
     @media screen and (max-width 550px)
@@ -386,6 +391,9 @@ body
 .nav-icon
   @media screen and (max-width 550px)
     font-size 30px !important
+.nav-icon-upl
+  @media screen and (max-width 550px)
+    font-size 35px !important
 .nav-icon-logout
   @media screen and (max-width 550px)
     font-size 26px !important

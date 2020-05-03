@@ -3,7 +3,7 @@
     <div class="header-wrapper">
       <header>
         <router-link
-          @click.native="$store.dispatch('refreshjobs', {param: 'logoclick'})" to="/"
+          @click.native="$store.dispatch('refreshjobs', {param: 'logoclick'}); $store.dispatch('filtersOff')" to="/"
           class="logolink"
         >
           <span class="logoText">
@@ -18,10 +18,11 @@
           <div id="nav">
             <router-link
               class="headerBtn"
+              style="margin-right: 5px;"
               v-if="user.role === 'company' && user.isagency == true" to="/uploads"
               :style="{color: $route.name != 'uploads' ? 'green' : 'var(--violet-btn-color)'}"
             >
-              <q-icon name="description" style="font-size: 32px;" class="nav-icon multipleUploadsHeader"></q-icon>
+              <q-icon name="description" style="font-size: 32px;" class="nav-icon-upl multipleUploadsHeader"></q-icon>
               <q-tooltip>
                 <p style="font-size: 15px; margin: 0">{{$t('addJob.xlsBtn')}}</p>
               </q-tooltip>

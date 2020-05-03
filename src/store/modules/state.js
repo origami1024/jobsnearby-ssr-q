@@ -41,6 +41,7 @@ export default function () {
       salMax: "",
       tops: [["","",""],["","",""],["","",""],["","",""],["","",""],["","",""]]
     },
+    jfiltersToggle: false,
     jFilters: {
       query: '',
 

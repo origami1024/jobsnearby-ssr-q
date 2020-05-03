@@ -18,58 +18,51 @@
       </q-tabs>
       <q-tab-panels class="registration__inner" :value="regState" animated>
         <q-tab-panel name="login">
-          <form @submit.prevent="trylog" style="margin-top: 12px">
+          <form @submit.prevent="trylog">
             <!-- trylog -->
-            <div style="display:flex; width: 100%; margin-bottom: 10px">
-              <label style="alignSelf: center; width: 120px;margin-bottom: 15px" for="mailInput1">* {{$t('reg.loginEmailLabel')}}</label>
-              <q-input
-                id='mailInput1'
-                name="login__mail"
-                square
-                dense
-                outlined
-                use-input
-                bg-color="deep-purple-1" color="deep-purple-10"
-                v-model="login.mail"
-                hint=""
-                autocomplete="true"
-                :error-message="login.validation.mail"
-                :error="login.validation.mail != ''"
-                style="width: 100%;"
-                @blur="validateMail"
-                @input="login.validation.mail = ''"
-              />
-            </div>
-            <div style="display:flex; width: 100%;">
-              <label style="alignSelf: center; width: 120px;;margin-bottom: 15px" for="pwInput1">* {{$t('reg.loginPWLabel')}}</label>
-              <q-input
-                id='pwInput1'
-                name="login__pw"
-                square
-                dense
-                outlined
-                bg-color="deep-purple-1" color="deep-purple-10"
-                v-model="login.pw"
-                hint=""
-                :error-message="login.validation.pw"
-                :error="login.validation.pw != ''"
-                style="width: 100%;"
-                @blur="validatePW"
-                @input="login.validation.pw = ''"
-              />
-            </div>
+            <!-- use-input -->
+            <label for="mailInput1" class="reg-label">{{$t('reg.loginEmailLabel')}}</label>
+            <q-input
+              for='mailInput1'
+              name="login__mail"
+              dense
+              outlined
+              bg-color="white" color="deep-purple-10"
+              v-model="login.mail"
+              hint=""
+              autocomplete="true"
+              :error-message="login.validation.mail"
+              :error="login.validation.mail != ''"
+              style="width: 100%;"
+              @blur="validateMail"
+              @input="login.validation.mail = ''"
+            />
+            <label for="pwInput1" class="reg-label">{{$t('reg.loginPWLabel')}}</label>
+            <q-input
+              for='pwInput1'
+              name="login__pw"
+              dense
+              outlined
+              bg-color="white" color="deep-purple-10"
+              v-model="login.pw"
+              hint=""
+              :error-message="login.validation.pw"
+              :error="login.validation.pw != ''"
+              style="width: 100%;"
+              @blur="validatePW"
+              @input="login.validation.pw = ''"
+            />
             <div class="row spacebetw">
-              <q-checkbox color="red-10" v-model="login.rememberme" :label="$t('reg.rmeLabel')" />
-              <a href="/forgotten.json" style="alignSelf: center; color:var(--main-borders-color)">{{$t('reg.frgtPWLabel')}}</a>
+              <q-checkbox dense class="rulescb2" color="red-10" style="color: var(--color1);" v-model="login.rememberme" :label="$t('reg.rmeLabel')" />
+              <a href="/forgotten.json" style="alignSelf: center; color:var(--btn-color); font-size: 12px;">{{$t('reg.frgtPWLabel')}}</a>
             </div>
             <q-btn 
-              color="red-10"
+              style="background-color: var(--violet-btn-color); color: white; border-radius: 10px; width: 100%;"
               :label="$t('reg.enterBtn')"
               type="submit"
               :loading="submitting"
               class="submitBtn"
             />
-            <!-- <input type="submit" value="Войти"> -->
             <p v-if="login.status != ''" style="color: #c00; padding: 0; margin: 0; margin-top: 10px">{{login.status}}</p>
             <p v-if="notVerified == true" style="margin: 0; margin-top: 10px; alignSelf: center;">
               <a href="/resend.json" style="color:var(--main-borders-color)">Отправить верификацию еще раз</a>
@@ -78,23 +71,17 @@
         </q-tab-panel>
         <q-tab-panel name="reg">
           <form action="#" @submit.prevent="tryreg">
-            <div style="display:flex; justify-content: space-around; width: 100%; margin-bottom: 10px">
+            <div style="display:flex; color: var(--color1); font-weight: 700; justify-content: space-between; width: 100%; margin-bottom: 10px">
               <q-radio color="red-10" v-model="usertype" dense val="subscriber" :label="$t('reg.radioSub')" />
               <q-radio color="red-10" v-model="usertype" dense val="company" :label="$t('reg.radioCom')" />
             </div>
-            <!-- <div class="line">
-              <input type="radio" v-model="usertype" id="r1" name="usertype" value="subscriber">
-              <label class="twolined" for="r1">Специалист (Ищу работу)</label>
-              <input type="radio" v-model="usertype" id="r2" name="usertype" value="company">
-              <label class="twolined" for="r2">Компания (Работодатель)</label>
-            </div> -->
-            <div v-show="usertype === 'company'" style="display:flex; width: 100%;">
-              <label style="alignSelf: center; width: 120px;margin-bottom: 15px">* {{$t('reg.companyLabel')}}</label>
+            <div v-show="usertype === 'company'">
+              <label for="reg_company" class="reg-label">{{$t('reg.companyLabel')}}</label>
               <q-input
-                square
+                for="reg_company"
                 dense
                 outlined
-                bg-color="deep-purple-1" color="deep-purple-10"
+                bg-color="white" color="deep-purple-10"
                 v-model="company"
                 hint=""
                 style="width: 100%;"
@@ -111,54 +98,48 @@
               <q-checkbox
                 color="red-10" :label="$t('reg.agencyLabel')"
                 v-model="agency"
-                style="font-family: Montserrat, sans-serif;"
+                dense
+                style="font-family: Montserrat, sans-serif; color: var(--color1);"
                 left-label
               />
             </div>
             <div v-show="usertype === 'subscriber'">
-              <div style="display:flex; width: 100%; margin-bottom: 10px">
-                <label style="alignSelf: center; width: 120px;margin-bottom: 15px" for="name2">* {{$t('reg.nameLabel')}}</label>
-                <q-input
-                  id='name2'
-                  square
-                  dense
-                  outlined
-                  bg-color="deep-purple-1" color="deep-purple-10"
-                  v-model="name"
-                  hint=""
-                  :error-message="validation.name"
-                  :error="validation.name != ''"
-                  style="width: 100%;"
-                  @blur="valiRegName"
-                  @input="validation.name = ''"
-                />
-              </div>
-              <div style="display:flex; width: 100%; margin-bottom: 10px">
-                <label style="alignSelf: center; width: 120px;margin-bottom: 15px" for="surname2">* {{$t('reg.surnameLabel')}}</label>
-                <q-input
-                  id='surname2'
-                  square
-                  dense
-                  outlined
-                  bg-color="deep-purple-1" color="deep-purple-10"
-                  v-model="surname"
-                  hint=""
-                  :error-message="validation.surname"
-                  :error="validation.surname != ''"
-                  style="width: 100%;"
-                  @blur="valiRegSurname"
-                  @input="validation.surname = ''"
-                />
-              </div>
-            </div>
-            <div style="display:flex; width: 100%; margin-bottom: 10px">
-              <label style="alignSelf: center; width: 120px;;margin-bottom: 15px" for="mailInput2">* {{$t('reg.loginEmailLabel')}}</label>
+              <!--  style="margin-bottom: 10px" -->
+              <label for="name2" class="reg-label">{{$t('reg.nameLabel')}}</label>
               <q-input
-                id='mailInput2'
-                square
+                for="name2"
                 dense
                 outlined
-                bg-color="deep-purple-1" color="deep-purple-10"
+                bg-color="white" color="deep-purple-10"
+                v-model="name"
+                hint=""
+                :error-message="validation.name"
+                :error="validation.name != ''"
+                style="width: 100%;"
+                @blur="valiRegName"
+                @input="validation.name = ''"
+              />
+              <label for="surname2" class="reg-label">{{$t('reg.surnameLabel')}}</label>
+              <q-input
+                for="surname2"
+                dense
+                outlined
+                bg-color="white" color="deep-purple-10"
+                v-model="surname"
+                hint=""
+                :error-message="validation.surname"
+                :error="validation.surname != ''"
+                style="width: 100%;"
+                @blur="valiRegSurname"
+                @input="validation.surname = ''"
+              />
+            </div>
+              <label for="mailInput2" class="reg-label">{{$t('reg.loginEmailLabel')}}</label>
+              <q-input
+                for='mailInput2'
+                dense
+                outlined
+                bg-color="white" color="deep-purple-10"
                 v-model="mail"
                 hint=""
                 :error-message="validation.mail"
@@ -167,15 +148,12 @@
                 @blur="valiRegMail"
                 @input="validation.mail = ''"
               />
-            </div>
-            <div style="display:flex; width: 100%; margin-bottom: 10px">
-              <label style="alignSelf: center; width: 120px;;margin-bottom: 15px" for="pw2">* {{$t('reg.loginPWLabel')}}</label>
+              <label for="pw2" class="reg-label">{{$t('reg.loginPWLabel')}}</label>
               <q-input
-                id='pw2'
-                square
+                for='pw2'
                 dense
                 outlined
-                bg-color="deep-purple-1" color="deep-purple-10"
+                bg-color="white" color="deep-purple-10"
                 v-model="pw"
                 hint=""
                 :error-message="validation.pw"
@@ -184,15 +162,13 @@
                 @blur="valiRegPW"
                 @input="validation.pw = ''"
               />
-            </div>
-            <div style="display:flex; width: 100%; margin-bottom: 10px">
-              <label style="alignSelf: center; width: 120px;;margin-bottom: 15px; display:flex" for="pwc2"><div style="margin-right: 4px">*</div>{{$t('reg.regConfirmPWLabel')}}</label>
+              <label for="pwc2" class="reg-label">{{$t('reg.regConfirmPWLabel')}}</label>
               <q-input
-                id='pwc2'
+                for='pwc2'
                 square
                 dense
                 outlined
-                bg-color="deep-purple-1" color="deep-purple-10"
+                bg-color="white" color="deep-purple-10"
                 v-model="pwc"
                 hint=""
                 :error-message="validation.pwc"
@@ -201,17 +177,20 @@
                 @blur="valiRegPWC"
                 @input="validation.pwc = ''"
               />
-            </div>
-            
-            <div style="display: flex; flex-direction:row; margin-bottom: 12px">
+            <div style="display: flex; flex-direction:row; margin-bottom: 20px">
               <q-checkbox
-                style="align-self: flex-start;margin-top:-8px" color="red-10" id="rulescb1" v-model="rules" :error-message="validation.rules" :error="validation.rules != ''"/>
-              <label style="text-align: justify;" for="rulescb1">
-                * {{$t('reg.rulesStart')}} <a style="color: var(--btn-color)" href="#">{{$t('reg.rulesLink')}}</a>{{$t('reg.rulesEnd')}}
+                dense
+                style="align-self: flex-start; margin-right: 7px;"
+                color="red-10"
+                id="rulescb1"
+                v-model="rules" :error-message="validation.rules" :error="validation.rules != ''"/>
+              <label class="cb1rules-label" style="padding-top: 3px; color: var(--color1);" for="rulescb1">
+                * {{$t('reg.rulesStart')}} <a class="cb1rules-link" style="color: var(--btn-color); text-decoration: none;" href="#">{{$t('reg.rulesLink')}}</a>{{$t('reg.rulesEnd')}}
               </label>
             </div>
             <q-btn 
-              color="red-10"
+              
+              style="background-color: var(--violet-btn-color); color: white; border-radius: 10px; width: 100%;"
               :label="$t('reg.regBtn')"
               type="submit"
               :loading="submitting"
@@ -555,17 +534,53 @@ export default {
     }
   },
   mounted() {
-    //console.log(this.$route.query.login)
     if (this.$route.query.login == 1) this.$store.dispatch('regStateChange', 'login')
     if (this.$route.query.login == 2) this.$store.dispatch('regStateChange', 'reg')
   }
 }
 </script>
-
+<style lang="stylus">
+.registration__inner .q-field--outlined .q-field__control:before
+  border 0 !important
+.registration__inner .q-field__control
+  font-size: 14px;
+  line-height: 15px;
+  border-radius 10px !important
+  box-shadow 0px 2px 15px rgba(0, 0, 0, 0.1)
+  height 36px
+  min-height 36px !important
+.registration__inner .q-field__native
+  height 36px !important
+  min-height 36px !important
+  padding 0 !important
+.registration__inner .q-field__native input
+  height 36px
+.registration__inner .q-field__append
+  height 36px
+</style>
 <style scoped lang="stylus">
 *
   font-family Montserrat, sans-serif
   font-size 14px
+.tabs .q-tab
+  min-height 36px !important
+.registration .q-tab-panel
+  padding 20px 34px
+// .registration .q-tab-panel form
+//   margin-top 0 !important
+.registration .rulescb2 .q-checkbox__inner
+  left 0px
+  margin-right 0
+  height 20px
+  width 20px
+  min-width 20px
+  margin-right 8px !important
+.registration .rulescb2
+  font-size 14px !important
+  @media screen and (max-width 550px)
+    font-size 12px !important
+
+
 .registration
   padding 15px 0
   margin 0
@@ -575,20 +590,34 @@ export default {
   display flex
   align-items flex-start
   padding-top 50px
+  @media screen and (max-width 550px)
+    padding 15px 20px
   .registration__main
     //border 2px solid black
     width 380px
+    @media screen and (max-width 550px)
+      width 100%
   .registration__inner
-    background-color #fff//#eee
-    border-bottom-left-radius 5px
-    border-bottom-right-radius 5px
-    box-shadow 0 0 4px 1px var(--main-borders-color)
+    // background-color #fff//#eee
+    border-bottom-left-radius 10px
+    border-bottom-right-radius 10px
+    background var(--menubg-color)
+    border: 0.5px solid #C2C2C6
+    box-sizing: border-box
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
   .tabs
     border-top-left-radius 5px
     border-top-right-radius 5px
     box-shadow 0 0 4px 1px var(--main-borders-color)
     color var(--color1)
     font-weight 700
+
+    border-top-left-radius 10px
+    border-top-right-radius 10px
+    background var(--menubg-color)
+    border: 0.5px solid #C2C2C6
+    box-sizing: border-box
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
   form
     display flex
     flex-direction column
@@ -622,7 +651,7 @@ export default {
       margin-left 5px
     .spacebetw
       justify-content space-between
-      margin-bottom 5px
+      margin-bottom 26px
     // #rulescb
     //   display inline
     //   margin-right 5px
@@ -634,4 +663,30 @@ export default {
   width 45%
   font-weight 700
   letter-spacing 2px
+
+.reg-label
+  color var(--color1)
+  font-family: Montserrat, sans-serif
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: left;
+  margin-bottom: 7px;
+  display: block
+  @media screen and (max-width 550px)
+    margin-bottom: 6px;
+
+.cb1rules-label
+  font-size 14px
+  line-height 17px
+  @media screen and (max-width 550px)
+    font-size 11px
+    line-height 13px
+.cb1rules-link
+  font-size 14px
+  line-height 17px
+  @media screen and (max-width 550px)
+    font-size 11px
+    line-height 13px
+
 </style>

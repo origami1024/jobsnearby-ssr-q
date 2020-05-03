@@ -105,8 +105,8 @@ export default {
   jobPage: {
     jobClosed: 'Вакансия закрыта',
     reason: 'причина',
-    sendCV: 'Подать резюме',
-    cvAlreadySent: 'Резюме уже подано',
+    sendCV: 'Отправить резюме',
+    cvAlreadySent: 'Резюме отправлено',
     reqs: 'Требования',
     none: 'Не указаны',
     expNone: 'Без опыта.',
@@ -131,6 +131,8 @@ export default {
     publishedDate: 'Дата публикации:',
     salaryNone: 'по итогам собеседования',
     jobNotPublishedYet: 'Вакансия будет видна в общем списке после проверки модератором',
+    cityWordStart: 'г.',
+    cityNotSet: 'Город не указан',
   },
   App: {
     login: 'Вход',
@@ -256,7 +258,7 @@ export default {
     loginEmailLabel: 'Email',
     loginPWLabel: 'Пароль',
     rmeLabel: 'Запомнить меня',
-    frgtPWLabel: 'Забыл пароль?',
+    frgtPWLabel: 'Забыли пароль?',
     enterBtn: 'Войти',
     radioSub: 'Специалист',
     radioCom: 'Компания',

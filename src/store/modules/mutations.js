@@ -1,4 +1,10 @@
 export default {
+  filtersToggle(state) {
+    state.jfiltersToggle = !state.jfiltersToggle
+  },
+  filtersOff(state) {
+    state.jfiltersToggle = false
+  },
   reopenJobById(state, jid) {
     state.user.ownJobs.find(val=>val.job_id == jid).is_closed = false
   },

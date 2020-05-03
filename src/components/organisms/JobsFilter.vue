@@ -1,10 +1,10 @@
 <template>
-  <div class="jobsfilter" :class="{ filtersHideBelow550: !filtersToggle}">
+  <div class="jobsfilter" :class="{ filtersHideBelow550: !$store.state.jfiltersToggle}">
     <span class="line0">
       <h3 class="filter__header">
         Расширенный поиск:
       </h3>
-      <button class="closeModal" @click="$emit('toggleFilters')">╳</button>
+      <button class="closeModal" @click="$store.dispatch('filtersOff')">╳</button>
       <!-- ✕ -->
     </span>
     <span class="lowresline">
@@ -55,7 +55,7 @@
       <q-btn
         v-if="$store.getters.isResetShown"
         class="headerBtns1 trashBg"
-        @click="$store.dispatch('resetFilters'); if (filtersToggle == true) $emit('toggleFilters')"
+        @click="$store.dispatch('resetFilters'); $store.dispatch('filtersOff')"
       />
       <q-btn
         :loading="pending"
@@ -80,7 +80,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'JobsFilter',
   props: {
-    filtersToggle: {type: Boolean, default: false},
+    // filtersToggle: {type: Boolean, default: false},
     pending: {type: Boolean, default: false},
   },
   computed: {
@@ -89,7 +89,7 @@ export default {
   methods: {
     applyFilters() {
       this.$store.dispatch('refreshjobs', {})
-      if (this.filtersToggle == true) this.$emit('toggleFilters')
+      this.$store.dispatch('filtersOff')
     }
   },
   components: {
