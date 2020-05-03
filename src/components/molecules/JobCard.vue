@@ -50,7 +50,7 @@
         <a class="showContactsLink show550" @click.prevent="isContactsShown = !isContactsShown" href="#">
           {{$t('jc.contactsLabel_mobile')}}
         </a>
-        <a v-if="user.role != 'company' && !cved" class="sendCVLink" @click.prevent="$store.dispatch('hitcv', job.job_id)" href="#">
+        <a v-if="user.role != 'company' && !cved" class="sendCVLink" @click.prevent="$store.dispatch('hitcv', {job_id: job.job_id, notif: $q.notify, firstNote: $t('App.firstCVNote'), onlyReg: $t('App.onlyRegisteredCV')})" href="#">
           {{$t('jc.sendCVLabel')}}
         </a>
         <div v-else-if="user.role == 'subscriber'" class="cvSentSpan">
@@ -169,9 +169,12 @@ export default {
   border-radius: 10px;
   margin-bottom 18px
   padding 19px 30px
+  min-width 551px
   @media screen and (max-width 950px)
     margin-bottom 10px
     padding 10px 12px
+  @media screen and (max-width 800px)
+    min-width auto
   @media screen and (max-width 550px)
     // padding 6px
     padding 18px 15px 10px 15px

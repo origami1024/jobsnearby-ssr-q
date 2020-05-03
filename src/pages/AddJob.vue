@@ -258,7 +258,7 @@
             </div>
             <div class="line">
             <q-input
-              :style="{width: '150px', marginRight: '40px'}"
+              class="salInputsAdaptable salInput1"
               dense
               outlined
               bg-color="white" color="deep-purple-10"
@@ -275,7 +275,8 @@
               :lazy-rules="lazyRulesAll"
             />
             <q-input
-              :style="{width: '150px', marginRight: '10px'}"
+              :style="{marginRight: '10px'}"
+              class="salInputsAdaptable"
               dense
               outlined
               bg-color="white" color="deep-purple-10"
@@ -297,9 +298,9 @@
               dense
               outlined
               dropdown-icon="none"
-              class="dropdown-padding-adjust"
+              class="salInputsAdaptable2 dropdown-padding-adjust"
               bg-color="white" color="deep-purple-10"
-              style="width: 150px; margin-left: auto;"
+              style="margin-left: auto;"
               use-input
               input-debounce="0"
               fill-input
@@ -791,6 +792,10 @@ div.q-field__messages
   width 150px
   @media screen and (max-width 550px)
     width 70px
+.salInputsAdaptable2
+  width 150px
+  @media screen and (max-width 550px)
+    width 105px
 .salInput1
   margin-right 40px
   @media screen and (max-width 550px)

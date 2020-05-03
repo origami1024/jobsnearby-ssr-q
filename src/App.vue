@@ -7,7 +7,7 @@
           class="logolink"
         >
           <span class="logoText">
-            HUNAR<span style="color: #8645FF;">MEN</span>
+            HUNAR<span style="color: #8645FF; margin-right: -7px">MEN</span>
           </span>
           <q-tooltip transition-show="rotate"
           transition-hide="rotate">
@@ -30,7 +30,7 @@
             <q-btn 
               @click.native="$store.dispatch('newJobInitAJ')"
               v-if="user.role == 'company'"
-              class="headerBtns1 headerBtnRed addJobMargin550"
+              class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
               text-color="white"
               :label="$t('App.newJobHint')"
               rounded
@@ -39,11 +39,11 @@
             <q-btn
               @click.native="authPls"
               v-else-if="user.role != 'subscriber'"
-              class="headerBtns1 headerBtnRed addJobMargin550"
+              class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
               text-color="white" 
               :label="$t('App.newJobHint')"
               to="/registration"
-            />            
+            />
           </div>
           <div id="authmenu">
             <div class="colx user-status-bar">

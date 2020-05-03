@@ -34,7 +34,9 @@
             </div>
           </div>
           <!-- <div style="margin-bottom: 15px;">{{user.cvurl}}</div> -->
-          <q-btn style="align-self:flex-end;" dense class="headerBtns1" v-if="user.cvurl != null && user.cvurl != ''" color="red-10" :label="$t('sub.deleteCVBtn')" @click="cvdel" />
+          <div style="max-width: 300px; display: flex; width: 100%;">
+            <q-btn style="margin-left: auto;" dense class="headerBtns1" v-if="user.cvurl != null && user.cvurl != ''" color="red-10" :label="$t('sub.deleteCVBtn')" @click="cvdel" />
+          </div>
         </q-tab-panel>
         <q-tab-panel name="sentCVS">
           <HitsList
@@ -367,7 +369,7 @@ export default {
   width 100%
 
 .subProfilePaddings
-  padding: 60px 80px 35px 80px;
+  padding: 40px 80px 35px 80px
   @media screen and (max-width 550px)
     padding 30px 34px
 </style>

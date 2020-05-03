@@ -133,6 +133,7 @@ export default {
     @media screen and (max-width 550px)
       width calc(100% - 40px)
       margin 0 20px
+      margin-bottom 20px
   .fb__core
     padding 15px 34px
     padding-bottom 36px

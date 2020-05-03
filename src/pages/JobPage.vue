@@ -8,7 +8,7 @@
         ({{$t('jobPage.jobNotPublishedYet')}})
       </div>
       <h1 class="titleHeader">{{job.title}}</h1>
-      <section style="margin-top: -10px; display: flex; justify-content: space-between; marginBottom: 15px;">
+      <section style="margin-top: -15px; display: flex; justify-content: space-between; marginBottom: 15px;">
         <div class="detailed__col" style="display: flex; flex-direction: column; justify-content: flex-end">
           <p class="salary-deriv">{{salary_deriv}}</p>
           <p class="jobpage__city_company">{{(job.city && job.city.length > 0) ? $t('jobPage.cityWordStart') + job.city : $t('jobPage.cityNotSet')}}</p>
@@ -21,22 +21,22 @@
       </section>
       <!-- <section style="display: flex; justify-content: space-between"></section> -->
       <section v-if="user.role != 'company'" style="margin-bottom: 20px;">
-        <!-- <q-btn
+        <q-btn
         v-if="!user.ownCVs.find(val=>val.cvjob_id == job.job_id)"
         text-color="white"
-        style="background-color: var(--violet-btn-color);alignSelf: center; white-space: nowrap; margin-top:4px; margin-left: 10px; padding: 0 10px; font-weight: 700;"
-        class="sendCVLink"
+        style="alignSelf: center; white-space: nowrap; margin-top:4px; margin-left: 10px; padding: 0 10px; font-weight: 700;"
+        class="headerBtns1 headerBtnRed"
         dense :label="$t('jobPage.sendCV')"
         @click.prevent="$store.dispatch('hitcv', job.job_id)"
-        /> -->
-        <a
+        />
+        <!-- <a
           v-if="!user.ownCVs.find(val=>val.cvjob_id == job.job_id)"
           class="sendCVLink"
           @click.prevent="$store.dispatch('hitcv', job.job_id)"
           href="#"
         >
           {{$t('jobPage.sendCV')}}
-        </a>
+        </a> -->
         <div 
           style="margin-left: 20px; alignSelf: flex-end; color: gray"
           v-else-if="user.role == 'subscriber'"
@@ -114,7 +114,7 @@
       <section style="margin-bottom: 0; display: flex; justify-content: space-between;">
         <p class="date-p">{{$t('jobPage.publishedDate')}} {{published}}</p>
         <p style="font-size: 17px; display: flex;">
-          <span style="font-size: 10px; line-height: 130%; align-self: center;margin-right: 3px;">{{job.hits_all > 0 ? job.hits_all : 1}}</span>
+          <span class="eyes" style="align-self: center;margin-right: 3px;">{{job.hits_all > 0 ? job.hits_all : 1}}</span>
           <img src="/statics/eye1.png">
           <!-- <svg width="20" height="12" class="bdscolored">
             <rect width="18" x="1" y="1" height="10" fill="transparent" stroke-width="2" style="stroke:var(--violet-btn-color)" rx="15"/>
@@ -258,7 +258,7 @@ section
   // text-align center
   width auto //var(--logoWidth)
   // max-width var(--logoWidth)
-  max-height 65px
+  max-height 45px
   // line-height 50px
   margin-left 5px
   // background-size contain
@@ -266,7 +266,7 @@ section
   // background-position center
 }
 .detailed__header1
-  color var(--color1)
+  color var(--btn-color)
   margin 0
   margin-bottom 10px
   font-family: Montserrat, sans-serif
@@ -283,8 +283,15 @@ section
   font-size: 13px;
   line-height: 15px;
   @media screen and (max-width 550px)
-    font-size: 9px;
+    font-size: 10px;
     line-height: 11px;
+.eyes
+  font-size 13px
+  line-height: 130%;
+  font-weight 500
+  color var(--color1)
+  @media screen and (max-width 550px)
+    font-size: 10px;
 .salary-deriv
   font-size: 16px;
   font-weight: 700;
@@ -295,6 +302,7 @@ section
     font-size: 14px;
     line-height: 17px;
 .jobpage__city_company
+  margin-top 5px
   @media screen and (max-width 550px)
     font-weight: 500;
     font-size: 10px;

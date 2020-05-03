@@ -130,10 +130,11 @@ export default function (/* { ssrContext } */) {
         })
         
       },
-      async hitcv (context, job_id) {
+      async hitcv (context, {job_id, notif, firstNote, onlyReg}) {
         if (context.state.user.role == 'subscriber') {
           if (!context.state.user.cvurl || context.state.user.cvurl.length < 5) {
             this.$router.push("/subprofile")
+            notif({html: true, message: firstNote})
             return false
           }
           let hitcvUrl = '/hitjobcv?jid=' + job_id
@@ -146,7 +147,7 @@ export default function (/* { ssrContext } */) {
             })
         } else if (context.state.user.role != 'company') {
           this.$router.push("/registration")
-          this.$q.notify({html: true, message: this.$t('App.onlyRegisteredCV')})
+          notif({html: true, message: onlyReg})
           return false
         }
       },

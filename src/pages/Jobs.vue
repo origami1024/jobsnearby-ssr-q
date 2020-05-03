@@ -41,7 +41,7 @@
         <div class="line jobs_prefilters">
           <!-- <div class="prefilters-leftwrap"> -->
             <span class="jobs__prefilters-label">Сортировка:</span>
-            <button class="orderLink">
+            <button class="orderLink dateLink">
               {{$t('jobs.dateOpts')[jFilters.timerange]}}
               <q-menu dense>
                 <q-item
@@ -304,11 +304,14 @@ export default {
     background-repeat no-repeat
     background-position right 3px center
     padding-right 18px
+    margin-right auto
     &:nth-of-type(1)
       // padding-left 16px
-      margin-right auto
+      margin-right 0
       @media screen and (max-width 950px)
         padding-left 0px
+      @media screen and (max-width 550px)
+        margin-right auto
     &:nth-of-type(2)
       margin-right auto
     &:hover
@@ -325,6 +328,7 @@ export default {
       height 22px
       width 99px
       padding 0
+      margin-right 0
   .paginationWrap
     padding 22px 0
     padding-bottom 10px//32
@@ -375,6 +379,7 @@ export default {
   color white
   text-transform uppercase
   cursor pointer
+  width 110px
   &:hover
     background-color var(--violet2) !important
   &:focus

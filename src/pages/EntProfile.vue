@@ -447,11 +447,13 @@ export default {
     text-overflow ellipsis
     font-family: Montserrat, sans-serif
     font-weight: normal;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17px;
     font-weight: 500;
     &:hover
       color var(--btn-color) !important
+    @media screen and (max-width 550px)
+      font-size 14px
   .responseLinkLvl2
     color var(--violet-btn-color)
     text-align left
@@ -496,14 +498,14 @@ export default {
   color var(--color1)
   font-family: Montserrat, sans-serif
   font-weight: 500;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 17px;
   text-align: left;
   margin-bottom: 7px;
   display: block
 
 .entProfilePaddings
-  padding: 60px 80px 35px 80px;
+  padding: 40px 80px 35px 80px;
   @media screen and (max-width 550px)
     padding 30px 34px
 </style>
@@ -535,7 +537,7 @@ export default {
   border 0 !important
 .entprofile__inp .q-field__control
   // outline 2px solid orange
-  font-size: 12px;
+  font-size: 15px;
   line-height: 15px;
   border-radius 10px
   box-shadow 0px 2px 15px rgba(0, 0, 0, 0.1)
@@ -557,7 +559,7 @@ export default {
 
 .entprofile__desc-inp .q-field__control
   // outline 2px solid orange
-  font-size: 12px;
+  font-size: 15px;
   line-height: 15px;
   border-radius 10px
   box-shadow 0px 2px 15px rgba(0, 0, 0, 0.1)
@@ -569,7 +571,7 @@ export default {
   padding-right 0
 
 .entprofile__domains-inp .q-field__control
-  font-size: 12px;
+  font-size: 15px;
   line-height: 15px;
   border-radius 10px
   box-shadow 0px 2px 15px rgba(0, 0, 0, 0.1)
