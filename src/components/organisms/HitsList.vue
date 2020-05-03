@@ -3,14 +3,14 @@
     <div>
       <!-- {{cvhitsHistory}} -->
       
-      <table style="width:100%">
+      <table style="box-sizing: border-box; width:100%;">
         <thead>
           <tr>
             <td style="width: 30%; min-width: 30%; max-width: 30%; text-align: left">{{$t('hits.job')}}</td>
             <td style="width: 25%; min-width: 25%; max-width: 25%;">{{$t('hits.company')}}</td>
             <td style="width: 15%; min-width: 15%; max-width: 15%;">{{$t('hits.remarks')}}</td>
-            <td style="width: 15%; min-width: 15%; max-width: 15%;">{{$t('hits.sent')}}</td>
-            <td style="width: 15%; min-width: 15%; max-width: 15%;">{{$t('hits.seen')}}</td>
+            <td class="noshow-below550" style="width: 15%; min-width: 15%; max-width: 15%;">{{$t('hits.sent')}}</td>
+            <td class="noshow-below550" style="width: 15%; min-width: 15%; max-width: 15%;">{{$t('hits.seen')}}</td>
           </tr>
         </thead>
         <tr class="jobstat" v-for="item in cvhitsHistory" :key="item.cvjob_id">
@@ -27,10 +27,10 @@
               {{$t('hits.closed')}}
             </span>
           </td>
-          <td>
+          <td class="noshow-below550">
             {{formatDate(item.date_created)}}
           </td>
-          <td>
+          <td class="noshow-below550">
             <span v-if="item.date_checked != null">
               {{formatDate(item.date_checked)}}
             </span>
@@ -75,9 +75,10 @@ export default {
 *
   margin 0
 .hitslist
+  padding-top 15px
   box-sizing border-box
   width 100%
-  min-width 300px
+  // min-width 300px
   table
     border-spacing 0
     thead
@@ -87,16 +88,15 @@ export default {
     td
       padding 3px
       max-width 85px
+      font-size 14px
+      @media screen and (max-width 550px)
+        font-size 11px
+        padding 0
   .line
     display flex
     align-items center
     border 1px solid gray
     padding 5px
-  .rowed
-    display flex
-    box-sizing border-box
-    max-width 100vw
-    overflow-x: scroll;
   .jobstat
     &:hover
       transition-duration 0.3s
@@ -106,6 +106,6 @@ export default {
         color white
   .link1
     text-decoration none
-    color var(--main-borders-color)//#248CEC
+    color var(--violet-btn-color)//#248CEC
     transition-duration 0.3s
 </style>

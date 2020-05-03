@@ -43,7 +43,7 @@ export default {
   },
   upl: {
     header: 'Добавление нескольких вакансий',
-    stepAdd: 'Добавить несколько вакансий через Excel',
+    stepAdd: 'Добавить вакансии из Excel',
     chooseFile: 'Выберите файл с вакансиями.',
     fileExample: 'Пример файла',
     stepPublish: 'Опубликовать вакансии',

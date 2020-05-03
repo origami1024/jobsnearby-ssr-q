@@ -1,6 +1,6 @@
 <template>
   <div v-if="user.role === 'company'" class="entprofile">
-    <p class="pageHeader" >{{$t('entProfile.entProfileTitle')}}</p>
+    <p class="pageHeader noshow-below550" >{{$t('entProfile.entProfileTitle')}}</p>
     <div class="entprofile__inner">
       <ProfileNav
         :localRoute="tab"
@@ -14,13 +14,12 @@
         v-model="tab"
         animated
       >
-        <q-tab-panel name="published" class="entprofile__published entprofile__mid">
+        <q-tab-panel name="published" class="entprofile__published">
           <h4 class="entprofile__header">{{$t('entProfile.publishedHeader')}}({{user.ownJobs.length}}):</h4>
           <JobsStats/>
         </q-tab-panel>
-        <q-tab-panel name="responses" class="entprofile__mid" style="display: flex; padding: 60px 80px 35px 80px;">
+        <q-tab-panel name="responses" class="entProfilePaddings" style="display: flex;">
           <div class="line" style="width: 100%; border-radius: 10px;">
-            <!-- expand-icon="none" -->
             <q-expansion-item
               v-for="item in Object.keys(respsJreformat)"
               :key="item"
@@ -28,7 +27,7 @@
               style="background-color: white; border-radius: 10px; margin-bottom: 10px;"
             >
               <template v-slot:header>
-                <div style="display: flex; align-items: center; font-weight: 500;">
+                <div class="lvl1Wrap" style="display: flex; align-items: center; font-weight: 500;">
                 <a class="responseLinkLvl1" :href="'/jobpage?id=' + item" target="_blank" style="display: flex;">
                   {{resps.find(val=>val.cvjob_id == item).title}}
                 </a>
@@ -76,7 +75,7 @@
             <div v-if="resps.length == 0">Пока нет ни одного отклика</div>
           </div>
         </q-tab-panel>
-        <q-tab-panel name="cabout" class="entprofile__mid" style="padding: 60px 80px 35px 80px;">
+        <q-tab-panel name="cabout" class="entProfilePaddings">
           <div>
             <label for="companyInp" class="cabout-label">{{$t('entProfile.cname')}}</label>
             <q-input
@@ -136,7 +135,7 @@
             {{$t('entProfile.sendChanges')}}
           </q-btn>
         </q-tab-panel>
-        <q-tab-panel class="entprofile__settings entprofile__mid" name="settings" style="padding: 60px 80px 35px 80px;">
+        <q-tab-panel class="entprofile__settings entProfilePaddings" name="settings">
           <h3 style="width: 100%; marginBottom: 10px; text-align: center;">{{$t('entProfile.settingsLabel')}} <strong>{{user.company}}</strong></h3>
           <label for="descInp" class="cabout-label">{{$t('entProfile.emailLabel')}}</label>
           <q-input color="deep-purple-10" bg-color="white" type="email" class="entprofile__inp" placeholder="aa@bb.cc" dense outlined bottom-slots :value="user.identity" counter maxlength="50" />
@@ -362,13 +361,13 @@ export default {
   width 100%
   min-width 864px
   min-height 60vh
-  // box-shadow 0 0 4px 1px var(--main-borders-color)
-  // border-radius 4px
   background var(--menubg-color)
   border: 0.5px solid #C2C2C6
   box-sizing: border-box
   border-radius: 10px;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
+  @media screen and (max-width 550px)
+    min-width auto
 .entprofile
   max-width 900px
   padding 20px 0px
@@ -376,8 +375,14 @@ export default {
   display flex
   flex-direction column
   justify-content center
+  @media screen and (max-width 550px)
+    padding 20px
+    padding-top 0
+    min-width 100%
   &__inner
     display flex
+    @media screen and (max-width 550px)
+      flex-direction column
   &__mid
     width 100%
   p
@@ -391,6 +396,8 @@ export default {
     align-self center
     font-size 18px
     padding-bottom 15px
+    @media screen and (max-width 550px)
+      font-size 14px !important
   .tabs
     // border-top-left-radius 15px
     // border-top-right-radius 15px
@@ -405,6 +412,7 @@ export default {
     align-items flex-start
   .entprofile__settings
     //background-color #eee
+    width 100%
     display flex
     flex-direction column
     align-items flex-start
@@ -427,6 +435,9 @@ export default {
     box-sizing border-box
     transition-duration 0.3s
     // background-image url('~assets/logoph.jpg')
+  .lvl1Wrap
+    @media screen and (max-width 550px)
+      width calc(100% - 50px)
   .responseLinkLvl1
     color var(--color1)
     text-decoration none
@@ -491,6 +502,10 @@ export default {
   margin-bottom: 7px;
   display: block
 
+.entProfilePaddings
+  padding: 60px 80px 35px 80px;
+  @media screen and (max-width 550px)
+    padding 30px 34px
 </style>
 <style lang="stylus">
 .q-tab-panel .q-item.q-focusable .q-focus-helper
@@ -598,4 +613,19 @@ export default {
 .entprofile .expansion1 .q-expansion-item__container .q-focus-helper
   height 22px !important
   padding 0
+
+
+.entprofile .q-chip
+  background-color var(--chip-color)
+  height 28px
+  @media screen and (max-width 550px)
+    max-width 205px
+.entprofile .q-chip span
+  @media screen and (max-width 550px)
+    max-width 175px
+    overflow hidden
+    text-overflow ellipsis
+    font-size 10px
+.entprofile .q-chip__content
+  padding 0 6px !important
 </style>

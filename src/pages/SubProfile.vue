@@ -14,10 +14,10 @@
         transition-prev="jump-up"
         transition-next="jump-up"
       >
-        <q-tab-panel name="cv" class="subprofile__cv" style="padding: 60px 80px 35px 80px;">
+        <q-tab-panel name="cv" class="subprofile__cv subProfilePaddings">
           
           <div class="line" style="display: flex; width: 100%;">
-            <div style="width:300px; margin-bottom: 20px;">
+            <div style="max-width: 300px; width: 100%; margin-bottom: 20px;">
 
               <label for="cvInp" class="uploaderWrapper" tabindex="0">
                 <!-- class="uploaderWrapper" -->
@@ -41,7 +41,7 @@
             :cvhitsHistory="cvhitsHistory"
           />
         </q-tab-panel>
-        <q-tab-panel class="subprofile__settings" name="personal" style="padding: 60px 80px 35px 80px;">
+        <q-tab-panel class="subprofile__settings subProfilePaddings" name="personal">
           <label for="subprofile__uname" class="input-label">{{$t('sub.name')}}</label>
           <q-input
             for="subprofile__uname"
@@ -66,7 +66,7 @@
         </q-tab-panel>
 
 
-        <q-tab-panel class="subprofile__settings" name="settings" style="padding: 60px 80px 35px 80px;">
+        <q-tab-panel class="subprofile__settings subProfilePaddings" name="settings">
           <label for="subprofile__email" class="input-label">{{$t('sub.email')}}</label>
           <q-input
             for="subprofile__email"
@@ -284,6 +284,8 @@ export default {
   box-sizing: border-box
   border-radius: 10px;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
+  @media screen and (max-width 550px)
+    min-width auto
 .subprofile
   max-width 900px
   padding 0 10px
@@ -291,10 +293,16 @@ export default {
   display flex
   flex-direction column
   justify-content center
+  @media screen and (max-width 550px)
+    padding 20px
+    padding-top 0
+    min-width 100%
   p
     margin-bottom 15px
   &__inner
     display flex
+    @media screen and (max-width 550px)
+      flex-direction column
   &__inp
     width 300px
   &__header
@@ -343,7 +351,9 @@ export default {
   &:hover>.logo-placeholder
     outline 1px solid var(--color1)
     //border-color var(--color1)
-
+  @media screen and (max-width 550px)
+    min-width auto
+    width 100%
 .input-label
   color var(--color1)
   font-family: Montserrat, sans-serif
@@ -356,6 +366,10 @@ export default {
 .subprofile__inp
   width 100%
 
+.subProfilePaddings
+  padding: 60px 80px 35px 80px;
+  @media screen and (max-width 550px)
+    padding 30px 34px
 </style>
 <style lang="stylus">
 .subprofile__inp .q-field--outlined .q-field__control:before

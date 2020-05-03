@@ -1,6 +1,6 @@
 <template>
   <div class="uploads">
-    <div v-if="user.role === 'company'" class="authed">
+    <div v-if="user.role === 'company'" class="authed uploads__inner">
       <h4 class="uploads__header">{{$t('upl.header')}}</h4>
       <q-stepper
         v-model="step"
@@ -15,7 +15,9 @@
           icon="settings"
           :done="step > 1"
         >
-          {{$t('upl.chooseFile')}} <a href="/statics/vac.xlsx">{{$t('upl.fileExample')}}</a>
+          <div style="margin-bottom: 10px;">
+            {{$t('upl.chooseFile')}} <a style="color: var(--violet-btn-color);" href="/statics/vac.xlsx">{{$t('upl.fileExample')}}</a>
+          </div>
           <!-- @change="parseFile" -->
           <q-input
             @change="parseFile"
@@ -40,41 +42,41 @@
             <table style="border-spacing: 0">
               <thead :style="{backgroundColor: 'black', color: 'white'}">
                 <td>{{$t('upl.tdTilte')}}</td>
-                <td>{{$t('upl.tdSalMin')}}</td>
-                <td>{{$t('upl.tdSalMax')}}</td>
-                <td>{{$t('upl.tdCurr')}}</td>
-                <td>{{$t('upl.tdAgeFrom')}}</td>
-                <td>{{$t('upl.tdAgeTo')}}</td>
-                <td>{{$t('upl.tdTimeFrom')}}</td>
-                <td>{{$t('upl.tdTimeTo')}}</td>
-                <td>{{$t('upl.tdSchedule')}}</td>
-                <td>{{$t('upl.tdLangs')}}</td>
-                <td>{{$t('upl.tdEdu')}}</td>
-                <td>{{$t('upl.tdExp')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdSalMin')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdSalMax')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdCurr')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdAgeFrom')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdAgeTo')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdTimeFrom')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdTimeTo')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdSchedule')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdLangs')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdEdu')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdExp')}}</td>
                 <td>{{$t('upl.tdCity')}}</td>
-                <td>{{$t('upl.tdJTyp')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdJTyp')}}</td>
                 <td>{{$t('upl.tdMore')}}</td>
-                <td>{{$t('upl.tdTel')}}</td>
-                <td>{{$t('upl.tdMail')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdTel')}}</td>
+                <td class="noshow-below550">{{$t('upl.tdMail')}}</td>
               </thead>
               <tr @input="onEditableInput" v-for="(item, index) in parsed" :key="index" :itemindex="index">
                 <td contenteditable="true" propname="title">{{item.title}}</td>
-                <td contenteditable="true" propname="salary_min">{{item.salary_min}}</td>
-                <td contenteditable="true" propname="salary_max">{{item.salary_max}}</td>
-                <td contenteditable="true" propname="currency">{{item.currency}}</td>
-                <td contenteditable="true" propname="age1">{{item.age1}}</td>
-                <td contenteditable="true" propname="age2">{{item.age2}}</td>
-                <td contenteditable="true" propname="worktime1">{{item.worktime1}}</td>
-                <td contenteditable="true" propname="worktime2">{{item.worktime2}}</td>
-                <td contenteditable="true" propname="schedule">{{item.schedule}}</td>
-                <td contenteditable="true" propname="langs">{{item.langs}}</td>
-                <td contenteditable="true" propname="edu">{{item.edu}}</td>
-                <td contenteditable="true" propname="experience">{{item.experience}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="salary_min">{{item.salary_min}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="salary_max">{{item.salary_max}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="currency">{{item.currency}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="age1">{{item.age1}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="age2">{{item.age2}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="worktime1">{{item.worktime1}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="worktime2">{{item.worktime2}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="schedule">{{item.schedule}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="langs">{{item.langs}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="edu">{{item.edu}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="experience">{{item.experience}}</td>
                 <td contenteditable="true" propname="city">{{item.city}}</td>
-                <td contenteditable="true" propname="jtype">{{item.jtype}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="jtype">{{item.jtype}}</td>
                 <td contenteditable="true" propname="description">{{item.description}}</td>
-                <td contenteditable="true" propname="contact_tel">{{item.contact_tel}}</td>
-                <td contenteditable="true" propname="contact_mail">{{item.contact_mail}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="contact_tel">{{item.contact_tel}}</td>
+                <td contenteditable="true" class="noshow-below550" propname="contact_mail">{{item.contact_mail}}</td>
               </tr>
             </table>
             <q-btn v-if="step > 1" flat color="primary" @click="resetParsed" :label="$t('upl.reset')" class="q-ml-sm" />
@@ -247,13 +249,36 @@ export default {
     font-size 15px
     font-weight 600
   &__published
-    padding 10px 10px
-    box-shadow 0 1px 4px 2px #ddd
-    border-radius 4px
+    padding 10px
+    background var(--menubg-color)
+    border: 0.5px solid #C2C2C6
+    box-sizing: border-box
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
+  @media screen and (max-width 550px)
+    padding 0 20px
   table
     border-collapse:collapse
   tr:nth-child(odd)
     background-color #eee
   .authed
-    margin 10px
+    margin 10px 0
+
+// .uploads .q-stepper
+  
+
+.uploads .q-stepper
+  background var(--menubg-color)
+  border: 0.5px solid #C2C2C6
+  box-sizing: border-box
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1)
+
+
+</style>
+<style lang="stylus">
+.uploads .q-stepper div.q-stepper__step-inner
+  // background-color red
+  @media screen and (max-width 550px)
+    padding 10px !important
 </style>

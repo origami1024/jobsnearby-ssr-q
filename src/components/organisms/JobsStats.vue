@@ -5,23 +5,26 @@
         <thead>
           <tr>
             <td style="width: 22%; min-width: 22%; max-width: 22%; text-align: left">{{$t('jobsStats.title')}}</td>
-            <td style="width: 6%; min-width: 6%; max-width: 6%;">{{$t('jobsStats.views')}}</td>
-            <td style="width: 6%; min-width: 6%; max-width: 6%;">{{$t('jobsStats.uniqViews')}}</td>
-            <!-- <td style="width: 15%; min-width: 15%; max-width: 15%;">Подали резюме</td> -->
+            <td class="noshow-below550" style="width: 6%; min-width: 6%; max-width: 6%;">{{$t('jobsStats.views')}}</td>
+            <!-- <td class="displaytc-only550" style="width: 6%; min-width: 6%; max-width: 6%;"><img src="/statics/eye1.png"></td> -->
+            <td class="noshow-below550" style="width: 6%; min-width: 6%; max-width: 6%;">{{$t('jobsStats.uniqViews')}}</td>
             <td style="width: 42%; min-width: 42%; max-width: 42%;">
               {{$t('jobsStats.status')}}
             </td>
             <!-- <td style="width: 33%; min-width: 33%; max-width: 33%;">{{$t('jobsStats.status')}}</td> -->
-            <td style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.change')}}</td>
-            <td style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.close')}}</td>
-            <td style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.delete')}}</td>
+            <td class="noshow-below550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.change')}}</td>
+            <td class="control-td displaytc-only550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.change')[0]}}</td>
+            <td class="noshow-below550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.close')}}</td>
+            <td class="control-td displaytc-only550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.close')[0]}}</td>
+            <td class="noshow-below550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.delete')}}</td>
+            <td class="control-td displaytc-only550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.delete')[0]}}</td>
           </tr>
         </thead>
         <tr class="jobstat" v-for="item in jobslist" :key="item.job_id">
           <td style="text-align: left"><a class="link1" target="_blank" :href="'/jobpage?id=' + item.job_id">{{item.title}}</a></td>
-          <td>{{Number(item.hits_all)}}</td>
-          <td>{{item.hits_uniq}}</td>          
-          <td style="font-size:15px">
+          <td class="noshow-below550">{{Number(item.hits_all)}}</td>
+          <td class="noshow-below550">{{item.hits_uniq}}</td>          
+          <td class="fs15">
             {{
               (item.is_published === true && item.is_closed === false)
                 ? $t('jobsStats.published')
@@ -34,18 +37,19 @@
                       : $t('jobsStats.closedByAdmin')
             }}
           </td>
-          <td>
+          <td class="control-td">
             <q-btn
               v-if="!item.is_closed"
               icon="edit"
               size="sm"
               color="green"
               glossy
+              class="controlbtn"
               @click="editJob(item.job_id)"
             >
             <!-- $emit('editJob', item.job_id) -->
               <q-tooltip>
-                <p style="font-size: 15px;margin: 0">{{$t('jobsStats.editHint')}}</p>
+                <p class="fs15" style="margin: 0">{{$t('jobsStats.editHint')}}</p>
               </q-tooltip>
             </q-btn>
             <q-btn
@@ -54,6 +58,7 @@
               size="sm"
               color="blue"
               glossy
+              class="controlbtn"
               @click="$store.dispatch('reopenJobById',item.job_id)"
             >
               <q-tooltip>
@@ -66,6 +71,7 @@
               size="sm"
               color="purple"
               glossy
+              class="controlbtn"
               @click="$store.dispatch('reopenJobById',item.job_id)"
             >
               <q-tooltip>
@@ -73,13 +79,14 @@
               </q-tooltip>
             </q-btn>
           </td>
-          <td>
+          <td class="control-td">
             <q-btn
               v-if="!item.is_closed"
               icon="work_off"
               size="sm"
               color="orange"
               glossy
+              class="controlbtn"
               @click="$store.dispatch('closeJobById',{jid: item.job_id, notifier: $q.notify})"
             >
               <q-tooltip>
@@ -90,12 +97,13 @@
               {{$t('jobsStats.closed')}}
             </span>
           </td>
-          <td>
+          <td class="control-td">
             <q-btn
               icon="delete_forever"
               size="sm"
               color="red"
               glossy
+              class="controlbtn"
               @click="$store.dispatch('deleteJobById',{jid: item.job_id, notifier: $q.notify})"
             >
               <q-tooltip>
@@ -164,28 +172,38 @@ export default {
 .jobsstats
   box-sizing border-box
   width 100%
-  min-width 300px
+  // min-width 300px
   table
     border-spacing 0
   thead td
     border-bottom 15px solid transparent
     font-size 14px
+    @media screen and (max-width 550px)
+      font-size 11px
+      border-bottom 3px solid transparent
   td
     padding 3px
-    // font-size 12px
-    max-width 85px
+    max-width 80px
     font-size 16px
     line-height 20px
-  .line
-    display flex
-    align-items center
-    border 1px solid gray
-    padding 5px
-  .rowed
-    display flex
-    box-sizing border-box
-    max-width 100vw
-    overflow-x: scroll;
+    @media screen and (max-width 550px)
+      font-size 12px
+      line-height 15px
+      padding 0px
+  .control-td
+    @media screen and (max-width 550px)
+      max-width 32px
+      // max-width 80px
+  // .line
+  //   display flex
+  //   align-items center
+  //   border 1px solid gray
+  //   padding 5px
+  // .rowed
+  //   display flex
+  //   box-sizing border-box
+  //   max-width 100%
+  //   overflow-x: scroll;
   .jobstat
     &:hover
       transition-duration 0.3s
@@ -198,4 +216,11 @@ export default {
     color #248CEC
     transition-duration 0.6s
     font-weight 500
+.fs15
+  font-size: 15px;
+  @media screen and (max-width 550px)
+    font-size 11px
+.controlbtn
+  @media screen and (max-width 550px)
+    max-width 30px
 </style>

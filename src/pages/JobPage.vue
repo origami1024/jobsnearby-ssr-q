@@ -20,7 +20,7 @@
         
       </section>
       <!-- <section style="display: flex; justify-content: space-between"></section> -->
-      <section v-if="user.role != 'company'">
+      <section v-if="user.role != 'company'" style="margin-bottom: 20px;">
         <!-- <q-btn
         v-if="!user.ownCVs.find(val=>val.cvjob_id == job.job_id)"
         text-color="white"
@@ -111,8 +111,8 @@
             </div>
         </div>
       </section>
-      <section style="display: flex; justify-content: space-between;">
-        <p>{{$t('jobPage.publishedDate')}} {{published}}</p>
+      <section style="margin-bottom: 0; display: flex; justify-content: space-between;">
+        <p class="date-p">{{$t('jobPage.publishedDate')}} {{published}}</p>
         <p style="font-size: 17px; display: flex;">
           <span style="font-size: 10px; line-height: 130%; align-self: center;margin-right: 3px;">{{job.hits_all > 0 ? job.hits_all : 1}}</span>
           <img src="/statics/eye1.png">
@@ -219,9 +219,9 @@ export default {
       font-size 14px !important
       // line-height: 150.4%;
 section
-  margin-bottom 15px
+  margin-bottom 10px
   text-align left
-  padding-bottom 5px
+  // padding-bottom 5px
   p
     margin-bottom 0
   li
@@ -267,8 +267,8 @@ section
 }
 .detailed__header1
   color var(--color1)
-  margin 10px 0px
-  margin-bottom 5px
+  margin 0
+  margin-bottom 10px
   font-family: Montserrat, sans-serif
   font-weight: bold;
   line-height: 130%;
@@ -276,6 +276,15 @@ section
   @media screen and (max-width 550px)
     font-size: 12px;
   
+.date-p
+  font-family: Montserrat, sans-serif;
+  color: var(--violet-btn-color);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
+  @media screen and (max-width 550px)
+    font-size: 9px;
+    line-height: 11px;
 .salary-deriv
   font-size: 16px;
   font-weight: 700;
@@ -308,7 +317,7 @@ section
 .subitem
   //padding-left 20px
   padding-bottom 5px
-  padding-top 5px
+  // padding-top 5px
   font-size 14px
   line-height: 130%;
   font-weight 500
@@ -335,9 +344,11 @@ section
   font-weight: 500 !important;
   font-size: 15px;
   line-height: 18px;
-  padding 9px 20px
-  padding-right 17px
+  padding 9px 15px
+  // padding-right 17px
   transition-duration 0.25s
+  display block
+  width 192px
   @media screen and (max-width: 950px)
     padding 5px 10px
     padding-right 8px
@@ -348,7 +359,6 @@ section
     line-height: 15px !important
     padding 8px
     width 100%
-    display block
     text-align center
   &:hover
     background-color var(--violet-btn-color)

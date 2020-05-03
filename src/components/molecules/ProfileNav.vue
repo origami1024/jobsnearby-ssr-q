@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pr-md" style="min-width: 270px;">
+  <div class="profilenav-wrap" style="min-width: 270px;">
     <q-list padding class="profilenav rounded-borders text-primary">
       <q-item
         v-for="(lr, index) in localroutes"
@@ -40,10 +40,23 @@ export default {
   }
 }
 </script>
-
+<style lang="stylus">
+.nav__link.q-item
+  @media screen and (max-width 550px)
+    height 36px
+    min-height 36px
+</style>
 <style scoped lang="stylus">
+.profilenav-wrap
+  padding-right 16px
+  @media screen and (max-width 550px)
+    padding 0
 .profilenav
   // box-shadow 0 0 3px 0px var(--main-borders-color)
+  @media screen and (max-width 550px)
+    display flex
+    flex-wrap wrap
+    justify-content space-between
 .badge1
   background-color var(--btn-color)
   border-radius 100%
@@ -58,6 +71,10 @@ export default {
   line-height: 17px;
   position absolute
   right 34px
+  @media screen and (max-width 550px)
+    right 20px
+    height 22px
+    width 22px
 .nav__link
   //color var(--color1) !important
   background-color var(--menubg-color)
@@ -70,6 +87,12 @@ export default {
   color var(--color1)
   border: 0.5px solid rgba(0, 0, 0, 0.2);
   padding 0
+  @media screen and (max-width 550px)
+    width calc(50% - 6px)
+    font-size: 12px;
+    line-height: 15px;
+    height 35px
+    margin-bottom 10px
 .nav__link-active
   color white
   //color var(--color1) !important
