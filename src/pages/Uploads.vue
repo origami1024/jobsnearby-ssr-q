@@ -1,6 +1,6 @@
 <template>
   <div class="uploads">
-    <div v-if="user.role === 'company'" class="authed uploads__inner">
+    <div v-if="user.role === 'company' && user.isagency === true" class="authed uploads__inner">
       <h4 class="uploads__header">{{$t('upl.header')}}</h4>
       <q-stepper
         v-model="step"
@@ -98,8 +98,11 @@
         <JobsStats/>
       </div>
     </div>
-    <div v-else>
+    <div v-else-if="user.role != 'company'">
       {{$t('upl.authPlsMsg')}}
+    </div>
+    <div v-else-if="user.isagency === false">
+      {{$t('upl.onlyAgency')}}
     </div>
   </div>
 </template>
@@ -123,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user', ['role', 'ownJobs']]),
+    ...mapState(['user', ['role', 'ownJobs', 'isagency']]),
   },
   mounted() {
     this.$store.dispatch('getOwnJobs')
