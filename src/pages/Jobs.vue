@@ -4,7 +4,7 @@
       <div class="banner__pic"></div>
       <div class="jobs__banner-right">
         <div class="banner__header-wrap">
-          <h2 class="banner__header">Найди подходящую вакансию уже сегодня!</h2>
+          <h2 class="banner__header">{{$t('jobs.bannerHeader')}}</h2>
         </div>
         <div class="jobs__top-search">
           <button class="filtersHamburgerBtn" @click="$store.dispatch('filtersToggle')"/>
@@ -15,7 +15,7 @@
             @keyup.enter="$store.dispatch('refreshjobs', {}); $store.dispatch('filtersOff')"
             :value="jFilters.txt"
             @input="$store.dispatch('filterUpd', {prop: 'txt', value: $event.target.value})"
-            placeholder="Введите ключевые слова"
+            :placeholder="$t('jobs.searchPh')"
           >
           <!-- <q-btn 
             @click="$store.dispatch('refreshjobs', {})"
@@ -40,7 +40,7 @@
       <div class="jobs__contents" v-if="!$store.state.jfiltersToggle">
         <div class="line jobs_prefilters">
           <!-- <div class="prefilters-leftwrap"> -->
-            <span class="jobs__prefilters-label">Сортировка:</span>
+            <span class="jobs__prefilters-label">{{$t('jobs.prefiltersLabelSort')}}</span>
             <button class="orderLink dateLink">
               {{$t('jobs.dateOpts')[jFilters.timerange]}}
               <q-menu dense>
@@ -74,7 +74,7 @@
           <!-- </div>
           <div class="prefilters-rightwrap"> -->
             <span>
-            <span class="jobs__prefilters-label">Отображать:</span>
+            <span class="jobs__prefilters-label">{{$t('jobs.prefiltersLabelShow')}}</span>
             <button class="orderLink">
               {{$t('jobs.perpageOpts')[jFilters.perpage]}}
               <q-menu dense>

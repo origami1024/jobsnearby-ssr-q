@@ -129,20 +129,20 @@
     <footer class="main__footer">
       <ul class="footer__ul-top">
         <li class="li1">
-          <h3>О нас</h3>
+          <h3>{{$t('App.footerHAboutUs')}}</h3>
           <ul>
-            <li><a href="#">Наши вакансии</a></li>
-            <li><router-link to="/feedback">Реклама на сайте</router-link></li>
+            <li><a href="#">{{$t('App.footerOurJobs')}}</a></li>
+            <li><router-link to="/feedback">{{$t('App.footerAdsHere')}}</router-link></li>
           </ul>
         </li>
         <li class="li2">
-          <h3>Соискателю</h3>
+          <h3>{{$t('App.footerHForSubs')}}</h3>
           <ul>
-            <li><a href="#">Рассылка вакансий</a></li>
+            <li><a href="#">{{$t('App.footerMailing')}}</a></li>
           </ul>
         </li>
         <li class="li3">
-          <h3>Работодателю</h3>
+          <h3>{{$t('App.footerHForEmp')}}</h3>
           <ul>
             <li>
               <router-link @click.native="$store.dispatch('newJobInitAJ')" v-if="user.role == 'company'" class="newlinks" to="/addJob">
@@ -155,7 +155,7 @@
           </ul>
         </li>
         <li class="li4">
-          <h3 class="noshow-below550">Контакты</h3>
+          <h3 class="noshow-below550">{{$t('App.footerHContacts')}}</h3>
           <ul>
             <li>
               <q-btn
@@ -164,7 +164,6 @@
                 :label="$t('App.fbBtnLabel')"
               />
             </li>
-            <!-- <li><a href="#">info@gmail.com</a></li> -->
           </ul>
         </li>
       </ul>

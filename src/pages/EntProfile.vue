@@ -111,8 +111,8 @@
             bg-color="white" color="deep-purple-10"
             :style="{width: '100%'}"
             max-values="3"
-            :value="cabout.domains"
-            @input="$store.dispatch('caboutPropUpd', {prop: 'domains', value: $event})"
+            :value="cabout.domains.map(d_idx=>$t('entProfile.companyDomains')[d_idx])"
+            @input="$store.dispatch('caboutPropUpd', {prop: 'domains', value: $event.map(d=>$t('entProfile.companyDomains').indexOf(d))})"
             :options="$t('entProfile.companyDomains')"
             :hint="null"
           />

@@ -188,6 +188,13 @@ export default {
     },
     doAuthForPublishing: 'Авторизируйтесь для возможности добавления вакансий',
     statusLoginNotDone: 'Вход не выполнен',
+    footerHAboutUs: 'О нас',
+    footerHForSubs: 'Соискателю',
+    footerHForEmp: 'Работодателю',
+    footerHContacts: 'Контакты',
+    footerOurJobs: 'Наши вакансии',
+    footerAdsHere: 'Реклама на сайте',
+    footerMailing: 'Рассылка вакансий'
   },
   filters: {
     searchHint: 'Поиск по полям название, автор, город, основной текст',
@@ -217,6 +224,11 @@ export default {
       {label: "от 3000", value: '3'},
     ],
     cities: ["Не имеет значения", "Ашхабад", "Дашогуз", "Мары", "Туркменабад", "Туркменбаши"],
+    fHeader: 'Расширенный поиск:',
+    fCityPh: 'Ашхабад',
+    fJCatPh: 'Бухгалтер',
+    fExpPh: 'от 1 до 3 лет',
+    fSalPh: 'от 200 до 500',
   },
   jobs: {
     sortOpts: {
@@ -234,7 +246,13 @@ export default {
       '25': '25 вакансий',
       '50': '50 вакансий',
       '100': '100 вакансий'
-    },    
+    },
+    bannerHeader: 'Найди подходящую вакансию уже сегодня!',
+    searchPh: 'Введите ключевые слова',
+    prefiltersLabelSort: 'Сортировка:',
+    prefiltersLabelShow: 'Отображать:',
+    salHeader: 'Зарплаты',
+    topJobsHeader: 'Топ профессий'
   },
   jc: {
     salaryNone: 'По итогам собеседования',
@@ -252,6 +270,9 @@ export default {
     today: 'Сегодня',
     yesterday: 'Вчера',
     daysAgo: 'дня назад',
+    notSpecified: 'Не указан',
+    cvSent: 'Резюме отправлено',
+    cityPrefix: 'г.',
   },
   reg: {
     loginLabel: 'Вход',

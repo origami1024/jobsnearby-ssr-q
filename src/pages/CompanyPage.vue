@@ -37,8 +37,8 @@
         </div>
       </section>
       <section style="display: flex; justify-content: space-between">
-        <p>{{$t('companyPage.publishedJobsCountLabel')}}{{cdata.jobs_count > 0 ? cdata.jobs_count : 1}}</p>
-        <p>{{$t('companyPage.registrationDate')}}{{timeCreated}}</p>
+        <p style="margin-right: 50px;">{{$t('companyPage.publishedJobsCountLabel')}}<span>{{cdata.jobs_count > 0 ? cdata.jobs_count : 1}}</span></p>
+        <p >{{$t('companyPage.registrationDate')}}<span>{{timeCreated}}</span></p>
       </section>
     </main>
   </div>
@@ -113,6 +113,7 @@ export default {
   padding: 0 10px;
   padding-top: 10px;
   box-sizing border-box
+  border-radius 10px
   box-shadow 0 0 3px 2px var(--main-borders-color)
   display flex
   flex-direction column

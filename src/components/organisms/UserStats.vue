@@ -1,9 +1,9 @@
 <template>
   <div class="jobs__right-aside">
     <div class="right-aside__salaries-stat statbox">
-      <h3
-        class="aside-h3" style="margin-left: 7px;"
-      >Зарплаты</h3>
+      <h3 class="aside-h3" style="margin-left: 7px;">
+        {{$t('jobs.salHeader')}}
+      </h3>
       <div class="wrapline">
         <div class="wrapcol0">
           <svg width="8" height="201" viewBox="0 0 8 201" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -30,9 +30,9 @@
       </div>
     </div>
     <div class="right-aside__professions-stat statbox">
-      <h3
-        class="aside-h3"
-      >Топ профессий</h3>
+      <h3 class="aside-h3">
+        {{$t('jobs.topJobsHeader')}}
+      </h3>
       <div class="professions-list">
         <div class="professions-row" v-for="(top,i) in salData.tops" :key="i">
           <div><a class="professions-link" :href="'/jobpage?id=' + top[2]" target='_blank'>{{top[0]}}</a></div>

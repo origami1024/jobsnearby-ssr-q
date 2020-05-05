@@ -2,7 +2,7 @@
   <div class="jobsfilter" :class="{ filtersHideBelow550: !$store.state.jfiltersToggle}">
     <span class="line0">
       <h3 class="filter__header">
-        Расширенный поиск:
+        {{$t('filters.fHeader')}}
       </h3>
       <button class="closeModal" @click="$store.dispatch('filtersOff')">╳</button>
       <!-- ✕ -->
@@ -10,7 +10,7 @@
     <span class="lowresline">
       <span class="lowres__double">
       <span class="f-label">{{$t('filters.city')}}</span>
-      <DDSelect :picked="jFilters.city" @update:city="$store.dispatch('filterUpd', {prop: 'city', value: $event == $t('filters.cities')[0] ? '' : $event})" :cities="$t('filters.cities')" ph="Ашхабад" class="selectWrapper" />
+      <DDSelect :picked="jFilters.city" @update:city="$store.dispatch('filterUpd', {prop: 'city', value: $event == $t('filters.cities')[0] ? '' : $event})" :cities="$t('filters.cities')" :ph="$t('jc.cityPh')" class="selectWrapper" />
       </span>
 
       <span class="lowres__double">
@@ -19,7 +19,7 @@
         :picked="jFilters.jcat"
         @update:value="$store.dispatch('filterUpd', {prop: 'jcat', value: $event.value == '' ? {label: '',value : 0} : $event})"
         :values="$t('App.jcats')"
-        ph="Бухгалтер" class="selectWrapper" emptyTemplate='0'
+        :ph="$t('filters.fJCatPh')" class="selectWrapper" emptyTemplate='0'
       />
       </span>
     </span>
@@ -29,7 +29,7 @@
       <BasicSelect
         :picked="jFilters.exp" 
         @update:value="$store.dispatch('filterUpd', {prop: 'exp', value: $event.value == 'idc' ? {label: '', value : 'idc'} : $event})"
-        :values="$t('filters.expFilters')" ph="от 1 до 3 лет" class="selectWrapper"
+        :values="$t('filters.expFilters')" :ph="$t('filters.fExpPh')" class="selectWrapper"
       />
       </span>
     <div class="line lowres__salaryWrap">
@@ -38,7 +38,7 @@
       <BasicSelect
         :picked="jFilters.salary"
         @update:value="$store.dispatch('filterUpd', {prop: 'salary', value: $event.value == 'idc' ? {label: '', value : 'idc'} : $event})"
-        :values="$t('filters.salFilters')" ph="от 200 до 500" class="selectWrapper"
+        :values="$t('filters.salFilters')" :ph="$t('filters.fSalPh')" class="selectWrapper"
       />
       </div>
       <div class="currency_inp_wrapper">

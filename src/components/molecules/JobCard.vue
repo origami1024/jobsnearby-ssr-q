@@ -2,7 +2,10 @@
   <div class="jobscard">
     <div class="line cityAndCompany">
       <div class="line" style="align-items: center;">
-        <p class="city" :class="job.city.length > 0 ? 'cityOK' : ''" v-html="filteredCity"></p>
+        <span style="display: flex">
+          <span v-if="job.city.length > 0" class="cityOK">{{$t('jc.cityPrefix')}}</span>
+          <p class="city" v-html="filteredCity"></p>
+        </span>
         <a :href="'/companypage?id=' + job.author_id" target="_blank">
           <div class="author joblink" v-html="filteredAuthor"></div>
         </a>
@@ -54,7 +57,7 @@
           {{$t('jc.sendCVLabel')}}
         </a>
         <div v-else-if="user.role == 'subscriber'" class="cvSentSpan">
-          <span style="font-size: 13px; color: gray; user-select: none">Резюме отправлено</span>
+          <span style="font-size: 13px; color: gray; user-select: none">{{$t('jc.cvSent')}}</span>
           <q-tooltip v-if="hitcv">
             <p v-if="(hitcv && hitcv.date_created)" style="font-size: 15px; margin: 0">{{$t('jc.tooltipSent')}} {{formatDate(hitcv.date_created)}}</p>
             <p v-if="(hitcv && hitcv.date_checked)" style="font-size: 15px; margin: 0">{{$t('jc.tooltipSeen')}} {{formatDate(hitcv.date_checked)}}</p>
@@ -64,7 +67,7 @@
       </div>
     </div>
     <div :class="{heightTransition: isContactsShown}" class="contactsPanel line" style="margin-top: 10px;">
-      <div><span style="font-weight: 300;">Email:</span> {{job.contact_mail != '' ? job.contact_mail : 'Не указан'}}</div>
+      <div><span style="font-weight: 300;">Email:</span> {{job.contact_mail != '' ? job.contact_mail : $t('jc.notSpecified')}}</div>
       <div><span style="font-weight: 300;">Tel:</span> {{job.contact_tel}}</div>
     </div>
   </div>
@@ -124,7 +127,7 @@ export default {
         return this.job.city.substr(0, i) + 
         '<span class="searched">' + this.job.city.substr(i, this.searchFilter.length) + '</span>' + 
         this.job.city.substr(i + this.searchFilter.length)
-      } else if (this.job.city.length == 0) return 'Не указан'
+      } else if (this.job.city.length == 0) return this.$t('jc.notSpecified')
       else return this.job.city
     },
     filteredDesc: function() {
@@ -211,8 +214,14 @@ export default {
       font-size: 9px;
       line-height: 20px
   .cityOK
-    &:before
-      content 'г.'
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    color var(--violet-btn-color)
+    line-height: 25px
+    @media screen and (max-width 550px)
+      font-size: 9px;
+      line-height: 20px
   .author
     font-weight: 500;
     font-size: 12px;

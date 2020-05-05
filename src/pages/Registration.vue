@@ -595,6 +595,7 @@ export default {
   .registration__main
     //border 2px solid black
     width 380px
+    margin-bottom 20px
     @media screen and (max-width 550px)
       width 100%
   .registration__inner
