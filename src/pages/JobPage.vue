@@ -192,6 +192,7 @@ export default {
   width: 80%;
   max-width: 850px;
   // background-color: white;
+  
   padding: 20px 15px;
   // padding-top: 10px;
   // border-radius 5px
@@ -203,7 +204,8 @@ export default {
   margin-top 15px
   margin-bottom 20px
   background: #FFFFFF;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+  // box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+  box-shadow 0 0 3px 2px var(--main-borders-color)
   border-radius: 10px;
   @media screen and (max-width 550px)
     width 100%
@@ -213,10 +215,10 @@ export default {
     color var(--color1)
     font-family: Montserrat;
     font-weight: bold;
-    font-size 20px !important
+    font-size 24px !important
     line-height: 150% !important
     @media screen and (max-width 550px)
-      font-size 14px !important
+      font-size 16px !important
       // line-height: 150.4%;
 section
   margin-bottom 10px
@@ -272,9 +274,9 @@ section
   font-family: Montserrat, sans-serif
   font-weight: bold;
   line-height: 130%;
-  font-size: 16px;
+  font-size: 20px;
   @media screen and (max-width 550px)
-    font-size: 12px;
+    font-size: 13px;
   
 .date-p
   font-family: Montserrat, sans-serif;
@@ -282,6 +284,7 @@ section
   font-weight: 500;
   font-size: 13px;
   line-height: 15px;
+  align-self: flex-end
   @media screen and (max-width 550px)
     font-size: 10px;
     line-height: 11px;
@@ -293,7 +296,7 @@ section
   @media screen and (max-width 550px)
     font-size: 10px;
 .salary-deriv
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color var(--violet-btn-color)
   @media screen and (max-width 550px)
@@ -302,8 +305,10 @@ section
     font-size: 14px;
     line-height: 17px;
 .jobpage__city_company
-  margin-top 5px
+  margin-top 12px
+  font-size: 14px;
   @media screen and (max-width 550px)
+    margin-top 5px
     font-weight: 500;
     font-size: 10px;
     line-height: 12px;
@@ -326,7 +331,7 @@ section
   //padding-left 20px
   padding-bottom 5px
   // padding-top 5px
-  font-size 14px
+  font-size 16px
   line-height: 130%;
   font-weight 500
   color var(--color1)

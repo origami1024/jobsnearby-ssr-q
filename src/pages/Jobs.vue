@@ -73,6 +73,7 @@
             </button>
           <!-- </div>
           <div class="prefilters-rightwrap"> -->
+            <span>
             <span class="jobs__prefilters-label">Отображать:</span>
             <button class="orderLink">
               {{$t('jobs.perpageOpts')[jFilters.perpage]}}
@@ -89,6 +90,7 @@
                 </q-item>
               </q-menu>
             </button>
+            </span>
           <!-- </div> -->
         </div>
         <JobsList/>
@@ -314,6 +316,8 @@ export default {
         margin-right auto
     &:nth-of-type(2)
       margin-right auto
+    &:nth-of-type(3)
+      //
     &:hover
       color var(--color1)
     @media screen and (max-width 550px)

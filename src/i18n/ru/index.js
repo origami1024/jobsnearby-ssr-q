@@ -310,7 +310,7 @@ export default {
     pTypeNewLabel: 'Создать вакансию',
     pTypeEditLabel: 'Редактирование вакансии',
     titleLabel: 'Название вакансии',
-    xlsBtn: 'Публикация вакансий XLS',
+    xlsBtn: 'Опубликовать несколько вакансий',
     titlePh: 'Менеджер по продажам мебели',
     titleValidationRequired: '* Обязательное поле',
     titleValidationMin: 'Минимум 2 символа',

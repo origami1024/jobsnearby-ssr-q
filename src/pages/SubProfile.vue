@@ -360,7 +360,7 @@ export default {
   color var(--color1)
   font-family: Montserrat, sans-serif
   font-weight: 500;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 17px;
   text-align: left;
   margin-bottom: 7px;
@@ -378,7 +378,7 @@ export default {
   border 0 !important
 .subprofile__inp .q-field__control
   // outline 2px solid orange
-  font-size: 12px;
+  font-size: 15px;
   line-height: 15px;
   border-radius 10px
   box-shadow 0px 2px 15px rgba(0, 0, 0, 0.1)

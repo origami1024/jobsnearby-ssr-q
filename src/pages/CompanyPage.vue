@@ -5,7 +5,7 @@
         <div class="detailed__col">
           <h1 class="titleHeader">{{cdata.company}}</h1>
           <div style="width: 100%">
-            <p>
+            <p class="font-wrap">
               {{cdata.website}}
             </p>
           </div>
@@ -134,6 +134,10 @@ export default {
   .titleHeader
     font-size 24px !important
     margin-top 8px
+  .font-wrap
+    font-size 16px
+    @media screen and (max-width 550px)
+      font-size 12px
 section
   margin-bottom 15px
   text-align left
@@ -186,7 +190,9 @@ section
   //padding-left 20px
   padding-bottom 5px
   padding-top 5px
-  font-size 14px
+  font-size 16px
+  @media screen and (max-width 550px)
+    font-size 12px
 .padleft
   padding-left 10px
 .descriptionHTML

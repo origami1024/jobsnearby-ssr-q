@@ -53,7 +53,7 @@
               @input="login.validation.pw = ''"
             />
             <div class="row spacebetw">
-              <q-checkbox dense class="rulescb2" color="red-10" style="color: var(--color1);" v-model="login.rememberme" :label="$t('reg.rmeLabel')" />
+              <q-checkbox dense class="rulescb2" color="red-10" style="color: var(--color1); margin-bottom: 6px;" v-model="login.rememberme" :label="$t('reg.rmeLabel')" />
               <a href="/forgotten.json" style="alignSelf: center; color:var(--btn-color); font-size: 12px;">{{$t('reg.frgtPWLabel')}}</a>
             </div>
             <q-btn 
