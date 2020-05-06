@@ -88,7 +88,7 @@
               @click="$store.dispatch('deleteJobById',{jid: item.job_id, notifier: $q.notify})"
             >
               <q-tooltip>
-                <p style="font-size: 15px;margin: 0">{{$t('jobsStats.deleteHint')}}</p>
+                <p style="font-size: 15px; margin: 0">{{$t('jobsStats.deleteHint')}}</p>
               </q-tooltip>
             </q-btn>
           </div>
