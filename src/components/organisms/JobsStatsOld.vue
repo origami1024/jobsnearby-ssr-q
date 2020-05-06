@@ -1,16 +1,30 @@
 <template>
   <div class="jobsstats">
-    <div class="jobsstats__display">
-      <div class="jobsstats__item" v-for="item in jobslist" :key="item.job_id">
-        <div class="left-side">
-          <p class="job-title">
-            <a class="title-link" target="_blank" :href="'/jobpage?id=' + item.job_id">{{item.title}}</a>
-          </p>
-          <div>{{$t('jobsStats.views')}} {{Number(item.hits_all)}}</div>
-          <div>{{$t('jobsStats.uniqViews')}} {{item.hits_uniq}}</div>
-        </div>
-        <div class="right-side">
-          <div class="jstatus">
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <td style="width: 22%; min-width: 22%; max-width: 22%; text-align: left">{{$t('jobsStats.title')}}</td>
+            <td class="noshow-below550" style="width: 6%; min-width: 6%; max-width: 6%;">{{$t('jobsStats.views')}}</td>
+            <!-- <td class="displaytc-only550" style="width: 6%; min-width: 6%; max-width: 6%;"><img src="/statics/eye1.png"></td> -->
+            <td class="noshow-below550" style="width: 6%; min-width: 6%; max-width: 6%;">{{$t('jobsStats.uniqViews')}}</td>
+            <td style="width: 42%; min-width: 42%; max-width: 42%;">
+              {{$t('jobsStats.status')}}
+            </td>
+            <!-- <td style="width: 33%; min-width: 33%; max-width: 33%;">{{$t('jobsStats.status')}}</td> -->
+            <td class="noshow-below550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.change')}}</td>
+            <td class="control-td displaytc-only550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.change')[0]}}</td>
+            <td class="noshow-below550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.close')}}</td>
+            <td class="control-td displaytc-only550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.close')[0]}}</td>
+            <td class="noshow-below550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.delete')}}</td>
+            <td class="control-td displaytc-only550" style="width: 8%; min-width: 8%; max-width: 8%;">{{$t('jobsStats.delete')[0]}}</td>
+          </tr>
+        </thead>
+        <tr class="jobstat" v-for="item in jobslist" :key="item.job_id">
+          <td style="text-align: left"><a class="link1" target="_blank" :href="'/jobpage?id=' + item.job_id">{{item.title}}</a></td>
+          <td class="noshow-below550">{{Number(item.hits_all)}}</td>
+          <td class="noshow-below550">{{item.hits_uniq}}</td>          
+          <td class="fs15">
             {{
               (item.is_published === true && item.is_closed === false)
                 ? $t('jobsStats.published')
@@ -22,8 +36,8 @@
                       ? $t('jobsStats.closedByAdmin') + ': "' +  item.closed_why + '"'
                       : $t('jobsStats.closedByAdmin')
             }}
-          </div>
-          <div>
+          </td>
+          <td class="control-td">
             <q-btn
               v-if="!item.is_closed"
               icon="edit"
@@ -34,7 +48,7 @@
               @click="editJob(item.job_id)"
             >
               <q-tooltip>
-                <p style="font-size: 15px; margin: 0">{{$t('jobsStats.editHint')}}</p>
+                <p class="fs15" style="margin: 0">{{$t('jobsStats.editHint')}}</p>
               </q-tooltip>
             </q-btn>
             <q-btn
@@ -63,22 +77,26 @@
                 <p style="font-size: 15px;margin: 0">{{$t('jobsStats.resendHint')}}</p>
               </q-tooltip>
             </q-btn>
-            <div style="display: inline;">
-              <q-btn
-                :disable="item.is_closed"
-                icon="work_off"
-                size="sm"
-                color="orange"
-                glossy
-                class="controlbtn"
-                @click="$store.dispatch('closeJobById',{jid: item.job_id, notifier: $q.notify})"
-              >
-              </q-btn>
+          </td>
+          <td class="control-td">
+            <q-btn
+              v-if="!item.is_closed"
+              icon="work_off"
+              size="sm"
+              color="orange"
+              glossy
+              class="controlbtn"
+              @click="$store.dispatch('closeJobById',{jid: item.job_id, notifier: $q.notify})"
+            >
               <q-tooltip>
                 <p style="font-size: 15px;margin: 0">{{$t('jobsStats.closeHint')}}</p>
               </q-tooltip>
-            </div>
-
+            </q-btn>
+            <span v-else>
+              {{$t('jobsStats.closed')}}
+            </span>
+          </td>
+          <td class="control-td">
             <q-btn
               icon="delete_forever"
               size="sm"
@@ -91,17 +109,16 @@
                 <p style="font-size: 15px;margin: 0">{{$t('jobsStats.deleteHint')}}</p>
               </q-tooltip>
             </q-btn>
-          </div>
-        </div>
-      </div>
+          </td>
+        </tr>
+      </table>
+      <p v-if="jobslist.length == 0">{{$t('jobsStats.none')}}</p>
     </div>
-    <p v-if="jobslist.length == 0">{{$t('jobsStats.none')}}</p>
   </div>
-
 </template>
 
-
 <script>
+
 export default {
   name: 'JobsStats',
   computed: {
@@ -110,7 +127,7 @@ export default {
     },
   },
   methods: {
-    editJob(jid) {
+    editJob(jid) {//Ok
       this.$store.dispatch('setAJNewJobsPageType', 'edit')
       let tmpObj = Object.assign({}, this.jobslist.find(j => j.job_id == jid))
       let jcatOptions = this.$t('App.jcats')
@@ -154,25 +171,38 @@ export default {
 .jobsstats
   box-sizing border-box
   width 100%
-  font-size 16px
-  line-height: 22px;
-  color var(--color1)
-  @media screen and (max-width: 550px)
+  // min-width 300px
+  table
+    border-spacing 0
+  thead td
+    border-bottom 15px solid transparent
     font-size 14px
-    line-height: 20px;
-  &__display
-    display flex
-    flex-direction column
-  &__item
-    background: #FFFFFF;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
-    border-radius: 10px;
-    margin-bottom 10px
-    display flex
-    justify-content space-between
-    padding 10px 14px
-    @media screen and (max-width: 550px)
-      margin-bottom 5px
+    @media screen and (max-width 550px)
+      font-size 11px
+      border-bottom 3px solid transparent
+  td
+    padding 3px
+    max-width 80px
+    font-size 16px
+    line-height 20px
+    @media screen and (max-width 550px)
+      font-size 12px
+      line-height 15px
+      padding 0px
+  .control-td
+    @media screen and (max-width 550px)
+      max-width 32px
+      // max-width 80px
+  // .line
+  //   display flex
+  //   align-items center
+  //   border 1px solid gray
+  //   padding 5px
+  // .rowed
+  //   display flex
+  //   box-sizing border-box
+  //   max-width 100%
+  //   overflow-x: scroll;
   .jobstat
     &:hover
       transition-duration 0.3s
@@ -180,47 +210,16 @@ export default {
       color white
       .link1
         color white
-  
-.left-side
-  text-align left
-  max-width calc(70% - 3px)
-  width calc(70% - 3px)
+  .link1
+    text-decoration none
+    color #248CEC
+    transition-duration 0.6s
+    font-weight 500
+.fs15
+  font-size: 15px;
   @media screen and (max-width 550px)
-    max-width calc(50% - 3px)
-    width calc(50% - 3px)
-.right-side
-  text-align right
-  display flex
-  flex-direction column
-  justify-content space-between
-  max-width calc(30% - 3px)
-  width calc(30% - 3px)
-  @media screen and (max-width 550px)
-    max-width calc(50% - 3px)
-    width calc(50% - 3px)
-
+    font-size 11px
 .controlbtn
-  margin-left 15px
   @media screen and (max-width 550px)
     max-width 30px
-
-.job-title
-  //
-.title-link
-  text-decoration none
-  color var(--color1)//#248CEC
-  transition-duration 0.3s
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 18px;
-  &:hover
-    color var(--violet-btn-color)
-  @media screen and (max-width 550px)
-    font-size: 12px;
-    line-height: 15px;
-
-.jstatus
-  color var(--violet-btn-color)
-  line-height 16px
-
 </style>

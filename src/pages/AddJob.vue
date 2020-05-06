@@ -258,7 +258,7 @@
             </div>
             <div class="line">
             <q-input
-              class="salInputsAdaptable salInput1"
+              class="InputsAdaptable3 salInput1"
               dense
               outlined
               bg-color="white" color="deep-purple-10"
@@ -276,7 +276,7 @@
             />
             <q-input
               :style="{marginRight: '10px'}"
-              class="salInputsAdaptable"
+              class="InputsAdaptable3"
               dense
               outlined
               bg-color="white" color="deep-purple-10"
@@ -744,6 +744,8 @@ export default {
   box-shadow 0px 2px 15px rgba(0, 0, 0, 0.1)
   height 36px
   min-height 36px !important
+  @media screen and (max-width 550px)
+    font-size: 14px;
 .addJob .q-field__native
   height 36px !important
   min-height 36px !important
@@ -796,6 +798,10 @@ div.q-field__messages
   width 150px
   @media screen and (max-width 550px)
     width 105px
+.InputsAdaptable3
+  width 150px
+  @media screen and (max-width 550px)
+    width 55px
 .salInput1
   margin-right 40px
   @media screen and (max-width 550px)

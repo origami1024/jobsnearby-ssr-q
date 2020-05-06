@@ -15,7 +15,7 @@
         animated
       >
         <q-tab-panel name="published" class="entprofile__published">
-          <h4 class="entprofile__header">{{$t('entProfile.publishedHeader')}}({{user.ownJobs.length}}):</h4>
+          <h4 class="entprofile__header">{{$t('entProfile.publishedHeader')}}</h4>
           <JobsStats/>
         </q-tab-panel>
         <q-tab-panel name="responses" class="entProfilePaddings" style="display: flex;">
@@ -391,11 +391,15 @@ export default {
     width 100%
     margin-bottom 12px !important
   &__header
-    display flex
-    justify-content flex-end
+    font-family: Montserrat, sans-serif
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 20px;
+    text-transform uppercase
+    color var(--btn-color)
+    margin 9px 0 !important
+    margin-bottom 20px !important
     align-self center
-    font-size 18px
-    padding-bottom 15px
     @media screen and (max-width 550px)
       font-size 14px !important
   .tabs
@@ -405,11 +409,14 @@ export default {
     animation-duration 0.3s
     transition-duration 0.3s
   .entprofile__published
+    padding 20px 20px
     width 100%
     //background-color #eee
     display flex
     flex-direction column
     align-items flex-start
+    @media screen and (max-width 550px)
+      padding 16px 10px
   .entprofile__settings
     //background-color #eee
     width 100%
