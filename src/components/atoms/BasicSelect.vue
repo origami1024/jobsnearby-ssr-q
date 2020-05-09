@@ -115,8 +115,9 @@ export default {
   // @media screen and (max-width 1160px)
   //   width 194px
   li
-    padding 2px 12px
+    padding 2px 9px
     border-radius 10px
+    font-size 14px
     &:hover
       background-color var(--violet-btn-color)
       color white
@@ -124,6 +125,7 @@ export default {
   font-family: Montserrat, sans-serif;
   font-style: normal;
   font-weight: normal;
+  letter-spacing -1px
   font-size: 12px;
   line-height: 36px;
   color black

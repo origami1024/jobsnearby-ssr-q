@@ -402,8 +402,8 @@ export default {
 .joblink
   color var(--color1)
   overflow-wrap: anywhere;
-  max-width 150px
-  min-width 150px
+  max-width 130px
+  min-width 125px
   &:hover
     color var(--violet-btn-color)
   @media screen and (max-width 550px)

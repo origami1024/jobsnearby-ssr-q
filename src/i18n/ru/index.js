@@ -228,7 +228,7 @@ export default {
     fCityPh: 'Ашхабад',
     fJCatPh: 'Бухгалтер',
     fExpPh: 'от 1 до 3 лет',
-    fSalPh: 'от 200 до 500',
+    fSalPh: '1000-3000',
   },
   jobs: {
     sortOpts: {

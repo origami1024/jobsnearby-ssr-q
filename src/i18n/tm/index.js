@@ -263,7 +263,7 @@ export default {
     curr: 'Walýuta',
     currDefault: [
       {label: "ähli", value: 'idc'},
-      {label: "manat", value: 'm'},
+      {label: "m", value: 'm'},
       {label: "$", value: '$'},
     ],
     exp: 'Tejribe',
@@ -278,8 +278,8 @@ export default {
     ],
     salFilters: [
       {label: "Tapawudy ýok", value: 'idc'}, 
-      {label: "0 dan 1000 çenli", value: '0-1'}, 
-      {label: "1000 dan 3000 çenli", value: '1-3'}, 
+      {label: "0-1000", value: '0-1'}, 
+      {label: "1000-3000", value: '1-3'}, 
       {label: "3000 den köp", value: '3'},
     ],
     cities: ["Tapawudy ýok", "Aşgabat", "Daşoguz", "Mary", "Türkmenabat", "Türkmenbaşy"],
@@ -287,7 +287,7 @@ export default {
     fCityPh: 'Aşgabat',
     fJCatPh: 'Buhgalter',
     fExpPh: '1-den 3 ýyla çenli',
-    fSalPh: '200-den 500-e çenli',
+    fSalPh: '1000-3000',
   },
   jobs: {
     sortOpts: {
@@ -325,6 +325,7 @@ export default {
     tooltipSeen: 'Seredildi',
     tooltipNotseen: 'Seredilenok',
     contactsLabel: 'Kontaktlar',
+    contactsLabel_mobile: 'Kontaktlar',
     today: 'Bu gün',
     yesterday: 'Düýn',
     daysAgo: 'gün mundan öň',

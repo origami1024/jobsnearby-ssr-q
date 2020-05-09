@@ -112,8 +112,9 @@ export default {
   user-select: none;
   box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
   li
-    padding 2px 12px
+    padding 2px 9px
     border-radius 10px
+    font-size 14px
     &:hover
       background-color var(--violet-btn-color)
       color white

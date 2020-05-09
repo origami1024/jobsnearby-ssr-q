@@ -341,7 +341,7 @@
                 :lazy-rules="lazyRulesAll"
               />
               <q-input
-                :style="{width: '150px', marginRight: '10px'}"
+                :style="{width: '150px'}"
                 dense
                 outlined
                 bg-color="white" color="deep-purple-10"

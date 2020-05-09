@@ -10,8 +10,9 @@
         class="nav__link"
         active-class="nav__link-active"
       >
-        <q-item-section style="position:relative;">
-          {{lr.l}}
+        <q-item-section style="position:relative;flex-direction: row; align-items: center;">
+          <span v-if="lr.badges > 0" style="margin-left: auto;margin-right: 10px;">{{lr.l}}</span>
+          <span v-else style="margin-right: 10px; display: inline !important;">{{lr.l}}</span>
           <q-badge v-if="lr.badges > 0" class="badge1" :label="lr.badges"/>
         </q-item-section>
       </q-item>
@@ -62,6 +63,7 @@ export default {
   border-radius 100%
   width 28px
   height 28px
+  margin-right auto
   text-align center
   justify-content center
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)
@@ -69,10 +71,11 @@ export default {
   font-weight: bold;
   font-size: 14px;
   line-height: 17px;
-  position absolute
-  right 34px
+  
+  // position absolute
+  // right 34px
   @media screen and (max-width 550px)
-    right 20px
+    // right 20px
     height 22px
     width 22px
 .nav__link

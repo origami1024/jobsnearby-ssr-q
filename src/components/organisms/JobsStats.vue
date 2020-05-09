@@ -200,7 +200,7 @@ export default {
     width calc(50% - 3px)
 
 .controlbtn
-  margin-left 15px
+  margin-left 8px
   @media screen and (max-width 550px)
     max-width 30px
 

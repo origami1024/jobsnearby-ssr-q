@@ -18,7 +18,6 @@
           <div style="margin-bottom: 10px;">
             {{$t('upl.chooseFile')}} <a style="color: var(--violet-btn-color);" href="/statics/vac.xlsx">{{$t('upl.fileExample')}}</a>
           </div>
-          <!-- @change="parseFile" -->
           <q-input
             @change="parseFile"
             outlined
@@ -93,7 +92,7 @@
           <q-btn color="primary" @click="step = 1" :disabled="step.length < 3" :label="$t('upl.addMore')"/>
         </q-step>
       </q-stepper>
-      <h4 class="uploads__header">{{$t('upl.allPublishedHeader')}}({{user.ownJobs.length}})</h4>
+      <h4 class="uploads__header">{{$t('upl.allPublishedHeader')}} ({{user.ownJobs.length}})</h4>
       <div class="uploads__published">
         <JobsStats/>
       </div>

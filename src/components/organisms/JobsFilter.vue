@@ -10,7 +10,7 @@
     <span class="lowresline">
       <span class="lowres__double">
       <span class="f-label">{{$t('filters.city')}}</span>
-      <DDSelect :picked="jFilters.city" @update:city="$store.dispatch('filterUpd', {prop: 'city', value: $event == $t('filters.cities')[0] ? '' : $event})" :cities="$t('filters.cities')" :ph="$t('jc.cityPh')" class="selectWrapper" />
+      <DDSelect :picked="jFilters.city" @update:city="$store.dispatch('filterUpd', {prop: 'city', value: $event == $t('filters.cities')[0] ? '' : $event})" :cities="$t('filters.cities')" :ph="$t('filters.fCityPh')" class="selectWrapper" />
       </span>
 
       <span class="lowres__double">
