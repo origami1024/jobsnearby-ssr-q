@@ -12,7 +12,7 @@
       >
         <q-item-section style="position:relative;flex-direction: row; align-items: center;">
           <span v-if="lr.badges > 0" style="margin-left: auto;margin-right: 10px;">{{lr.l}}</span>
-          <span v-else style="margin-right: 10px; display: inline !important;">{{lr.l}}</span>
+          <span v-else style="display: inline !important;">{{lr.l}}</span>
           <q-badge v-if="lr.badges > 0" class="badge1" :label="lr.badges"/>
         </q-item-section>
       </q-item>
