@@ -1,6 +1,7 @@
 const Pool = require('pg').Pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || `postgres://postgres:123456@localhost:5433/jobsnearby`
+  // connectionString: `postgres://postgres@localhost:5432/jobsnearby`
 })
 
 
@@ -43,9 +44,7 @@ async function cpLoginEndpoint(req, res) {
       res.send('<html><script>window.location.href = "/cplogin.json?e=err1"</script></html>')
       return false
     }
-    console.log('23')
     let authed = bcrypt.compareSync(pw, adminData)
-    console.log('cp54: ', authed)
 
     if (authed) {
       let jwtoken = SupremeValidator.generateJSONWebToken(mail)

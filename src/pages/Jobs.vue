@@ -242,9 +242,12 @@ export default {
       margin 0
   .jobs__contents
     margin 0 26px
+    min-width 551px
     flex-grow 2
     @media screen and (max-width: 1160px)
       margin 0 10px
+    @media screen and (max-width 800px)
+      min-width auto
     @media screen and (max-width 550px)
       //margin 0 5px
       margin 0
