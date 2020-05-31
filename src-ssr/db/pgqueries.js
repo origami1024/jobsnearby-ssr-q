@@ -1839,7 +1839,7 @@ async function login(req, res) {
 
 async function getUserAuthByCookies(session, mail) {
   let que = `SELECT email AS identity, user_id, role, 
-    name AS username, surname, company, insearch, isagency, cvurl, is_active
+    name, surname, company, insearch, isagency, cvurl, is_active
     FROM "users" 
     WHERE ("auth_cookie" = $1 AND "email" = $2)`
   let params = [session, mail]

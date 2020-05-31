@@ -14,7 +14,7 @@
         transition-prev="jump-up"
         transition-next="jump-up"
       >
-        <q-tab-panel name="cv" class="subprofile__cv subProfilePaddings">
+        <q-tab-panel name="cv" class="subprofile__cv subProfilePaddings" @drop="cvDrop">
           
           <div class="line" style="display: flex; width: 100%;">
             <div style="max-width: 300px; width: 100%; margin-bottom: 20px;">
@@ -148,6 +148,17 @@ export default {
     this.$destroy()
   },
   methods: {
+    cvDrop(e) {
+      if (e.dataTransfer.files.length == 1) {
+        let n = e.dataTransfer.files[0].name
+        let ext = n.substr(n.lastIndexOf(".")).toLowerCase()
+        if (['.doc','.docx','.pdf','.rtf','.md','.txt'].includes(ext)) {
+          this.uploadCV(e.dataTransfer.files)
+        } else this.$q.notify('Неправильный формат файла')
+        window.console.log(e.dataTransfer.files[0])
+      }
+      window.console.log(e)
+    },
     getCVHitsHistory() {//OK
       let url = '/getcvhitshistory'
       this.$axios
@@ -247,7 +258,7 @@ export default {
       this.$axios
         .post(url, udata, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
         .then(response => {
-          console.log('trychpw', response.data)
+          // console.log('trychpw', response.data)
           if (response.data == 'OK') {
             this.$q.notify(this.$t('sub.pwChanged'))
           }
@@ -256,7 +267,8 @@ export default {
     },
     setLocalRoute(rou) {//ok
       if (rou == 'personal') {
-        this.userdata.username = this.user.username
+        
+        this.userdata.username = this.user.name
         this.userdata.surname = this.user.surname
         this.userdata.insearch = this.user.insearch
       } else
@@ -264,14 +276,23 @@ export default {
         //do axious shiet to get the listOfSentJobs
         this.getCVHitsHistory()
       }
-      
       this.tab = rou
     },
   },
   mounted(){
-    this.userdata.username = this.user.username
+    this.userdata.username = this.user.name
     this.userdata.surname = this.user.surname
     this.userdata.insearch = this.user.insearch
+
+    //без этого дропать файлы нельзя
+    window.addEventListener("dragover",function(e){
+      e = e || event;
+      e.preventDefault()
+    },false)
+    window.addEventListener("drop",function(e){
+      e = e || event;
+      e.preventDefault()
+    },false)
   },
 }
 </script>

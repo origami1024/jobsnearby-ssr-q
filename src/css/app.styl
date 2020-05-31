@@ -169,7 +169,7 @@ body
       height 40px
       padding 0
       white-space normal
-      max-width 120px
+      max-width 180px
     @media screen and (max-width 550px)
       max-width none
       padding 0 8px
@@ -192,7 +192,11 @@ body
           padding 0
   .addJobSpecific
     @media screen and (max-width 550px)
-      width 168px
+      width 180px
+      height auto
+      line-height calc(1rem + 2px)
+      font-size 14px
+      padding 0
   .headerBtnRed
     &:hover
       background-color var(--btn-color1) !important
@@ -208,6 +212,7 @@ body
   .violetBtns
     padding 0 3px
     margin-left 15px
+    box-shadow 0 1px 5px rgba(0,0,0,0.2), 0 2px 2px rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12)
     @media screen and (max-width 800px)
       margin-left 10px
       padding 0 6px
@@ -227,6 +232,8 @@ body
     outline none
     &:hover
       background-color var(--violet2)
+    @media screen and (max-width: 800px)
+      margin-left 0
     @media screen and (max-width: 550px)
       background url('/statics/login.png')
       background-repeat no-repeat
@@ -390,6 +397,9 @@ body
   @media screen and (max-width 550px)
     width auto !important
     
+#q-app .headerBtns1 .q-btn__wrapper
+  @media screen and (max-width 800px)
+    padding 5px !important
 #q-app .footerLinkFB.headerBtns1 div
   font-weight 600 !important
   font-size 13px !important

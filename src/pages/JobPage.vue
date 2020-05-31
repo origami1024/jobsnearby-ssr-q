@@ -13,8 +13,8 @@
           <p class="salary-deriv">{{salary_deriv}}</p>
           <p class="jobpage__city_company">{{(job.city && job.city.length > 0) ? $t('jobPage.cityWordStart') + job.city : $t('jobPage.cityNotSet')}}</p>
         </div>
-        <div class="detailed__col" style="">
-          <img class="detailed__logo1" :src="(job.logo_url && job.logo_url.length > 1) ? job.logo_url : '/statics/logoph.png'">
+        <div class="detailed__col" style="display: flex; flex-direction: column; justify-content: center;">
+          <img style="align-self: center;" class="detailed__logo1" :src="(job.logo_url && job.logo_url.length > 1) ? job.logo_url : '/statics/companyph.png'">
           <p class="author-link-wrapper"><a :href="'/companypage?id=' + job.author_id" target="_blank" class="detailed__author-link1 jobpage__city_company">{{job.author}}</a></p>  
         </div>
         
@@ -52,7 +52,7 @@
           </div>
           <div class="subitem" v-if="job.experience >= 0">
               {{
-                (1 > job.experience >= 0) ?
+                (1 > job.experience && job.experience>= 0) ?
                   $t('jobPage.expNone')
                 :(job.experience >= 1 && 3 > job.experience) ?
                   $t('jobPage.exp1_3')
@@ -263,6 +263,7 @@ section
   max-height 45px
   // line-height 50px
   margin-left 5px
+  margin-bottom 3px
   // background-size contain
   // background-repeat no-repeat
   // background-position center
@@ -307,6 +308,7 @@ section
 .jobpage__city_company
   margin-top 12px
   font-size: 14px;
+  font-weight bold;
   @media screen and (max-width 550px)
     margin-top 5px
     font-weight: 500;
@@ -315,8 +317,8 @@ section
 .padleft
   padding-left 10px
 .descriptionHTML
-  font-size 14px
-  line-height 1.1
+  font-size 16px
+  line-height 1
   word-wrap break-word
   max-width 100%
   @media screen and (max-width 550px)

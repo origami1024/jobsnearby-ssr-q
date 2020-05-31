@@ -54,7 +54,7 @@
         state == 'OK'
           ? $t('fb.messageSuccess')
           : $t('fb.messageError')}}</p>
-      <div style="width: 100%;">
+      <div style="width: 100%; margin-bottom: 15px;">
         <q-btn class="headerBtns1 headerBtnRed" style="margin-right: 10px" color="red-10" :label="$t('fb.btnSendMore')" @click="state='ready'" />
         <q-btn class="headerBtns1 headerBtnRed" color="red-10" :label="$t('fb.toMain')" @click="fbDataFlush(); state='ready'; $router.push('/')" />
       </div>

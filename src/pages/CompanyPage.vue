@@ -10,29 +10,35 @@
             </p>
           </div>
         </div>
-        <div class="detailed__logo" :style="{'background-image': 'url(' + cdata.logo_url + ')'}" >{{cdata.logo_url == '' || !cdata.logo_url ? 'logo placeholder' : ''}}</div>
+        <div 
+          class="detailed__logo"
+          :style="{'background-image': 'url(' + (
+            (cdata.logo_url && cdata.logo_url.length > 0)
+            ? cdata.logo_url 
+            : '/statics/companyph.png')
+          + ')'}" >
+        </div>
       </section>
       <section v-if="cdata.domains.length > 0">
         <h4 class="detailed__header">{{$t('companyPage.categoriesHeader')}}</h4>
         <div class="subitem"  v-if="cdata.domains[0]">
-          
-            {{cdata.domains[0]}}
-          
+          {{$t('entProfile.companyDomains')[cdata.domains[0]]}}
         </div>
         <div class="subitem"  v-if="cdata.domains[1]">
-          
-            {{cdata.domains[1]}}
-          
+          {{$t('entProfile.companyDomains')[cdata.domains[1]]}}
         </div>
         <div class="subitem"  v-if="cdata.domains[2]">
-          {{cdata.domains[2]}}
+          {{$t('entProfile.companyDomains')[cdata.domains[2]]}}
         </div>
       </section>
-      <section v-if="cdata.full_description.length > 0">
+      <section>
         <h4 class="detailed__header">{{$t('companyPage.descHeader')}}</h4>
         <div class="subitem" >
-          <div class="descriptionHTML">
+          <div v-if="cdata.full_description && cdata.full_description.length > 0" class="descriptionHTML">
             {{cdata.full_description}}
+          </div>
+          <div v-else>
+            {{$t('companyPage.descPh')}}
           </div>
         </div>
       </section>
@@ -48,25 +54,14 @@
 
 export default {
   name: 'companypage',
-  data: ()=>{return {
-    // cdata: {
-    //   company: '',
-    //   logo_url: '',
-    //   domains: [], //3max
-    //   website: '',
-    //   full_description: '',
-    //   time_created: '',
-    //   jobs_count: 0
-    // }
-  }},
   mounted() {
-    console.log(this.$route.query.id)
-    // this.getCompanyData()
+    console.log('cp9', this.$route.query.id)
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
-    if (ssrContext)
+    if (ssrContext) {
+      console.log('cp91', ssrContext.req.companyData)
       return store.dispatch('setCompanyDetails', ssrContext.req.companyData)
-    else
+    } else
       return store.dispatch('fetchCompanyDetails', currentRoute.query.id)
   },
   computed: {

@@ -9,7 +9,7 @@ export default function () {
       identity: 'Гость',//previously 'user', or is a mail
       role: 'guest',
       user_id: -1,
-      username: '',
+      name: '',
       surname: '',
       company: '',
       isagency: false,

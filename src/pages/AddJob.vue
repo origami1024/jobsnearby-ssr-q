@@ -526,9 +526,13 @@ export default {
       }
     },
     jobEditedObj(newObj) {
-      console.log('jobEditorWatcher cp0')
       if (this.props.newJobsPageType == 'edit') {
         this.job = Object.assign({}, this.jobInit, newObj)
+        if (!newObj.salary_min && !newObj.salary_max) {
+          this.salaryOn = true
+          console.log(newObj.salary_min, newObj.salary_max)
+        }
+          
         console.log('jobEditorWatcher cp')
       } else {
         this.job = Object.assign({}, this.jobInit)

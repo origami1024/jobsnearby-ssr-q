@@ -102,6 +102,7 @@ export default {
     descHeader: 'Описание',
     publishedJobsCountLabel: 'Размещено вакансий: ',
     registrationDate: 'Зарегистрирована: ',
+    descPh: 'пока нет описания',
   },
   jobPage: {
     jobClosed: 'Вакансия закрыта',

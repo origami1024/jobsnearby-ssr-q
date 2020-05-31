@@ -342,7 +342,9 @@ export default {
       e.preventDefault()
     },false)
     this.$store.dispatch('getOwnJobs')
-    setTimeout(()=>{this.getResps()},100)
+    setTimeout(() => {
+      this.getResps()
+    }, 100)
   },
   watch: {//ok
     $route (to, from){

@@ -33,6 +33,7 @@
           <td class="noshow-below550">
             <span v-if="item.date_checked != null">
               {{formatDate(item.date_checked)}}
+            <span style="color: mediumseagreen; font-weight: bold; font-size: 16px; line-height: 10px;">✓</span>
             </span>
             <span v-else>
               {{$t('hits.no')}}

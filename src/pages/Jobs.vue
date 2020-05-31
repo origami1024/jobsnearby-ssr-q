@@ -4,7 +4,7 @@
       <div class="banner__pic"></div>
       <div class="jobs__banner-right">
         <div class="banner__header-wrap">
-          <h2 class="banner__header">{{$t('jobs.bannerHeader')}}</h2>
+          <h1 class="banner__header">{{$t('jobs.bannerHeader')}}</h1>
         </div>
         <div class="jobs__top-search">
           <button class="filtersHamburgerBtn" @click="$store.dispatch('filtersToggle')"/>

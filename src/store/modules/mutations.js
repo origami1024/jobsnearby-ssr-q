@@ -95,6 +95,7 @@ export default {
   },
   setCompanyDetails (state, company) {
     state.cdata = company
+    console.log('cp7', state.cdata)
   },
   storeAuth (state, user) {
     state.user = {...state.user, ...user}
@@ -109,7 +110,7 @@ export default {
       identity: 'Гость',
       role: 'guest',
       user_id: -1,
-      username: '',
+      name: '',
       surname: '',
       company: '',
       isagency: false,

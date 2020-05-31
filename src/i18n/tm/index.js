@@ -102,6 +102,7 @@ export default {
     descHeader: 'Düşündiriş',
     publishedJobsCountLabel: 'Wezipe goşuldy: ',
     registrationDate: 'Registrasiýa bolan: ',
+    descPh: 'entek düşündiriş ýok',
   },
   jobPage: {
     jobClosed: 'Wezipe ýapyk',
