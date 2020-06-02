@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html prefix="og: http://ogp.me/ns#">
   <head>
     <title><%= htmlWebpackPlugin.options.productName %></title>
 
@@ -7,6 +7,11 @@
     <meta name="description" content="<%= htmlWebpackPlugin.options.productDescription %>">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
+    <!-- TODO: are dynamic links needed on each page? <meta property="og:url" content="https://hunarmen.com" /> -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Hunarmen" />
+    <meta property="og:description" content="Работа в Туркменистане" />
+    <meta property="og:image" content="https://hunarmen.com/statics/login.png" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width<% if (htmlWebpackPlugin.options.ctx.mode.cordova || htmlWebpackPlugin.options.ctx.mode.capacitor) { %>, viewport-fit=cover<% } %>">
     <link rel="icon" type="image/png" sizes="16x16" href="statics/icons/favicon-16x16.png">
     <link rel="icon" type="image/ico" href="statics/icons/favicon.ico">

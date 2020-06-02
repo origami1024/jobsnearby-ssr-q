@@ -16,8 +16,13 @@ export default {
   name: 'LangChanger',
   methods: {
     setLang(lang) {
+      //lang is saved both in cookies and localstorage
       this.$i18n.locale = lang
       window.localStorage.setItem('lang', lang)
+      this.$axios
+        .post('/setlang', {lang}, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+        // .then(resp => {
+        // })
     },
   }
 }

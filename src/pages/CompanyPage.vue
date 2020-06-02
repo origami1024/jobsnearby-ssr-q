@@ -59,7 +59,7 @@ export default {
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
     if (ssrContext) {
-      console.log('cp91', ssrContext.req.companyData)
+      // console.log('cp91', ssrContext.req.companyData)
       return store.dispatch('setCompanyDetails', ssrContext.req.companyData)
     } else
       return store.dispatch('fetchCompanyDetails', currentRoute.query.id)

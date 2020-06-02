@@ -135,6 +135,13 @@ function validateOneJob (data) {
 }
 
 
+async function setLangCookie(req, res) {
+  let lang = req.body.lang
+  // console.log('lang, settings cookies:', lang)
+  res.cookie('lang', lang)
+  res.send('have a nice cookies')
+}
+
 async function resend(req, res) {
   //page with form to request a resend
   let body = `
@@ -504,8 +511,8 @@ async function addJobs (req, res) {
     let last_posted = results.rows[0].last_posted
     let limitCount = parseInt(results.rows[0].new_jobs_count_today)
     if (!limitCount) limitCount = 0
-    console.log('cp77', last_posted)
-    console.log('cp78', limitCount)
+    // console.log('cp77', last_posted)
+    // console.log('cp78', limitCount)
     if (limitCount >= DAILY_JOBS_LIMIT && parseInt(last_posted) != NaN && parseInt(last_posted) < 0 && parseInt(last_posted) > -JOBS_LIMIT_DURATION) {//-86400
       res.send({msg: 'error limits reached', added: 0, total: req.body.length})
       return false
@@ -802,7 +809,7 @@ async function updateJob (req, res) {
       let jid = req.body.job_id
       if (isNaN(jid) != false || !Number.isInteger(Number(jid)) || jid < 0) {
         res.send('wrong job id: ' + jid)
-        console.log('cp34: ', jid)
+        // console.log('cp34: ', jid)
         return false
       }
       let parsedData = validateOneJob(req.body)
@@ -850,8 +857,8 @@ async function addOneJob (req, res) {
       let last_posted = results.rows[0].last_posted
       let limitCount = parseInt(results.rows[0].new_jobs_count_today)
       if (!limitCount) limitCount = 0
-      console.log('cp67', last_posted)
-      console.log('cp68', limitCount)
+      // console.log('cp67', last_posted)
+      // console.log('cp68', limitCount)
       if (limitCount >= DAILY_JOBS_LIMIT && parseInt(last_posted) != NaN && parseInt(last_posted) < 0 && parseInt(last_posted) > -JOBS_LIMIT_DURATION) {//-86400
         res.send('error limits reached')
         return false
@@ -1429,7 +1436,6 @@ async function getCompanyById(req, res) {
     res.status(400).send('Неправильный id компании.')
     return false
   }
-  console.log('cp1')
   let que = `
     SELECT company, logo_url, domains, website, full_description, users.time_created, count(*) as jobs_count
     FROM users JOIN jobs ON (jobs.author_id = users.user_id)
@@ -1441,7 +1447,6 @@ async function getCompanyById(req, res) {
     //throw new Error('job by id error')
     return false
   })
-  console.log('cp2')
   let company
   if (result.rows && result.rows.length === 1) company = result.rows[0]
   else {
@@ -1550,7 +1555,6 @@ async function changeuserstuff(req, res) {
       return undefined
     })
     if (user_id) {
-      console.log('cp256: ', user_id, udata)
       let doit = await updateUserData(user_id, udata).catch(error => {
         res.send('step3')
         return undefined
@@ -1777,7 +1781,7 @@ async function login(req, res) {
       userData = userData.rows[0]
       userData.identity = mail
     }
-    // console.log('cp77', userData)
+    
     if (userData) {
       //check if blockd
       if (userData.is_active == false) {
@@ -1953,6 +1957,8 @@ module.exports = {
   reg,
   out,
   
+  setLangCookie,
+
   verify,
 
   feedback,

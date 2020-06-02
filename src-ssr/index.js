@@ -80,7 +80,7 @@ app.get('*', (req, res) => {
         res.redirect(err.url)
       }
       else if (err.code === 404) {
-        res.status(404).send('404 | Page Not Found')
+        res.status(404).send('<html><body><h2>404 | Page Not Found</h2><a href="https://hunarmen.com">go back to hunarmen.com</a></body><html>')
       }
       else {
         // Render Error Page or Redirect

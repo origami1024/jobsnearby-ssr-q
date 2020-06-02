@@ -168,7 +168,6 @@
         </li>
       </ul>
     </footer>
-
   </div>
 </template>
 
@@ -191,9 +190,11 @@ export default {
     window.removeEventListener("storage", this.onStorageUpdate)
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
+    
     if (ssrContext && typeof ssrContext.req.userData === 'object' && ssrContext.req.userData !== null) {
       return store.dispatch('storeAuth', ssrContext.req.userData)
     }
+    
   },
   mounted() {
     if (localStorage.lang) this.$i18n.locale = localStorage.lang

@@ -115,7 +115,6 @@ export default function (/* { ssrContext } */) {
         context.commit('setAJNewJobsPageType', value)
       },
       caboutPropUpd (context, {prop, value}) {
-        console.log('cp19', value)
         context.commit('setCAboutProp', {prop, value})
       },
       async getOwnCAbout (context) {

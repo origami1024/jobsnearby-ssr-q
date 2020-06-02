@@ -1348,7 +1348,6 @@ async function deleteJobByIdAdmin(req, res) {
 
 async function userStatRegen(req, res) {
   //generate new stuff
-  console.log('cp1')
   if (req.cookies && req.cookies.sessioa && req.cookies.sessioa.length > 50 && req.cookies.user2) {
     let auth = await adminAuth(req.cookies.user2, req.cookies.sessioa).catch(error => {
       //res.send('step2')
@@ -1378,7 +1377,6 @@ async function userStatRegen(req, res) {
         console.log('cp userStatRegen err1: ', error)
         return false
       })
-      console.log('cp2', result)
       let resubig = []
       let resu = {}
       if (result && result.rows && result.rows.length > 0) {
@@ -1392,7 +1390,6 @@ async function userStatRegen(req, res) {
           salMinCurr = 'm'
         }
         
-        console.log('cp3', resu.salMin)
         let que = `
           UPDATE cached_salary_stats
           SET (statvalue, statcurrency, time_updated) = (${salMin}, '${salMinCurr}', NOW())
@@ -1405,8 +1402,6 @@ async function userStatRegen(req, res) {
 
       }
       resubig.push(resu)
-      
-      console.log('cp4', resubig)
 
 
       let que3 = 'SELECT salary_min, salary_max, currency FROM jobs'

@@ -33,6 +33,7 @@ module.exports.extendApp = function ({ app, ssr }) {
   //app.use(cookieParser('qwekkk-12345'))
   app.use(cookieParser())
 
+
   app.get('/jobs.json', db.getJobs)
   app.get('/salstats.json', db.getSalStats)
   app.get('/jobby.idjson=:id', db.getJobByIdJSON)
@@ -52,6 +53,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/cvupdate.json', db.cvurlupdate)
   app.post('/cvdelete.json', db.cvurldelete)
   
+  app.post('/setlang', db.setLangCookie)
+
   app.post('/hitjobcv', db.hitjobcv)
 
 
@@ -102,23 +105,10 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/userstatregen.json', adm.userStatRegen)
   // aa end
   
+
+
+
   //ssr stuff
-  //0 -- wait! on what route is this? on any first route?
-  //0 -- think this trhourh
-  /*AUTH ROUTE WOT? NO SUCH ROUTE ON SSR
-  app.post('/auth', async function (req, res, next) {
-    if (authPreValidation(req.cookies.session, req.cookies.mail)) {
-      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
-        console.log('getUserAuthByCookies. xxx', error)
-        return 'error1'
-      })
-    } else {
-      //empty or not valid auth data
-      req.userData = 'noauth'
-    }
-    
-    next()
-  })*/
   //1
   app.get('/', async function (req, res, next) {
     //auth first
