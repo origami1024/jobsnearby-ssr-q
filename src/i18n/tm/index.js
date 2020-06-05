@@ -64,6 +64,7 @@ export default {
     tdMore: 'Goşmaça',
     tdTel: 'Tel',
     tdMail: 'Poçta',
+    tdJCategory: 'Hünär',
     reset: 'Pozmak',
     publish: 'Goşmak',
     stepFinish: 'Soňy',

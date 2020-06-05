@@ -18,6 +18,17 @@ const JOBS_LIMIT_DURATION = 86400 //86400 - 24 hours
 
 const SupremeValidator = require('./../serverutils').SupremeValidator
 
+const cookieConfig = {
+  httpOnly: true, // to disable accessing cookie via client side js
+  secure: true, // to force https (if you use it)
+  maxAge: 2000000000, // ttl in ms (remove this option and cookie will die when browser is closed)
+  signed: true // if you use the secret with cookieParser
+}
+const cookieConfigNoRemember = {
+  httpOnly: true, // to disable accessing cookie via client side js
+  secure: true, // to force https (if you use it)
+  signed: true // if you use the secret with cookieParser
+}
 
 function authPreValidation(session, mail) {
   if (
@@ -138,7 +149,7 @@ function validateOneJob (data) {
 async function setLangCookie(req, res) {
   let lang = req.body.lang
   // console.log('lang, settings cookies:', lang)
-  res.cookie('lang', lang)
+  res.cookie('lang', lang, cookieConfigNoRemember)
   res.send('have a nice cookies')
 }
 
@@ -529,6 +540,7 @@ async function addJobs (req, res) {
       let n = 19
       let iSkipped = 0
       for (let i = 0; i < processedlength; i++) {//Math.min - максимум 15
+        req.body[i].jcategory
         let parsedData = validateOneJob(req.body[i])
         if (parsedData == false) { iSkipped += 1; continue}
         //author_id - проверка не нужна
@@ -1743,8 +1755,8 @@ async function out(req, res) {
   //maybe delete stuff in db and write some statistics down
   //for now just reset cookies and send back OK
   // console.log('user logout')
-  res.cookie('session', '')
-  res.cookie('mail', '')
+  res.cookie('session', '', cookieConfigNoRemember)
+  res.cookie('mail', '', cookieConfigNoRemember)
   res.send('get out then')
 }
 
@@ -1812,11 +1824,14 @@ async function login(req, res) {
         delete userData.block_reason
         userData.success = 'OK'
         if (rememberme) {
-          res.cookie('session', jwtoken, {expires: new Date(Date.now() + 590013000)})
-          res.cookie('mail', mail, {expires: new Date(Date.now() + 590013000)})
+          // res.cookie('session', jwtoken, {expires: new Date(Date.now() + 590013000)})
+          // res.cookie('mail', mail, {expires: new Date(Date.now() + 590013000)})
+          res.cookie('session', jwtoken, cookieConfig)
+          res.cookie('mail', mail, cookieConfig)
+          
         } else {
-          res.cookie('session', jwtoken)
-          res.cookie('mail', mail)
+          res.cookie('session', jwtoken, cookieConfigNoRemember)
+          res.cookie('mail', mail, cookieConfigNoRemember)
         }
 
         //own CVS on login

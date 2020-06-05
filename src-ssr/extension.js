@@ -30,8 +30,8 @@ module.exports.extendApp = function ({ app, ssr }) {
 
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
-  //app.use(cookieParser('qwekkk-12345'))
-  app.use(cookieParser())
+  app.use(cookieParser('twerk-12345'))
+  // app.use(cookieParser())
 
 
   app.get('/jobs.json', db.getJobs)

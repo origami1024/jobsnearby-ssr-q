@@ -38,25 +38,28 @@
           :done="step > 2"
         >
           <div>
-            <table style="border-spacing: 0">
-              <thead :style="{backgroundColor: 'black', color: 'white'}">
-                <td>{{$t('upl.tdTilte')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdSalMin')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdSalMax')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdCurr')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdAgeFrom')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdAgeTo')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdTimeFrom')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdTimeTo')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdSchedule')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdLangs')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdEdu')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdExp')}}</td>
-                <td>{{$t('upl.tdCity')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdJTyp')}}</td>
-                <td>{{$t('upl.tdMore')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdTel')}}</td>
-                <td class="noshow-below550">{{$t('upl.tdMail')}}</td>
+            <table style="border-spacing: 0; margin-bottom: 15px;">
+              <thead>
+                <tr style="background-color: black; color: white;">
+                  <td>{{$t('upl.tdTilte')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdSalMin')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdSalMax')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdCurr')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdAgeFrom')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdAgeTo')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdTimeFrom')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdTimeTo')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdSchedule')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdLangs')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdEdu')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdExp')}}</td>
+                  <td>{{$t('upl.tdCity')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdJTyp')}}</td>
+                  <td>{{$t('upl.tdMore')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdTel')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdMail')}}</td>
+                  <td class="noshow-below550">{{$t('upl.tdJCategory')}}</td>
+                </tr>
               </thead>
               <tr @input="onEditableInput" v-for="(item, index) in parsed" :key="index" :itemindex="index">
                 <td contenteditable="true" propname="title">{{item.title}}</td>
@@ -76,6 +79,7 @@
                 <td contenteditable="true" propname="description">{{item.description}}</td>
                 <td contenteditable="true" class="noshow-below550" propname="contact_tel">{{item.contact_tel}}</td>
                 <td contenteditable="true" class="noshow-below550" propname="contact_mail">{{item.contact_mail}}</td>
+                <td class="noshow-below550" propname="jcategory">{{item.jcategory}}</td>
               </tr>
             </table>
             <q-btn v-if="step > 1" flat color="primary" @click="resetParsed" :label="$t('upl.reset')" class="q-ml-sm" />
@@ -145,8 +149,19 @@ export default {
       this.parsed = []
       this.step = 1
     },
+    transformJCats() {
+      //в экселе указываются пока что только на русском
+      const JCATS = {"Не имеет значения":0,"Бух учет, финансы":19,"Гос служба":1,"Дизайн, полиграфия":14,"ИТ, Интернет":4,"Красота, фитнес, спорт":12,"Логистика, склад":10,"Маркетинг, реклама":13,"Медицина, Фармация, Ветеринария":9,"Недвижимость, риэлтерские услуги":3,"Нефть и Газ":5,"Образование, репетиторство":6,"Производство, агропром":7,"Рестораны, питание":8,"Строительство":11,"Торговля":2,"Транспорт, автосервис":15,"Туризм, гостиницы":16,"Юриспруденция":17,"HR, кадры":18}
+      this.parsed = this.parsed.map(one => {
+        console.log(one.jcategory)
+        one.jcategory = JCATS[one.jcategory]
+        return one
+      })
+    },
     sendNewJobs: function () {
       if (this.parsed.length > 0) {
+        this.transformJCats()
+        console.log(this.parsed[0])
         this.uploadStatus = 'Идет загрузка...'
         this.$axios
           .post('/entrance', this.parsed, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
@@ -190,7 +205,7 @@ export default {
         
         let entries = [
           'title', 'salary_min', 'salary_max', 'currency', 'contact_tel', 'contact_mail', 'description',
-          'age1', 'age2', 'worktime1', 'worktime2', 'schedule', 'edu', 'experience', 'city'
+          'age1', 'age2', 'worktime1', 'worktime2', 'schedule', 'edu', 'experience', 'city', 'jcategory'
         ]
         let len = lastLineIndex
         lastLineIndex = 0
@@ -200,13 +215,16 @@ export default {
         let newl = (entryname) => {
           //console.log(lastLineIndex)
           //console.log(alpha[alphaIndex] + lastLineIndex)
+          
           if (alpha[alphaIndex] + lastLineIndex in tmp) newData[lastLineIndex][entryname] = tmp[alpha[alphaIndex] + lastLineIndex].v
           alphaIndex += 1
         }
         while (lastLineIndex <= len) {
           alphaIndex = 0
           newData.push({})
-          entries.forEach(val => newl(val))
+          
+          entries.forEach(newl)
+          
           console.log((alpha[alphaIndex] + lastLineIndex in tmp && getjtype(tmp[alpha[alphaIndex] + lastLineIndex].v) != ''))
           if (alpha[alphaIndex] + lastLineIndex in tmp && getjtype(tmp[alpha[alphaIndex] + lastLineIndex].v) != '') newData[lastLineIndex].jtype = getjtype(tmp[alpha[alphaIndex] + lastLineIndex].v)
           alphaIndex += 1
@@ -218,11 +236,15 @@ export default {
           alphaIndex += 1
           if (alpha[alphaIndex] + lastLineIndex in tmp) newData[lastLineIndex].langs.push(tmp[alpha[alphaIndex] + lastLineIndex].v)
           alphaIndex += 1
+
           lastLineIndex++
         }
+        
+        
+        newData.shift()
+        newData.shift()
+        newData = newData.filter(d => d.title)
         console.log(newData)
-        newData.shift()
-        newData.shift()
         
         localVue.parsed = newData
         //localVue.$refs.stepper.next()

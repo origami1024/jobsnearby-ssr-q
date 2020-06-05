@@ -64,6 +64,7 @@ export default {
     tdMore: 'Дополнительно',
     tdTel: 'Тел',
     tdMail: 'Почта',
+    tdJCategory: 'Профессия',
     reset: 'Сбросить',
     publish: 'Опубликовать',
     stepFinish: 'Финиш',

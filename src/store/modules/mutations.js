@@ -73,6 +73,7 @@ export default {
     state.jobs.page_current = Number(rawjobs.page)
   },
   refreshUStats (state, stats) {//user stats
+    let topIdx = 0
     for (let index = 0; index < stats.length; index++) {
       if (stats[index].statname == 'salMin')
         state.uStats.salMin = stats[index].statvalue + stats[index].statcurrency
@@ -81,14 +82,17 @@ export default {
       else if (stats[index].statname == 'salMax')
         state.uStats.salMax = stats[index].statvalue + stats[index].statcurrency
       else if (stats[index].statname.startsWith('top')) {
-        let topIdx = parseInt(stats[index].statname.replace('top',''))
+        // let topIdx = parseInt(stats[index].statname.replace('top',''))
         state.uStats.tops[topIdx] = [
-          stats[index].statlabel, 
+          stats[index].statlabel,
           stats[index].statvalue + stats[index].statcurrency,
           stats[index].statlink
         ]
+        topIdx += 1
+        
       }
     }
+    console.log('cp111', state.uStats)
   },
   setJobDetails (state, job) {
     state.jobDetails = job
