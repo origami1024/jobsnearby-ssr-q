@@ -634,10 +634,19 @@ async function getResps(req, res) {
       console.log('cp getResps err1: ', error)
     })
     if (result.rows.length == 1) {
+      // let que2 = `
+      //   SELECT cvhits.*, jobs.title, users.name, users.surname
+      //   FROM cvhits, jobs, users
+      //   WHERE jobs.author_id = $1 AND cvhits.cvjob_id = jobs.job_id AND cvhits.cvuser_id = users.user_id
+      // `
       let que2 = `
         SELECT cvhits.*, jobs.title, users.name, users.surname
-        FROM cvhits, jobs, users
-        WHERE jobs.author_id = $1 AND cvhits.cvjob_id = jobs.job_id AND cvhits.cvuser_id = users.user_id
+        FROM cvhits
+        INNER JOIN jobs
+        ON jobs.author_id = $1
+        AND cvhits.cvjob_id = jobs.job_id
+        INNER JOIN users
+        ON cvhits.cvuser_id = users.user_id
       `
       let params2 = [result.rows[0].user_id]
       let resps = await pool.query(que2, params2).catch(error => {
@@ -1296,8 +1305,9 @@ const getJobs = (req, res) => {
   // console.log('curr_line: ', curr_line)
 
   let que =  `SELECT jobs.author_id, users.company as author, jobs.job_id, jobs.city, jobs.experience, jobs.title, jobs.currency, jobs.salary_min, jobs.salary_max, jobs.description, jobs.time_updated as updated, jobs.contact_mail, contact_tel
-              FROM jobs, users
-              WHERE jobs.author_id = users.user_id AND
+              FROM jobs
+              INNER JOIN users
+              ON jobs.author_id = users.user_id AND
                 jobs.is_published = TRUE AND
                 jobs.is_closed = FALSE
                 ${timerange} 
@@ -1314,7 +1324,6 @@ const getJobs = (req, res) => {
                 ${curr_line}
               ${sort}
               LIMIT $1 ${'OFFSET ' + offset}`
-              
   let qparams = [perpage]
   if (txt) qparams.push(txt)
   if (city) qparams.push(city)
@@ -1325,8 +1334,9 @@ const getJobs = (req, res) => {
     }
     qparams.shift()
     let countque =  `SELECT count(*) AS full_count
-                    FROM jobs, users
-                    WHERE jobs.author_id = users.user_id AND
+                    FROM jobs
+                    INNER JOIN users
+                    ON jobs.author_id = users.user_id AND
                       jobs.is_published = TRUE AND
                       jobs.is_closed = FALSE
                       ${timerange} 
@@ -1909,8 +1919,9 @@ async function getJobDataSSR(id, addr) {
   // console.log('get job by id first func. ip: ', req.headers['x-forwarded-for'] || req.connection.remoteAddress)
   let que = `SELECT * FROM
     (SELECT jobs.author_id, users.company as author, users.logo_url, jobs.job_id, jobs.city, jobs.experience, jobs.jobtype, jobs.title, jobs.edu, jobs.currency, jobs.salary_min, jobs.salary_max, jobs.description, jobs.worktime1, jobs.worktime2, jobs.schedule, jobs.age1, jobs.age2, jobs.langs, jobs.time_published as published, jobs.time_updated as updated, contact_mail, contact_tel, cardinality(jobs.hits_log) as hits_all, jobs.is_closed, jobs.closed_why, jobs.jcategory, jobs.is_published
-    FROM jobs, users
-    WHERE jobs.author_id = users.user_id AND jobs.job_id = $1) a,
+    FROM jobs
+    INNER JOIN users
+    ON jobs.author_id = users.user_id AND jobs.job_id = $1) a,
     (select count(distinct hits_log1) as hits_uniq
     from (
         select unnest(hits_log) as hits_log1

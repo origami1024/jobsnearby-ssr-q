@@ -8,6 +8,7 @@
 // Configuration for your app
 // https://quasar.dev/quasar-cli/quasar-conf-js
 
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = function (/* ctx */) {
   return {
@@ -86,6 +87,7 @@ module.exports = function (/* ctx */) {
             formatter: require('eslint').CLIEngine.getFormatter('stylish')
           }
         })
+        cfg.plugins.push(new CopyWebpackPlugin([{ from: 'src/rootFolder/', to: '' }]))
       },
     },
 

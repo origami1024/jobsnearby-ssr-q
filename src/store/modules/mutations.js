@@ -92,7 +92,6 @@ export default {
         
       }
     }
-    console.log('cp111', state.uStats)
   },
   setJobDetails (state, job) {
     state.jobDetails = job

@@ -1,17 +1,17 @@
 <template>
   <div class="jobsfilter" :class="{ filtersHideBelow550: !$store.state.jfiltersToggle}">
-    <span class="line0">
+    <div class="line0">
       <h3 class="filter__header">
         {{$t('filters.fHeader')}}
       </h3>
       <button class="closeModal" @click="$store.dispatch('filtersOff')">╳</button>
       <!-- ✕ -->
-    </span>
-    <span class="lowresline">
-      <span class="lowres__double">
+    </div>
+    <div class="lowresline">
+      <div class="lowres__double">
       <span class="f-label">{{$t('filters.city')}}</span>
       <DDSelect :picked="jFilters.city" @update:city="$store.dispatch('filterUpd', {prop: 'city', value: $event == $t('filters.cities')[0] ? '' : $event})" :cities="$t('filters.cities')" :ph="$t('filters.fCityPh')" class="selectWrapper" />
-      </span>
+      </div>
 
       <span class="lowres__double">
       <span class="f-label">{{$t('filters.jcat')}}</span>
@@ -22,16 +22,16 @@
         :ph="$t('filters.fJCatPh')" class="selectWrapper" emptyTemplate='0'
       />
       </span>
-    </span>
-    <span class="lowresline">
-      <span class="lowres__double">
+    </div>
+    <div class="lowresline">
+      <div class="lowres__double">
       <span class="f-label">{{$t('filters.exp')}}</span>
       <BasicSelect
         :picked="jFilters.exp" 
         @update:value="$store.dispatch('filterUpd', {prop: 'exp', value: $event.value == 'idc' ? {label: '', value : 'idc'} : $event})"
         :values="$t('filters.expFilters')" :ph="$t('filters.fExpPh')" class="selectWrapper"
       />
-      </span>
+      </div>
     <div class="line lowres__salaryWrap">
       <div class="salary_inp_wrapper">
       <span class="f-label">{{$t('filters.sal')}}</span>
@@ -49,7 +49,7 @@
       />
       </div>
     </div>
-    </span>
+    </div>
     
     <div class="w100 lowres__bottom" :style="{justifyContent: $store.getters.isResetShown ? 'space-between': 'flex-end'}">
       <q-btn

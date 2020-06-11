@@ -30,13 +30,10 @@ body
   box-sizing border-box
   position relative
   font-family 'Montserrat', sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
   text-align center
   color #2c3e50
   font-size 13px
   line-height 14px
-  //max-width var(--maxW)
   margin auto
   min-height 100vh
   display flex
@@ -91,11 +88,7 @@ body
     #authmenu
       @media screen and (max-width 550px)
         order 3
-  // .lowres__header-right
-  //   display flex
-  //   align-items center
-  //   @media screen and (max-width 550px)
-  //     justify-content center
+
   .r-link
     margin-right 10px
     display block
@@ -107,27 +100,13 @@ body
     line-height 1
   h4
     line-height 1
-  // a 
-  //   &:visited
-  //     color purple
-  .logo.router-link-exact-active
-    color white
-    background-color white//purple
-    &:visited
-      color white
-      background-color white//purple
   .searched
     background-color yellow
   .r-view
-    //width 90%
     max-width var(--maxW)
-    min-height calc(100vh - 150px - 1.5px - 200px)
+    min-height calc(100vh - 150px - 2px - 200px)
     box-sizing border-box
     margin 0 auto
-  // .logo
-  //   //margin-right 10px
-  //   font-weight 700
-  //   letter-spacing 2px
   .pageHeader
     font-family: Montserrat;
     font-weight: bold;
@@ -200,15 +179,6 @@ body
   .headerBtnRed
     &:hover
       background-color var(--btn-color1) !important
-    @media screen and (max-width: 550px)
-      // font-size 12px
-      // padding 0 !important
-      // white-space normal
-      // height 36px
-      // line-height 14px
-      // div
-      //   padding 0 !important
-      //   width 82px
   .violetBtns
     padding 0 3px
     margin-left 15px
@@ -218,16 +188,6 @@ body
     @media screen and (max-width 800px)
       margin-left 10px
       padding 0 6px
-    @media screen and (max-width: 550px)
-      // font-size 16px
-      // line-height 36px
-      // height 36px
-      // padding 0 !important
-      // margin-right 0
-      // div
-      //   width 55px
-      // div div
-      //   margin-top -3px
   .loginbtn
     background-color var(--violet-btn-color)
     font-weight 700 !important
@@ -365,9 +325,6 @@ body
     font-size 16px
     background-color transparent
     text-transform uppercase
-    //border 2px solid transparent
-    //transition-duration .4s
-    //padding 4px
     margin 0 2px
     border-radius 4px
     padding-right 0px
@@ -410,8 +367,6 @@ body
   line-height: 13px !important
   @media screen and (max-width 550px)
     font-size: 10px !important
-    
-  // padding 0 20px !important
 .nav-icon
   @media screen and (max-width 550px)
     font-size 30px !important

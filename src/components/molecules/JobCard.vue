@@ -1,13 +1,13 @@
 <template>
-  <div class="jobscard">
+  <div class="jobscard" itemscope itemtype="http://schema.org/JobPosting">
     <div class="line cityAndCompany">
       <div class="line" style="align-items: center;">
-        <span style="display: flex">
+        <div style="display: flex">
           <span v-if="job.city.length > 0" class="cityOK">{{$t('jc.cityPrefix')}}</span>
-          <p class="city" v-html="filteredCity"></p>
-        </span>
-        <a :href="'/companypage?id=' + job.author_id" target="_blank">
-          <div class="author joblink" v-html="filteredAuthor"></div>
+          <p itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" class="city" v-html="filteredCity"></p>
+        </div>
+        <a :href="'/companypage?id=' + job.author_id" target="_blank" itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization">
+          <div itemprop="name" class="author joblink" v-html="filteredAuthor"></div>
         </a>
       </div>
       <div class="line" style="align-items: center; font-weight: 500; font-size: 12px; line-height: 15px; color: var(--color1);">
@@ -15,22 +15,22 @@
       </div>
     </div>
     <div class="line lowres_twolines linetwo">
-      <h4 class="cardHeader">
+      <h4 class="cardHeader" itemprop="title">
         <a :href="'/jobpage?id=' + job.job_id" target="_blank">
           <strong class="joblink" v-html="filteredTitle"/>
         </a>
       </h4>
       <div class="colx salary__outer-wrap">
-        <strong class="alignRight jobcard__salary">
+        <div style="font-weight: bold;" class="alignRight jobcard__salary">
           <p v-if="job.salary_min === job.salary_max && job.salary_min > 0">{{job.salary_max}}&nbsp;{{currency}}</p>
           <p v-else-if="job.salary_min && job.salary_min > 0">{{job.salary_min}}&nbsp;-&nbsp;{{job.salary_max}}&nbsp;{{currency}}</p>
           <p v-else-if="job.salary_max > 0">{{job.salary_max}}&nbsp;{{currency}}</p>
           <p v-else style="text-align: right; font-size: 16px;">{{$t('jc.salaryNone')}}</p>
-        </strong>
+        </div>
       </div>
     </div>
     <div class="line">
-      <p class="filteredDesc" v-html="
+      <p itemprop="description" class="filteredDesc" v-html="
         `${job.experience == -1 ?
             $t('jc.expEmpty')
           :(1 > job.experience) ?

@@ -1,11 +1,11 @@
 <template>
-  <div class="jobpage">
+  <div class="jobpage" itemscope="" itemtype="http://schema.org/Organization">
     <main class="detailed__main">
       <section class="detailed__line" style="marginBottom: 5px">
         <div class="detailed__col">
-          <h1 class="titleHeader">{{cdata.company}}</h1>
+          <h1 class="titleHeader" itemprop="name">{{cdata.company}}</h1>
           <div style="width: 100%">
-            <p class="font-wrap">
+            <p itemprop="website" class="font-wrap">
               {{cdata.website}}
             </p>
           </div>
@@ -21,20 +21,20 @@
       </section>
       <section v-if="cdata.domains.length > 0">
         <h4 class="detailed__header">{{$t('companyPage.categoriesHeader')}}</h4>
-        <div class="subitem"  v-if="cdata.domains[0]">
+        <div itemprop="industry" class="subitem"  v-if="cdata.domains[0]">
           {{$t('entProfile.companyDomains')[cdata.domains[0]]}}
         </div>
-        <div class="subitem"  v-if="cdata.domains[1]">
+        <div itemprop="industry" class="subitem"  v-if="cdata.domains[1]">
           {{$t('entProfile.companyDomains')[cdata.domains[1]]}}
         </div>
-        <div class="subitem"  v-if="cdata.domains[2]">
+        <div itemprop="industry" class="subitem"  v-if="cdata.domains[2]">
           {{$t('entProfile.companyDomains')[cdata.domains[2]]}}
         </div>
       </section>
       <section>
         <h4 class="detailed__header">{{$t('companyPage.descHeader')}}</h4>
         <div class="subitem" >
-          <div v-if="cdata.full_description && cdata.full_description.length > 0" class="descriptionHTML">
+          <div itemprop="description" v-if="cdata.full_description && cdata.full_description.length > 0" class="descriptionHTML">
             {{cdata.full_description}}
           </div>
           <div v-else>
@@ -54,9 +54,6 @@
 
 export default {
   name: 'companypage',
-  mounted() {
-    console.log('cp9', this.$route.query.id)
-  },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
     if (ssrContext) {
       // console.log('cp91', ssrContext.req.companyData)
@@ -81,7 +78,7 @@ export default {
           .get(companyUrl, null, {headers: {'Content-Type' : 'application/json' }})
           .then(response => {
             //getting the one page data
-            console.log('cpJJ2', response.data)
+            // console.log('cpJJ2', response.data)
             this.cdata = response.data
             //this.setVariables()
             this.ajaxLoading = false

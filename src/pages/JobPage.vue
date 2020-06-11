@@ -1,5 +1,5 @@
 <template>
-  <div class="jobpage">
+  <div class="jobpage" itemscope itemtype="http://schema.org/JobPosting">
     <main class="detailed__main1">
       <div v-if="job.is_closed" style="color: red; font-size: 16px">
         {{$t('jobPage.jobClosed')}} {{job.closed_why != '' ? ', ' + $t('jobPage.reason') + ': ' + job.closed_why : ''}}
@@ -7,11 +7,11 @@
       <div v-if="job.is_published != true" style="color: gray; font-size: 14px">
         ({{$t('jobPage.jobNotPublishedYet')}})
       </div>
-      <h1 class="titleHeader">{{job.title}}</h1>
+      <h1 class="titleHeader" itemprop="title">{{job.title}}</h1>
       <section style="margin-top: -15px; display: flex; justify-content: space-between; marginBottom: 15px;">
         <div class="detailed__col" style="display: flex; flex-direction: column; justify-content: flex-end">
           <p class="salary-deriv">{{salary_deriv}}</p>
-          <p class="jobpage__city_company">{{(job.city && job.city.length > 0) ? $t('jobPage.cityWordStart') + job.city : $t('jobPage.cityNotSet')}}</p>
+          <p class="jobpage__city_company" itemprop="jobLocation" itemscope itemtype="http://schema.org/Place">{{(job.city && job.city.length > 0) ? $t('jobPage.cityWordStart') + job.city : $t('jobPage.cityNotSet')}}</p>
         </div>
         <div class="detailed__col" style="display: flex; flex-direction: column; justify-content: center;">
           <img style="align-self: center;" class="detailed__logo1" :src="(job.logo_url && job.logo_url.length > 1) ? job.logo_url : '/statics/companyph.png'">
@@ -95,7 +95,7 @@
         <div>
             <h4 class="detailed__header1">{{$t('jobPage.desc')}}</h4>
             <div class="subitem">
-              <div class="descriptionHTML" v-html="job.description">
+              <div itemprop="description" class="descriptionHTML" v-html="job.description">
               </div>
             </div>
         </div>
@@ -112,7 +112,7 @@
         </div>
       </section>
       <section style="margin-bottom: 0; display: flex; justify-content: space-between;">
-        <p class="date-p">{{$t('jobPage.publishedDate')}} {{published}}</p>
+        <p class="date-p" itemprop="datePosted">{{$t('jobPage.publishedDate')}} {{published}}</p>
         <p style="font-size: 17px; display: flex;">
           <span class="eyes" style="align-self: center;margin-right: 3px;">{{job.hits_all > 0 ? job.hits_all : 1}}</span>
           <img src="/statics/eye1.png">

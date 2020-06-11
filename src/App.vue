@@ -1,12 +1,13 @@
 <template>
   <div id="q-app">
     <div class="header-wrapper">
-      <header>
+      <header itemscope="" itemtype="http://schema.org/Organization">
         <router-link
           @click.native="$store.dispatch('refreshjobs', {param: 'logoclick'}); $store.dispatch('filtersOff')" to="/"
           class="logolink"
+          itemprop="url"
         >
-          <span class="logoText">
+          <span class="logoText" itemprop="logo">
             HUNAR<span style="color: #8645FF; margin-right: -7px">MEN</span>
           </span>
           <q-tooltip transition-show="rotate"
@@ -47,15 +48,6 @@
           </div>
           <div id="authmenu">
             <div class="colx user-status-bar">
-              <!-- <q-btn 
-                style="background-color: var(--violet-btn-color);"
-                class="headerBtns1 violetBtns"
-                text-color="white"
-                :label="$t('App.login')"
-                @click.native="regState='login'"
-                v-if="user.role && user.role.startsWith('guest')"
-                to="/registration"
-              /> -->
               <router-link 
                 style="font-family: Montserrat, sans-serif; padding: 0 20px; font-weight: 600; font-size: 14px;
                   color: #fff; line-height: 40px; text-transform: uppercase; text-decoration: none;"

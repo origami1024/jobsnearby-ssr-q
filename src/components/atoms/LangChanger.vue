@@ -21,8 +21,6 @@ export default {
       window.localStorage.setItem('lang', lang)
       this.$axios
         .post('/setlang', {lang}, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
-        // .then(resp => {
-        // })
     },
   }
 }
@@ -47,7 +45,7 @@ export default {
   @media screen and (max-width 800px)
     margin-left 20px
   @media screen and (max-width 550px)
-    font-family: Montserrat;
+    font-family: Montserrat, sans-serif;
     font-weight: 500;
     font-size: 10px;
     line-height: 12px;
