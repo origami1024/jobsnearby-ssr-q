@@ -17,13 +17,6 @@
             @input="$store.dispatch('filterUpd', {prop: 'txt', value: $event.target.value})"
             :placeholder="$t('jobs.searchPh')"
           >
-          <!-- <q-btn 
-            @click="$store.dispatch('refreshjobs', {})"
-            class="headerBtns1 searchBtn"
-            style="background-color: var(--violet-btn-color); margin-left: -15px; padding: 0 12px;"
-            text-color="white"
-            :label="$t('filters.searchBtn')"
-          /> -->
           <button
             @click="$store.dispatch('refreshjobs', {}); $store.dispatch('filtersOff')"
             class="headerBtns1 searchBtn"
@@ -39,7 +32,6 @@
       </div>
       <div class="jobs__contents" v-if="!$store.state.jfiltersToggle">
         <div class="line jobs_prefilters">
-          <!-- <div class="prefilters-leftwrap"> -->
             <span class="jobs__prefilters-label">{{$t('jobs.prefiltersLabelSort')}}</span>
             <button class="orderLink dateLink">
               {{$t('jobs.dateOpts')[jFilters.timerange]}}
@@ -71,8 +63,6 @@
                 </q-item>
               </q-menu>
             </button>
-          <!-- </div>
-          <div class="prefilters-rightwrap"> -->
             <span>
             <span class="jobs__prefilters-label">{{$t('jobs.prefiltersLabelShow')}}</span>
             <button class="orderLink">
@@ -124,18 +114,11 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'Jobs',
-  props: {
-    // pages: {type: Number, default: 1},
-    // page_current: {type: Number, default: 1},
-  },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
     if (ssrContext) {
       return store.dispatch('refreshJobsData', ssrContext.req.rawjobs)
     }
   },
-  // data() {return {
-  //   filtersToggle: false,
-  // }},
   components: {
     JobsFilter,
     JobsList,
@@ -223,12 +206,12 @@ export default {
       margin-top 0px
       width 100%
       position relative
-  .jobsfilter__search
-    box-sizing border-box
-    width 100%
-    margin-right 5px
-    @media screen and (max-width 550px)
-      margin-right 0
+  // .jobsfilter__search
+  //   box-sizing border-box
+  //   width 100%
+  //   margin-right 5px
+  //   @media screen and (max-width 550px)
+  //     margin-right 0
   .jobs__main
     box-sizing border-box
     display flex
@@ -249,26 +232,13 @@ export default {
     @media screen and (max-width 800px)
       min-width auto
     @media screen and (max-width 550px)
-      //margin 0 5px
       margin 0
       padding 0px
-      //width calc(100% - 30px)
-      
-    // @media screen and (max-width 800px)
-    //   margin-left 0
-    //box-sizing border-box
-    //width calc(100% - 10px)
-    //max-width calc(var(--maxW) - 410px) //that is including the filters to the left
   .jobs_prefilters
     margin-bottom 26px
     padding-top 6px
-    //background-color var(--main-bg-color)
-    //box-shadow 0 0 4px 1px var(--main-borders-color)
-    //box-sizing border-box
     @media screen and (max-width: 950px)
       margin-bottom 10px
-    .prefilters-rightwrap
-      align-self flex-start
   *
     margin 0
   .line
@@ -278,10 +248,8 @@ export default {
   .pageBtns
     cursor pointer
     border 0
-    margin 0
     background-color transparent
     font-family: Montserrat, sans-serif
-    font-weight: normal;
     font-size: 16px;
     line-height: 20px;
     color var(--violet-btn-color)
@@ -311,7 +279,6 @@ export default {
     padding-right 18px
     margin-right auto
     &:nth-of-type(1)
-      // padding-left 16px
       margin-right 0
       @media screen and (max-width 950px)
         padding-left 0px
@@ -319,8 +286,6 @@ export default {
         margin-right auto
     &:nth-of-type(2)
       margin-right auto
-    &:nth-of-type(3)
-      //
     &:hover
       color var(--color1)
     @media screen and (max-width 550px)
@@ -355,7 +320,6 @@ export default {
   height: 40px !important
   border none
   font-family: Montserrat, sans-serif
-  font-weight: normal
   font-size: 14px !important
   line-height: 17px !important
   margin-left 16px !important
@@ -421,25 +385,19 @@ export default {
   height 15px
   position absolute
   &:hover
-    // background-color var(--btn-color1) !important
     filter: brightness(1.5)
   &:active
-    // background-color var(--btn-color1) !important
-    // box-shadow 0 2px 3px 1px #bbb
     filter: brightness(1.5)
   &:focus
     outline none
   @media screen and (max-width 550px)
     display block
-.prefilters-leftwrap
-  @media screen and (max-width 550px)
-    width 63%
-    display flex
-    justify-content space-between
+// .prefilters-leftwrap
+//   @media screen and (max-width 550px)
+//     width 63%
+//     display flex
+//     justify-content space-between
 .jobs__prefilters-label
-  color black
-  font-family: Montserrat, sans-serif !important
-  font-weight: normal !important
   font-size: 14px !important
   line-height: 17px !important
   margin-right 5px

@@ -228,38 +228,24 @@ section
     margin-bottom 0
   li
     margin 5px 0
-.detailed__button {
-  background-color: #B4E873;
-  padding: 5px;
-  border: 0;
-  font-size: 20px;
-  cursor: pointer;
-}
-.detailed__button:hover {
-  color: white;
-}
+// .detailed__button {
+//   background-color: #B4E873;
+//   padding: 5px;
+//   border: 0;
+//   font-size: 20px;
+//   cursor: pointer;
+// }
+// .detailed__button:hover {
+//   color: white;
+// }
 .detailed__author-link1
   color var(--main-borders-color)
   text-decoration none
   &:hover
     color var(--violet-btn-color)
-.author-link-wrapper
-  // min-width var(--logoWidth)
-  
-.detailed__line {
-  display: flex;
-  justify-content: space-between;
-}
-// .detailed__col{
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: flex-end;
-  
-// }
 .detailed__logo1{
   // text-align center
-  width auto //var(--logoWidth)
-  // max-width var(--logoWidth)
+  width auto
   max-height 45px
   // line-height 50px
   margin-left 5px
@@ -347,35 +333,35 @@ section
   margin-right 2px
   margin-left 10px
 
-.sendCVLink
-  background-color var(--color-graypink)
-  color var(--color1)
-  text-decoration none
-  border: 2px solid var(--violet-btn-color)
-  box-sizing: border-box;
-  border-radius: 10px;
-  font-family: Montserrat, sans-serif
-  font-style: normal;
-  font-weight: 500 !important;
-  font-size: 15px;
-  line-height: 18px;
-  padding 9px 15px
-  // padding-right 17px
-  transition-duration 0.25s
-  display block
-  width 192px
-  @media screen and (max-width: 950px)
-    padding 5px 10px
-    padding-right 8px
-    line-height: 26px;
-  @media screen and (max-width 550px)
-    align-self flex-start
-    font-size: 12px !important
-    line-height: 15px !important
-    padding 8px
-    width 100%
-    text-align center
-  &:hover
-    background-color var(--violet-btn-color)
-    color white
+// .sendCVLink
+//   background-color var(--color-graypink)
+//   color var(--color1)
+//   text-decoration none
+//   border: 2px solid var(--violet-btn-color)
+//   box-sizing: border-box;
+//   border-radius: 10px;
+//   font-family: Montserrat, sans-serif
+//   font-style: normal;
+//   font-weight: 500 !important;
+//   font-size: 15px;
+//   line-height: 18px;
+//   padding 9px 15px
+//   // padding-right 17px
+//   transition-duration 0.25s
+//   display block
+//   width 192px
+//   @media screen and (max-width: 950px)
+//     padding 5px 10px
+//     padding-right 8px
+//     line-height: 26px;
+//   @media screen and (max-width 550px)
+//     align-self flex-start
+//     font-size: 12px !important
+//     line-height: 15px !important
+//     padding 8px
+//     width 100%
+//     text-align center
+//   &:hover
+//     background-color var(--violet-btn-color)
+//     color white
 </style>

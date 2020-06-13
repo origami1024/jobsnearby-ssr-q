@@ -5,7 +5,6 @@
         {{$t('filters.fHeader')}}
       </h3>
       <button class="closeModal" @click="$store.dispatch('filtersOff')">╳</button>
-      <!-- ✕ -->
     </div>
     <div class="lowresline">
       <div class="lowres__double">

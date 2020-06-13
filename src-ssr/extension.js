@@ -113,8 +113,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.get('/', async function (req, res, next) {
     //auth first
     // console.log('cp1debug')
-    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
-      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
       })
@@ -131,8 +131,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   //2
   app.get('/jobpage', async function (req, res, next) {
     //auth first
-    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
-      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
       })
@@ -159,8 +159,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   //3
   app.get('/companypage', async function (req, res, next) {
     //auth first
-    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
-      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
       })
@@ -185,8 +185,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   })
   app.get('/registration', async function (req, res, next) {
     //only auth here
-    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
-      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
       })
@@ -198,8 +198,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   })
   app.get('/subprofile', async function (req, res, next) {
     //only auth here
-    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
-      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
       })
@@ -211,8 +211,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   })
   app.get('/entprofile', async function (req, res, next) {
     //only auth here
-    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
-      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
       })
@@ -224,8 +224,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   })
   app.get('/addjob', async function (req, res, next) {
     //only auth here
-    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
-      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
         console.log('getUserAuthByCookies. addjob', error)
         return 'error1'
       })
@@ -237,8 +237,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   })
   app.get('/uploads', async function (req, res, next) {
     //only auth here
-    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
-      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
         console.log('getUserAuthByCookies. uploads', error)
         return 'error1'
       })
@@ -250,8 +250,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   })
   app.get('/feedback', async function (req, res, next) {
     //only auth here
-    if (db.authPreValidation(req.cookies.session, req.cookies.mail)) {
-      req.userData = await db.getUserAuthByCookies(req.cookies.session, req.cookies.mail).catch(error => {
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
         console.log('getUserAuthByCookies. xxx', error)
         return 'error1'
       })

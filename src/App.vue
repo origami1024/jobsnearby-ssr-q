@@ -5,7 +5,6 @@
         <router-link
           @click.native="$store.dispatch('refreshjobs', {param: 'logoclick'}); $store.dispatch('filtersOff')" to="/"
           class="logolink"
-          itemprop="url"
         >
           <span class="logoText" itemprop="logo">
             HUNAR<span style="color: #8645FF; margin-right: -7px">MEN</span>
@@ -15,7 +14,6 @@
             <p style="font-size: 14px; margin: 0">{{$t('App.logoTooltip')}}</p>
           </q-tooltip>
         </router-link>
-        <!-- <div class="lowres__header-right"> -->
           <div id="nav">
             <router-link
               class="headerBtn"
@@ -49,7 +47,7 @@
           <div id="authmenu">
             <div class="colx user-status-bar">
               <router-link 
-                style="font-family: Montserrat, sans-serif; padding: 0 20px; font-weight: 600; font-size: 14px;
+                style="padding: 0 20px; font-size: 14px;
                   color: #fff; line-height: 40px; text-transform: uppercase; text-decoration: none;"
                 class="headerBtns1 violetBtns loginbtn"
                 @click.native="regState='login'"
@@ -258,8 +256,6 @@ export default {
         this.$store.dispatch('setAJSentState', 'none')
       }
     },
-    //THERE ARE MANY LOCALSTORAGE INSERTS, MOVE IT INTO WHEN DATA IS RECEIVED (AUTH RELATED!)
-    //!!!!!!!!!!!IMPORTANT!!!!!!!!!! CUZ HERE THEY CAN DUPLICATE OPERATION ON OTHER OPEN TABS
   },
   components: {
     LangChanger

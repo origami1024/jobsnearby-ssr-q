@@ -50,7 +50,7 @@
       </div>
     </div>
     <div v-else class="fb_inner">
-      <p>{{
+      <p style="margin-top: 15px;">{{
         state == 'OK'
           ? $t('fb.messageSuccess')
           : $t('fb.messageError')}}</p>

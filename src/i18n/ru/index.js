@@ -454,7 +454,7 @@ export default {
     resendHint: 'На проверку модератору для открытия',
     closeHint: 'Закрыть',
     deleteHint: 'Удалить',
-    closedByUser: 'Закрыта пользователем',
+    closedByUser: 'Готова к открытию',
     closedByAdmin: 'Закрыта админом',
     awaitsAdmin: 'Ожидает проверки модератора',
   }

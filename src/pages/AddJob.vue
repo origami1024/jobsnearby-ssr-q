@@ -416,11 +416,11 @@
         <q-btn style="margin-top: 12px;" color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
       </div>
       <div v-else-if="props.sent == 'fail'" :key="3" class="jobpage__wrapper">
-        <p style="color: red; font-size: 16px;">{{$t('addJob.sendJobError1')}}</p>
+        <p style="color: var(--btn-color); font-size: 16px;">{{$t('addJob.sendJobError1')}}</p>
         <q-btn style="margin-top: 12px;" color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
       </div>
       <div v-else-if="props.sent == 'limit'" :key="4" class="jobpage__wrapper">
-        <p style="color: red; font-size: 16px;">{{$t('addJob.sendJobErrorLimit')}}</p>
+        <p style="color: var(--btn-color); font-size: 16px;">{{$t('addJob.sendJobErrorLimit')}}</p>
         <!-- <q-btn color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/> -->
       </div>
       <div v-else-if="user.role == 'guestUnau' | user.role == 'guest'" :key="4" class="jobpage__wrapper">

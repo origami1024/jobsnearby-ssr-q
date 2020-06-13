@@ -20,13 +20,13 @@ const SupremeValidator = require('./../serverutils').SupremeValidator
 
 const cookieConfig = {
   httpOnly: true, // to disable accessing cookie via client side js
-  secure: true, // to force https (if you use it)
+  // secure: true, // to force https (if you use it)
   maxAge: 2000000000, // ttl in ms (remove this option and cookie will die when browser is closed)
   signed: true // if you use the secret with cookieParser
 }
 const cookieConfigNoRemember = {
   httpOnly: true, // to disable accessing cookie via client side js
-  secure: true, // to force https (if you use it)
+  // secure: true, // to force https (if you use it)
   signed: true // if you use the secret with cookieParser
 }
 
@@ -285,7 +285,7 @@ async function forgottenMail(url, mail) {
   let mailOptions = {
     // should be replaced with real recipient's account
     to: mail, //'origami1024@gmail.com',
-    subject: 'Восстановление пароля на jobsnearby',
+    subject: 'Восстановление пароля на hunarmen.com',
     text: 'Для получения нового пароля нужно подтвердить восстановление, перейдя по ссылке ' + url1 + '. После этого вы получите второе письмо с новым паролем. Эта ссылка действительна в течении 2 часов.'
   }
   transporter.sendMail(mailOptions, (error, info) => {
@@ -419,8 +419,8 @@ async function forgottenx2Mail(newpw, mail) {
   let mailOptions = {
     // should be replaced with real recipient's account
     to: mail, //'origami1024@gmail.com',
-    subject: 'Сгенерирован новый пароль на jobsnearby',
-    text: 'Пароль изменен на jobsnearby изменен по процедуре восстановления на: ' + newpw + '. Измените его в профиле на более безопасный.'
+    subject: 'Сгенерирован новый пароль на hunarmen.com',
+    text: 'Пароль пользователя на hunarmen.com изменен по процедуре восстановления на: ' + newpw + '. Измените его в профиле на более безопасный.'
   }
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
@@ -504,9 +504,9 @@ async function forgotten(req, res) {
 
 
 async function addJobs (req, res) {
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que1st = `SELECT user_id, email, new_jobs_count_today, EXTRACT(EPOCH FROM new_jobs_count_date - 'now()'::timestamptz) AS last_posted FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
-    let params1st = [req.cookies.session, req.cookies.mail]
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
     let results = await pool.query(que1st, params1st).catch(error => {
       console.log('cp addJobs errX: ', error)
       return false
@@ -593,13 +593,13 @@ async function viewHit(req, res) {
     res.status(400).send('Неправильный hit.')
     return false
   }
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que = `
       SELECT user_id
       FROM users
       WHERE auth_cookie = $1 AND email = $2 AND role = 'company'
     `
-    let result = await pool.query(que, [req.cookies.session, req.cookies.mail]).catch(error => {
+    let result = await pool.query(que, [req.signedCookies.session, req.signedCookies.mail]).catch(error => {
       console.log('cp viewHit err1: ', error)
     })
     if (result.rows.length == 1) {
@@ -623,14 +623,14 @@ async function viewHit(req, res) {
 }
 
 async function getResps(req, res) {
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     //get author_id first, also check role in the process
     let que = `
       SELECT user_id
       FROM users
       WHERE auth_cookie = $1 AND email = $2 AND role = 'company'
     `
-    let result = await pool.query(que, [req.cookies.session, req.cookies.mail]).catch(error => {
+    let result = await pool.query(que, [req.signedCookies.session, req.signedCookies.mail]).catch(error => {
       console.log('cp getResps err1: ', error)
     })
     if (result.rows.length == 1) {
@@ -669,9 +669,9 @@ async function reopenJobById(req, res) {
     res.status(400).send('Неправильный id вакансии.')
     return false
   }
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
-    let params1st = [req.cookies.session, req.cookies.mail]
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
         res.send('step2')
@@ -708,9 +708,9 @@ async function deleteJobById(req, res) {
     return false
   }
 
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
-    let params1st = [req.cookies.session, req.cookies.mail]
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
         res.send('step2')
@@ -745,9 +745,9 @@ async function closeJobById(req, res) {
     res.status(400).send('Неправильный id вакансии.')
     return false
   }
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
-    let params1st = [req.cookies.session, req.cookies.mail]
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
         res.send('step2')
@@ -776,9 +776,9 @@ async function closeJobById(req, res) {
 }
 
 async function getOwnJobs (req, res) {
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que1st = `SELECT user_id FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
-    let params1st = [req.cookies.session, req.cookies.mail]
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
         res.send('step2')
@@ -814,9 +814,9 @@ async function getOwnJobs (req, res) {
 
 
 async function updateJob (req, res) {
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
-    let params1st = [req.cookies.session, req.cookies.mail]
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
         res.send('step2')
@@ -862,9 +862,11 @@ async function updateJob (req, res) {
 }
 
 async function addOneJob (req, res) {
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  // console.log('cp177', req.signedCookies)
+  // console.log('cp178', req.signedCookies)
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que1st = `SELECT user_id, email, new_jobs_count_today, EXTRACT(EPOCH FROM new_jobs_count_date - 'now()'::timestamptz) AS last_posted FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
-    let params1st = [req.cookies.session, req.cookies.mail]
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
         res.send('step2')
@@ -934,10 +936,10 @@ async function addOneJob (req, res) {
 }
 
 async function updateOneCompany(req, res) {
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     //console.log(req.body)
     let que1st = `SELECT user_id, company, logo_url, role FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
-    let params1st = [req.cookies.session, req.cookies.mail]
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
         res.send('step2')
@@ -991,9 +993,9 @@ async function updateOneCompany(req, res) {
 }
 
 async function updateOneCompanyPic(req, res) {
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que1st = `SELECT user_id, logo_url, role FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
-    let params1st = [req.cookies.session, req.cookies.mail]
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
         res.send('step2')
@@ -1035,13 +1037,13 @@ async function updateOneCompanyPic(req, res) {
 }
 
 async function getOwnCompanyJSON(req, res) {
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que = `
       SELECT company, logo_url, domains, website, full_description
       FROM users
       WHERE auth_cookie = $1 AND email = $2 AND role = 'company'
     `
-    let result = await pool.query(que, [req.cookies.session, req.cookies.mail]).catch(error => {
+    let result = await pool.query(que, [req.signedCookies.session, req.signedCookies.mail]).catch(error => {
       console.log('cp getOwnCompanyJSON err: ', error)
       return false
     })
@@ -1067,13 +1069,13 @@ async function hitjobcv(req, res) {
     res.send('Error: CV not loaded')
     return false
   }
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que = `
       SELECT user_id
       FROM users
       WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'
     `
-    let result = await pool.query(que, [req.cookies.session, req.cookies.mail]).catch(error => {
+    let result = await pool.query(que, [req.signedCookies.session, req.signedCookies.mail]).catch(error => {
       console.log('cp hitjobcv err: ', error)
       return false
     })
@@ -1169,12 +1171,12 @@ async function verify(req, res) {
 
 
 async function cvurldelete(req, res) {
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que = `
       UPDATE "users" SET "cvurl" = ''
       WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'
     `
-    let params = [req.cookies.session, req.cookies.mail]
+    let params = [req.signedCookies.session, req.signedCookies.mail]
     let result = await pool.query(que, params).catch(error => {
       console.log('cp cvurldelete err: ', error)
       return undefined
@@ -1192,13 +1194,13 @@ async function cvurldelete(req, res) {
 
 async function cvurlupdate(req, res) {
   if (req.body && req.body.cvurl && req.body.cvurl.length > 4 && req.body.cvurl.length < 86) {
-    if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+    if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
       //console.log(req.body)
       let que = `
         UPDATE "users" SET "cvurl" = $1
         WHERE auth_cookie = $2 AND email = $3 AND role = 'subscriber'
       `
-      let params = [req.body.cvurl, req.cookies.session, req.cookies.mail]
+      let params = [req.body.cvurl, req.signedCookies.session, req.signedCookies.mail]
       let result = await pool.query(que, params).catch(error => {
         console.log('cp cvurlupdate err: ', error)
         return undefined
@@ -1215,13 +1217,13 @@ async function cvurlupdate(req, res) {
 }
 
 async function getCVHitsHistory(req, res) {
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que = `
       SELECT user_id
       FROM users
       WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'
     `
-    let result = await pool.query(que, [req.cookies.session, req.cookies.mail]).catch(error => {
+    let result = await pool.query(que, [req.signedCookies.session, req.signedCookies.mail]).catch(error => {
       console.log('cp getResps err1: ', error)
     })
     if (result.rows.length == 1) {
@@ -1502,7 +1504,7 @@ async function testMail(n, mail) {
   let mailOptions = {
     // should be replaced with real recipient's account
     to: mail, //'origami1024@gmail.com',
-    subject: 'Верификация пользователя на jobsnearby',
+    subject: 'Верификация пользователя на hunarmen.com',
     text: 'Перейдите по ссылке для верификации пользователя: ' + txt
   }
   transporter.sendMail(mailOptions, (error, info) => {
@@ -1571,8 +1573,8 @@ async function changeuserstuff(req, res) {
     res.send('error surname')
     return false
   }
-  if (authPreValidation(req.cookies.session, req.cookies.mail)) {
-    let user_id = await authedForUserData(req.cookies.session, req.cookies.mail,'subscriber').catch(error => {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+    let user_id = await authedForUserData(req.signedCookies.session, req.signedCookies.mail,'subscriber').catch(error => {
       res.send('step2')
       return undefined
     })
@@ -1626,9 +1628,9 @@ async function changepw(req, res) {
     let newpw = req.body.newpw
     if (SupremeValidator.isValidEmail(mail) && SupremeValidator.isValidPW(oldpw) && SupremeValidator.isValidPW(newpw)) {
       //if cookies present
-      if (authPreValidation(req.cookies.session, req.cookies.mail)) {
+      if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
         //check data in db
-        let userData = await getDiapers(req.cookies.session, mail).catch(error => {
+        let userData = await getDiapers(req.signedCookies.session, mail).catch(error => {
           res.send('step2')
           return undefined
         })
@@ -1637,7 +1639,7 @@ async function changepw(req, res) {
           //console.log('cp219: ', userData, ' and ', authed)
           if (authed) {
             let newhash = bcrypt.hashSync(newpw, bcrypt.genSaltSync(9))
-            let updator = await updateDiaper(newhash, userData.pwhash, req.cookies.session).catch(error => {
+            let updator = await updateDiaper(newhash, userData.pwhash, req.signedCookies.session).catch(error => {
               res.send('step2')
               return undefined
             })
@@ -1781,7 +1783,7 @@ async function tryInsertAuthToken(id,token) {
   return true
 }
 async function login(req, res) {
-  // console.log('cp login: ', req.cookies)
+  // console.log('cp login: ', req.signedCookies)
   let mail = req.body[0].toLowerCase()
   let pw = req.body[1]
   let rememberme = req.body[2]
@@ -1824,7 +1826,7 @@ async function login(req, res) {
         //generate and store a cookie
         let jwtoken = SupremeValidator.generateJSONWebToken(mail)
         //send the cookie and send the ok
-        //console.log(req.cookies)
+        //console.log(req.signedCookies)
         let laststage = await tryInsertAuthToken(userData.user_id, jwtoken).catch(error => {
           res.send('step3')
           return undefined

@@ -2,9 +2,9 @@
   <div class="jobscard" itemscope itemtype="http://schema.org/JobPosting">
     <div class="line cityAndCompany">
       <div class="line" style="align-items: center;">
-        <div style="display: flex">
+        <div style="display: flex" itemprop="jobLocation">
           <span v-if="job.city.length > 0" class="cityOK">{{$t('jc.cityPrefix')}}</span>
-          <p itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" class="city" v-html="filteredCity"></p>
+          <p  itemprop="address" itemscope itemtype="http://schema.org/Place" class="city" v-html="filteredCity"></p>
         </div>
         <a :href="'/companypage?id=' + job.author_id" target="_blank" itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization">
           <div itemprop="name" class="author joblink" v-html="filteredAuthor"></div>
@@ -14,6 +14,9 @@
         <p class="updated__value" v-html="lastUpdated"></p>
       </div>
     </div>
+    <meta itemprop="datePosted" :content="this.job.updated">
+    <meta itemprop="employmentType" content="full-time">
+    <meta itemprop="validThrough" :content="plusOneMonth">
     <div class="line lowres_twolines linetwo">
       <h4 class="cardHeader" itemprop="title">
         <a :href="'/jobpage?id=' + job.job_id" target="_blank">
@@ -21,11 +24,11 @@
         </a>
       </h4>
       <div class="colx salary__outer-wrap">
-        <div style="font-weight: bold;" class="alignRight jobcard__salary">
+        <div itemprop="baseSalary" style="font-weight: bold;" class="alignRight jobcard__salary">
           <p v-if="job.salary_min === job.salary_max && job.salary_min > 0">{{job.salary_max}}&nbsp;{{currency}}</p>
           <p v-else-if="job.salary_min && job.salary_min > 0">{{job.salary_min}}&nbsp;-&nbsp;{{job.salary_max}}&nbsp;{{currency}}</p>
           <p v-else-if="job.salary_max > 0">{{job.salary_max}}&nbsp;{{currency}}</p>
-          <p v-else style="text-align: right; font-size: 16px;">{{$t('jc.salaryNone')}}</p>
+          <p v-else style="text-align: right; font-size: 15px; font-weight: 400;">{{$t('jc.salaryNone')}}</p>
         </div>
       </div>
     </div>
@@ -57,7 +60,7 @@
           {{$t('jc.sendCVLabel')}}
         </a>
         <div v-else-if="user.role == 'subscriber'" class="cvSentSpan">
-          <span style="font-size: 13px; color: gray; user-select: none">{{$t('jc.cvSent')}}</span>
+          <span class="cvsent_text">{{$t('jc.cvSent')}}</span>
           <q-tooltip v-if="hitcv">
             <p v-if="(hitcv && hitcv.date_created)" style="font-size: 15px; margin: 0">{{$t('jc.tooltipSent')}} {{formatDate(hitcv.date_created)}}</p>
             <p v-if="(hitcv && hitcv.date_checked)" style="font-size: 15px; margin: 0">{{$t('jc.tooltipSeen')}} {{formatDate(hitcv.date_checked)}}</p>
@@ -85,6 +88,11 @@ export default {
     isContactsShown: false  
   }},
   computed: {
+    plusOneMonth() {
+      let d = new Date()
+      d.setMonth(d.getMonth() + 1)
+      return d
+    },
     user() {
       return {role: this.$store.state.user.role}
     },
@@ -161,13 +169,11 @@ export default {
   margin 0
   text-align left
   font-family: Montserrat, sans-serif;
-  font-style: normal;
 .jobscard
   position relative
   box-sizing border-box
   transition-duration 0.1s
   //box-shadow 0 0 2px 1px #dfdfdf
-  background: #fff;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15)
   border-radius: 10px;
   margin-bottom 18px
@@ -230,11 +236,11 @@ export default {
     @media screen and (max-width 550px)
       font-size 9px
       line-height 20px
-  .updated__label
-    margin-right 5px
-    margin-left auto
-    @media screen and (max-width 550px)
-      display none
+  // .updated__label
+  //   margin-right 5px
+  //   margin-left auto
+  //   @media screen and (max-width 550px)
+  //     display none
   .updated__value
     @media screen and (max-width 550px)
       margin-left auto
@@ -248,19 +254,15 @@ export default {
       margin-top 5px
       min-width auto
       max-width 100%
+  .cvsent_text
+    font-size: 13px;
+    color: gray;
+    user-select: none
   .line
-    //padding 5px
     display flex
     justify-content space-between
     &:last-child
       margin-bottom 0
-  .linej
-    display flex
-  // .line50
-  //   display flex
-  //   align-items center
-  //   min-width 120px
-  //   max-width 50%
   .lowres_twolines
     @media screen and (max-width 550px)
       flex-direction column
@@ -283,20 +285,17 @@ export default {
   padding-right 15px
   border-bottom 2px solid var(--violet-btn-color)
   font-family: Montserrat, sans-serif;
-  font-style: normal;
-  font-weight: normal;
+
   font-size: 15px;
   line-height: 18px;
   color var(--color1)
-  display inline-block
+  // display inline-block
   align-self flex-end
   padding-bottom 2px
   @media screen and (max-width: 950px)
     font-size: 14px
     max-width 116px
   @media screen and (max-width: 550px)
-    // max-width 100%
-    // font-size 15px
     font-size: 12px !important
     line-height: 15px !important
     margin-right auto
@@ -319,7 +318,6 @@ export default {
   box-sizing: border-box;
   border-radius: 10px;
   font-family: Montserrat, sans-serif
-  font-style: normal;
   font-weight: 500;
   font-size: 15px;
   line-height: 18px;
@@ -383,7 +381,6 @@ export default {
   overflow hidden
   word-break break-word
   font-family: "Montserrat", sans-serif;
-  font-weight: normal;
   font-size: 14px;
   line-height: 17px;
   color var(--color1)
@@ -394,7 +391,6 @@ export default {
     margin-bottom 10px
   @media screen and (max-width 550px)
     font-size: 12px;
-    line-height: 15px;
     max-height 30px
     line-height: 130%;
     margin-bottom 5px
