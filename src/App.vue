@@ -6,7 +6,7 @@
           @click.native="$store.dispatch('refreshjobs', {param: 'logoclick'}); $store.dispatch('filtersOff')" to="/"
           class="logolink"
         >
-          <span class="logoText" itemprop="logo">
+          <span class="logoText">
             HUNAR<span style="color: #8645FF; margin-right: -7px">MEN</span>
           </span>
           <q-tooltip transition-show="rotate"

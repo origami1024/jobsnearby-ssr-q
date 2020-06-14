@@ -270,6 +270,11 @@ async function adminPanel(req, res) {
                   Числа
                 </a>
               </li>
+              <li>
+                <a href="/snpics.json">
+                  Соц сети
+                </a>
+              </li>
               ${auth.category_rights === '777'
                 ? `<li>
                   <a href="/cpsuper.json">Суперадмин</a>
@@ -1032,6 +1037,30 @@ async function adminGetUsers2() {
   return resu
 }
 
+const path = require('path');
+const fs = require('fs');
+
+async function snpics(req, res) {
+  if (req.cookies && req.cookies.sessioa && req.cookies.sessioa.length > 50 && req.cookies.user2) {
+    let auth = await adminAuth(req.cookies.user2, req.cookies.sessioa).catch(error => {
+      return undefined
+    })
+    if (auth) {
+      var body = '<div style="text-align: center; margin: 15px auto; font-size: 22px; font-weight: 600;">Последнее отправленное в соцсети</div><div>' + pageParts.cplink() + '</div><hr><ul>'
+      let files = await fs.promises.readdir('./www/statics/sn_posted').catch(e => {})
+        //  ./src/statics
+      if (files) {
+        files.forEach(file => {
+          // console.log('ppp', file)
+          body += `<li style="width: 100%; margin-bottom: 15px; display:flex;align-items:center;"><img style="max-width: 300px; max-height: 200px; margin-right: 10px;" src="https://hunarmen.com/statics/sn_posted/${file}"> <a href="https://hunarmen.com/statics/sn_posted/${file}" download>${file}</a></li>`
+        })
+      }
+      body += '</ul>'
+      let html = pageParts.head + body + pageParts.footer
+      res.send(html)
+    } else res.send(pageParts.noau)
+  } else res.send(pageParts.noau)
+}
 async function superAdmin(req, res) {
   if (req.cookies && req.cookies.sessioa && req.cookies.sessioa.length > 50 && req.cookies.user2) {
     //auth check
@@ -1292,7 +1321,7 @@ async function approveJobByIdAdmin(req, res) {
         res.status(200).send('OK')
         //here we go with telegram - start python script
         const python = spawn('python', [
-          'tg_bot.py',
+          'sn_bot.py',
           results2.rows[0].title,
           results2.rows[0].salary_min + ' - ' + results2.rows[0].salary_max,
           results2.rows[0].description.substring(0,50),
@@ -1602,4 +1631,6 @@ module.exports = {
   auaction,
 
   userStatRegen,
+
+  snpics,
 }

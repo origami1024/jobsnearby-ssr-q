@@ -195,7 +195,7 @@ export default {
         let tmp = workbook.Sheets[workbook.SheetNames[0]]
         
         let lastLineIndex = tmp["!ref"].split(':')
-        lastLineIndex = Math.min(lastLineIndex[lastLineIndex.length - 1].replace(/\D/g,''), 15)
+        lastLineIndex = Math.min(lastLineIndex[lastLineIndex.length - 1].replace(/\D/g,''), 32)
         // console.log('ccc', lastLineIndex)
         function getjtype(val) {
           //console.log('gettype cp1: ', val)

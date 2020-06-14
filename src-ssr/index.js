@@ -99,7 +99,7 @@ app.get('*', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Server listening at port ${port}`)
+  console.log(`${Date()}. Server listening at port ${port}`)
 })
 // app.listen(port, () => {
 //   console.log(`Server listening at port ${port}`)

@@ -15,7 +15,7 @@
         </div>
         <div class="detailed__col" style="display: flex; flex-direction: column; justify-content: center;">
           <img style="align-self: center;" class="detailed__logo1" :src="(job.logo_url && job.logo_url.length > 1) ? job.logo_url : '/statics/companyph.png'">
-          <p class="author-link-wrapper"><a :href="'/companypage?id=' + job.author_id" target="_blank" class="detailed__author-link1 jobpage__city_company">{{job.author}}</a></p>  
+          <p class="author-link-wrapper"><a itemprop="hiringOrganization" itemscope="itemscope" itemtype="http://schema.org/Organization" :href="'/companypage?id=' + job.author_id" target="_blank" class="detailed__author-link1 jobpage__city_company">{{job.author}}</a></p>  
         </div>
         
       </section>
@@ -112,7 +112,8 @@
         </div>
       </section>
       <section style="margin-bottom: 0; display: flex; justify-content: space-between;">
-        <p class="date-p" itemprop="datePosted">{{$t('jobPage.publishedDate')}} {{published}}</p>
+        <meta itemprop="datePosted" :content="this.job.updated">
+        <p class="date-p">{{$t('jobPage.publishedDate')}} {{published}}</p>
         <p style="font-size: 17px; display: flex;">
           <span class="eyes" style="align-self: center;margin-right: 3px;">{{job.hits_all > 0 ? job.hits_all : 1}}</span>
           <img src="/statics/eye1.png">
@@ -131,8 +132,8 @@ import { mapState } from 'vuex'
 export default {
   name: 'jobpage',
   data() {return {
-    currency: '',//this.$t('App.currencyDic')['m']
-    salary_deriv: '',
+    // currency: '',//this.$t('App.currencyDic')['m']
+    salary_deriv1: '',
   }},
   computed: {
     ...mapState(['user', ['role','ownCVs']]),
@@ -146,35 +147,51 @@ export default {
     published() {
       let d = new Date(this.job.published)
       return d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear()
+    },
+    salary_deriv() {
+      let currency = this.$t('App.currencyDic')[this.job.currency]
+      let res = ''
+      if (this.job.salary_min < 1) {
+        if (this.job.salary_max < 1) {
+          res = this.$t('jobPage.salaryNone')
+        } else res = this.job.salary_max + ' ' + currency
+      } else {
+        if (this.job.salary_min < this.job.salary_max) {
+          res = `${this.job.salary_min} - ${this.job.salary_max}` + ' ' + currency
+        } else
+        if (this.job.salary_min == this.job.salary_max) {
+          res = `${this.job.salary_max}` + ' ' + currency
+        } else res = `${this.job.salary_max}` + ' ' + currency
+      }
+      return res
     }
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
-    // console.log('sad', currentRoute.query.id)
     if (ssrContext)
       return store.dispatch('setJobDetails', ssrContext.req.jobData)
     else
       return store.dispatch('fetchJobDetails', currentRoute.query.id)
   },
-  mounted() {
-    this.setVariables()
-  },
-  methods: {
-    setVariables() {
-      this.currency = this.$t('App.currencyDic')[this.job.currency]
-      if (this.job.salary_min < 1) {
-        if (this.job.salary_max < 1) {
-          this.salary_deriv = this.$t('jobPage.salaryNone')
-        } else this.salary_deriv = this.job.salary_max + ' ' + this.currency
-      } else {
-        if (this.job.salary_min < this.job.salary_max) {
-          this.salary_deriv = `${this.job.salary_min} - ${this.job.salary_max}` + ' ' + this.currency
-        } else
-        if (this.job.salary_min = this.job.salary_max) {
-          this.salary_deriv = `${this.job.salary_max}` + ' ' + this.currency
-        } else this.salary_deriv = `${this.job.salary_max}` + ' ' + this.currency
-      }
-    }
-  }
+  // mounted() {
+  //   //this.setVariables()
+  // },
+  // methods: {
+  //   setVariables() {
+  //     let currency = this.$t('App.currencyDic')[this.job.currency]
+  //     if (this.job.salary_min < 1) {
+  //       if (this.job.salary_max < 1) {
+  //         this.salary_deriv = this.$t('jobPage.salaryNone')
+  //       } else this.salary_deriv = this.job.salary_max + ' ' + currency
+  //     } else {
+  //       if (this.job.salary_min < this.job.salary_max) {
+  //         this.salary_deriv = `${this.job.salary_min} - ${this.job.salary_max}` + ' ' + currency
+  //       } else
+  //       if (this.job.salary_min == this.job.salary_max) {
+  //         this.salary_deriv = `${this.job.salary_max}` + ' ' + currency
+  //       } else this.salary_deriv = `${this.job.salary_max}` + ' ' + currency
+  //     }
+  //   }
+  // }
 }
 </script>
 

@@ -59,6 +59,7 @@ module.exports.extendApp = function ({ app, ssr }) {
 
 
   app.post('/getownjobs.json', db.getOwnJobs)
+  // app.post('/getownjobscut.json', db.getOwnJobsCut)
   app.post('/ownCompany.json', db.getOwnCompanyJSON)
   app.post('/companyupdpic.json', db.updateOneCompanyPic)
   app.post('/companyUpdate.json', db.updateOneCompany)
@@ -94,6 +95,7 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.get('/cpsuper.json', adm.superAdmin)
   app.get('/u2out.json', adm.u2out)
   app.post('/newu2.json', adm.adminNew)
+  app.get('/snpics.json', adm.snpics)
   //CPEND
 
   //admin actions

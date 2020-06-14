@@ -3,10 +3,10 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL || `postgres://postgres:123456@localhost:5433/jobsnearby`
   // connectionString: `postgres://postgres@localhost:5432/jobsnearby`
 })
-console.log('debug1', process.env.DATABASE_URL)
-console.log('debug2', process.env.SITE_URL)
-console.log('debug3', process.env.GMAIL_FOR_VERIFICATIONS)
-console.log('debug4', process.env.GMAIL_PW)
+// console.log('debug1', process.env.DATABASE_URL)
+// console.log('debug2', process.env.SITE_URL)
+// console.log('debug3', process.env.GMAIL_FOR_VERIFICATIONS)
+// console.log('debug4', process.env.GMAIL_PW)
 const titleRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\+\$\%\(\)\№\:\#\/]*$/
 
 const bcrypt = require('bcryptjs')
@@ -516,7 +516,7 @@ async function addJobs (req, res) {
       return false
     }
 
-    let processedlength = Math.min(req.body.length, 15)
+    let processedlength = Math.min(req.body.length, 31)
     let totalLengthReport = processedlength
     let uid = results.rows[0].user_id
     let last_posted = results.rows[0].last_posted
