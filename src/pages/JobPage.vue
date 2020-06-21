@@ -9,13 +9,14 @@
       </div>
       <h1 class="titleHeader" itemprop="title">{{job.title}}</h1>
       <section style="margin-top: -15px; display: flex; justify-content: space-between; marginBottom: 15px;">
-        <div class="detailed__col" style="display: flex; flex-direction: column; justify-content: flex-end">
-          <p class="salary-deriv">{{salary_deriv}}</p>
-          <p class="jobpage__city_company" itemprop="jobLocation" itemscope itemtype="http://schema.org/Place">{{(job.city && job.city.length > 0) ? $t('jobPage.cityWordStart') + job.city : $t('jobPage.cityNotSet')}}</p>
+        <div itemprop="jobLocation" itemscope class="detailed__col" style="display: flex; flex-direction: column; justify-content: flex-end">
+          <p itemprop="baseSalary" class="salary-deriv">{{salary_deriv}}</p>
+          <p class="jobpage__city_company" itemprop="address">{{(job.city && job.city.length > 0) ? $t('jobPage.cityWordStart') + job.city : $t('jobPage.cityNotSet')}}</p>
         </div>
-        <div class="detailed__col" style="display: flex; flex-direction: column; justify-content: center;">
+        <div itemprop="hiringOrganization" itemscope="itemscope" itemtype="http://schema.org/Organization" class="detailed__col" style="display: flex; flex-direction: column; justify-content: center;">
           <img style="align-self: center;" class="detailed__logo1" :src="(job.logo_url && job.logo_url.length > 1) ? job.logo_url : '/statics/companyph.png'">
-          <p class="author-link-wrapper"><a itemprop="hiringOrganization" itemscope="itemscope" itemtype="http://schema.org/Organization" :href="'/companypage?id=' + job.author_id" target="_blank" class="detailed__author-link1 jobpage__city_company">{{job.author}}</a></p>  
+          <meta itemprop="name" :content="job.author">
+          <p class="author-link-wrapper"><a :href="'/companypage?id=' + job.author_id" target="_blank" class="detailed__author-link1 jobpage__city_company">{{job.author}}</a></p>  
         </div>
         
       </section>

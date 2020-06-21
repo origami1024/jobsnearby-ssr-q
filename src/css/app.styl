@@ -23,9 +23,31 @@ body
   background-size: auto, auto, 100% 200px
   background-position right top, left 18px bottom, center bottom
   @media screen and (max-width 550px)
-    background-size: auto, 160px, 100% 140px
+    background-size: auto, 160px, 100% 160px
     background-image url('/statics/bg1-mobile.png'), url('/statics/bg2-mobile.png'), linear-gradient(180deg, var(--footer-color), var(--footer-color))
     background-position right top, left 8px bottom, center bottom
+
+.social-link
+  margin-right 10px
+
+.social-icon
+  fill var(--color1)
+  width 26px
+  height 26px
+  @media screen and (max-width 550px)
+    width 20px
+    height 20px
+.vk
+  &:hover
+    fill #4c75a3
+.tg
+  &:hover
+    fill #00bfff
+.insta
+  &:hover
+    fill #E1306C
+
+
 #q-app
   box-sizing border-box
   position relative
@@ -243,7 +265,7 @@ body
     @media screen and (max-width 800px)
       padding 20px 15px 12px 15px
     @media screen and (max-width 550px)
-      height 140px
+      height 160px
       padding 15px 20px
     .footer__ul-top
       display flex

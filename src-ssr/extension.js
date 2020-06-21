@@ -96,6 +96,7 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.get('/u2out.json', adm.u2out)
   app.post('/newu2.json', adm.adminNew)
   app.get('/snpics.json', adm.snpics)
+  app.get('/deleteSnpics.json', adm.deleteSnpics)
   //CPEND
 
   //admin actions

@@ -1420,7 +1420,8 @@ async function hitJobById (job_id, ip) {
   pool.query(que, params, (error, results1) => {
     if (error) {
       console.log('hitJobById Error: ', error)
-    } else console.log('job hit')
+    }
+    // else console.log('job hit')
   })
 }
 

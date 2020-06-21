@@ -198,7 +198,9 @@ export default {
     font-size: 17px;
     line-height: 21px;
     text-transform uppercase
-    
+    margin-right 8px
+    @media screen and (max-width 550px)
+      margin-right 0
   .cityAndCompany
     margin-bottom 15px
     @media screen and (max-width 550px)
@@ -246,7 +248,7 @@ export default {
       margin-left auto
       font-size 9px
   .salary__outer-wrap
-    margin-left 15px
+    margin-left 20px
     min-width 100px
     max-width 145px
     @media screen and (max-width 550px)
@@ -359,7 +361,7 @@ export default {
   font-family: Montserrat;
   font-style: normal;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 17px !important;
   line-height: 22px;
   color var(--violet-btn-color)
   @media screen and (max-width 550px)
