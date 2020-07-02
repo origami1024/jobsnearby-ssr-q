@@ -6,7 +6,7 @@
           <span v-if="job.city.length > 0" class="cityOK">{{$t('jc.cityPrefix')}}</span>
           <p  itemprop="address" itemscope itemtype="http://schema.org/Place" class="city" v-html="filteredCity"></p>
         </div>
-        <a :href="'/companypage?id=' + job.author_id" target="_blank" itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization">
+        <a class="authorLink" :href="'/companypage?id=' + job.author_id" target="_blank" itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization">
           <div itemprop="name" class="author joblink" v-html="filteredAuthor"></div>
         </a>
       </div>
@@ -71,7 +71,7 @@
     </div>
     <div :class="{heightTransition: isContactsShown}" class="contactsPanel line" style="margin-top: 10px;">
       <div><span style="font-weight: 300;">Email:</span> {{job.contact_mail != '' ? job.contact_mail : $t('jc.notSpecified')}}</div>
-      <div><span style="font-weight: 300;">Tel:</span> {{job.contact_tel}}</div>
+      <div><span style="font-weight: 300;">Tel: </span><a style="color: var(--color1);" :href="telProcessed">{{job.contact_tel}}</a></div>
     </div>
   </div>
 </template>
@@ -85,9 +85,15 @@ export default {
     job: Object,
   },
   data: ()=>{return {
-    isContactsShown: false  
+    isContactsShown: false 
   }},
   computed: {
+    telProcessed() {
+      let tel = 'tel:' + (this.job.contact_tel.startsWith('993')
+        ? '+' + this.job.contact_tel
+        : this.job.contact_tel)
+      return tel
+    },
     plusOneMonth() {
       let d = new Date()
       d.setMonth(d.getMonth() + 1)
@@ -215,12 +221,17 @@ export default {
     border-right: 1px solid var(--color1)
     line-height: 25px
     margin-right: 10px
+    max-width 200px
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     @media screen and (max-width 550px)
       // width 50%
       padding-right: 5px
       margin-right: 5px
       font-size: 9px;
       line-height: 20px
+      max-width 110px
   .cityOK
     font-weight: 500;
     font-size: 12px;
@@ -238,6 +249,8 @@ export default {
     @media screen and (max-width 550px)
       font-size 9px
       line-height 20px
+      max-width 120px
+      min-width 0 !important
   // .updated__label
   //   margin-right 5px
   //   margin-left auto
@@ -407,6 +420,10 @@ export default {
   @media screen and (max-width 550px)
     font-size: 14px;
     line-height 20px
+// .authorLink
+  // @media screen and (max-width 550px)
+    // min-width 0 !important
+    // max-width auto !important
 .cvSentSpan
   align-self center
   @media screen and (max-width 550px)

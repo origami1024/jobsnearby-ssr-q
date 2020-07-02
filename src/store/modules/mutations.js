@@ -98,7 +98,7 @@ export default {
   },
   setCompanyDetails (state, company) {
     state.cdata = company
-    console.log('cp7', state.cdata)
+    // console.log('cp7', state.cdata)
   },
   storeAuth (state, user) {
     state.user = {...state.user, ...user}

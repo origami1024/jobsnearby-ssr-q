@@ -1,9 +1,10 @@
 
-
+import Jobs from 'pages/Jobs.vue'
 const routes = [
   {
     path: '/',
-    component: () => import('pages/Jobs.vue')
+    component: Jobs
+    // component: () => import('pages/Jobs.vue')
   },
   {
     path: '/registration',

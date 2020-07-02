@@ -15,7 +15,7 @@ const fs = require('fs')
 // let nodeMailer = require('nodemailer')
 const SupremeValidator = require('./../serverutils').SupremeValidator
 const pageParts = require('./../pageParts')
-
+const salaryDeriv = require('./../serverutils').salaryDeriv
 //Добавить лог
 async function addLog (action, body, author_id, author_mail) {
   //time, action, body, author_id, author_name
@@ -608,7 +608,7 @@ async function adminGetUsers() {
   let que = `
     SELECT *
     FROM "users"
-    ORDER BY user_id DESC
+    ORDER BY time_updated DESC
   `
   let result = await pool.query(que, null).catch(error => {
     console.log('cp adminGetUsers err1: ', error)
@@ -754,7 +754,7 @@ async function adminGetJobs() {
       let que = `
         SELECT *
         FROM "jobs"
-        ORDER BY time_created DESC
+        ORDER BY time_updated DESC
 
       `
       let result = await pool.query(que, null).catch(error => {
@@ -776,6 +776,12 @@ async function adminJobs(req, res) {
       return undefined
     })
     if (auth) {
+      let data = await adminGetJobs().catch(error => {
+        console.log('cp adminGetJobs err1: ', error)
+        return []
+      })
+
+
       let body = `
         <style>
         .hidden {
@@ -785,17 +791,16 @@ async function adminJobs(req, res) {
         a {color:blue; text-decoration: none}
         a:visited {color:blue}
         </style>
-        <h2 style="text-align:center; margin: 0;">Вакансии</h2>
+        <h2 style="text-align:center; margin: 0;">Вакансии (${data.length})</h2>
         ${pageParts.cplink()}
         <table style="width: 100%; font-size:14px">
           <thead style="background-color: purple; color: white;">
             <tr style="padding: 5px">
               <td>jid</td>
-              <td>title</td>
+              <td>title<input id="title-filter-inp" style="margin-left: 10px;" type="text" placeholder="filter"></td>
               <td>aid</td>
               <td>time_updated</td>
               <td>is_published</td>
-              <td>currency</td>
               <td>contact_mail</td>
               <td>contact_tel</td>
               <td>Закрыта?</td>
@@ -806,10 +811,7 @@ async function adminJobs(req, res) {
           <tbody>
         
       `
-      let data = await adminGetJobs().catch(error => {
-        console.log('cp adminGetJobs err1: ', error)
-        return []
-      })
+      
       
       data.forEach(val=>{
         let d = new Date(val.time_updated).toString().split(' GMT')[0].substring(3)
@@ -817,15 +819,14 @@ async function adminJobs(req, res) {
           <tr id="jtr_${val.job_id}" ${(val.is_published == false && val.is_closed == false) ? 'style="font-weight: 700"' : ''}>
             <td>${val.job_id}</td>
             <td><a href="/jobpage?id=${val.job_id}" target="_blank">${val.title}</a></td>
-            <td>${val.author_id}</td>
+            <td><a href="/companypage?id=${val.author_id}" target="_blank">${val.author_id}</a></td>
             <td>${d}</td>
             <td id="td_apr_${val.job_id}">${val.is_published}</td>
-            <td>${val.currency}</td>
             <td>${val.contact_mail}</td>
             <td>${val.contact_tel}</td>
             <td id="td_ic_${val.job_id}">${val.is_closed}</td>
             <td id="td_cw_${val.job_id}">${val.closed_why}</td>
-            <td style="width: 180px; display: flex">
+            <td style="width: 210px; display: flex">
               ${val.is_closed == false
                 ? `
                   <div id="cl_ctr_${val.job_id}">
@@ -843,13 +844,21 @@ async function adminJobs(req, res) {
                 ? ''
                 : `<button id="btn_apr_${val.job_id}" style="padding:0" onclick="sendaprjob(${val.job_id})">Одобрить</button>`
               }
-              <a href="/statics/sn_posted/${val.job_id}.png" download style="margin: 0 5px;">соцпик</a>
+              <a href="/statics/sn_posted/${val.job_id}.png?rand=${Date.now()}" download style="margin: 0 5px;">соцпик</a>
+              <button title="Перегенерировать картинку" onclick='sendPicRegen(event, "${val.title}","${val.salary_min}", "${val.salary_max}", "${val.currency}","${val.city}", "${val.job_id}", "${val.contact_tel}")'>🔄</button>
+              <button title="Отредактировать название и описание" onclick='showEditModal(event, ${val.job_id}, "${val.title}", \`${val.description}\`)'>✍</button>
             </td>
           </tr>
         `
         body += tmp
       })
       body += '</tbody></table>'
+      body += `<div id="jobQuickEditModal" class="hidden" style="position: relative; background-color: lightblue; padding: 15px; position: absolute; top: calc(50% - 200px); left: calc(50% - 250px); z-index: 1;">
+        <input type="text" id="qem__title" style="display: block; width: 500px;">
+        <textarea id="qem__desc" style="display: block; width: 500px; height: 400px;"></textarea>
+        <button id="qem__btn" style="display: block" onclick="sendQuickEdits(event)" data-jid="-1">Отправить</button>
+        <button style="position: absolute; top: 0; right: 0;" onclick='document.getElementById("jobQuickEditModal").classList.add("hidden")'>X</button>
+      </div>`
       body += `
         <script>
           function popup(jid) {
@@ -915,6 +924,68 @@ async function adminJobs(req, res) {
             }
             http.send(JSON.stringify(d))
           }
+          function filterInput() {
+            let needle = document.getElementById("title-filter-inp").value.toLowerCase()
+            let trs = [...document.querySelectorAll('[id^="jtr_"]')]
+            trs.forEach(el => {
+              let currentText = el.querySelectorAll('td')[1].getElementsByTagName('a')[0].textContent.toLowerCase()
+              if (needle != '' && !currentText.includes(needle))
+                el.classList.add('hidden')
+              else
+                el.classList.remove('hidden')
+            })
+          }
+          document.getElementById("title-filter-inp").addEventListener('input', filterInput)
+          function sendPicRegen(event, title, sal_min, sal_max, cur, city, jid, contact_tel) {
+            // if (sal.startsWith('0 - 0')) sal = 'По итогам собеседования'
+            let d = {title, sal_min, sal_max, cur, city, contact_tel, jid}
+            var http = new XMLHttpRequest()
+            var url = '/socpicbyparams.json'
+            http.open('POST', url, true)
+            http.setRequestHeader('Content-type', 'application/json')
+            //
+            http.onreadystatechange = function() {
+              if(http.readyState == 4 && http.status == 200) {
+                console.log('cpo2: ', http.responseText)
+                alert('Картинка сгенерирована')
+              }
+            }
+            http.send(JSON.stringify(d))
+            event.target.previousElementSibling.setAttribute("href", "/statics/sn_posted/" + jid + ".png?rand=" + Date.now())
+          }
+          function showEditModal(event, jid, title, description) {
+            document.getElementById("qem__title").value = title;
+            document.getElementById("qem__desc").value = description;
+            document.getElementById("qem__btn").setAttribute("data-jid", jid);
+            document.getElementById("jobQuickEditModal").classList.remove("hidden")
+          }
+          function sendQuickEdits(event) {
+            let title = document.getElementById("qem__title").value
+            let desc = document.getElementById("qem__desc").value
+            let jid = document.getElementById("qem__btn").getAttribute("data-jid")
+            document.getElementById("qem__btn").setAttribute("data-jid", -1)
+            document.getElementById("jobQuickEditModal").classList.add("hidden")
+            console.log(title, desc, jid)
+            let d = {title, desc, jid}
+            var http = new XMLHttpRequest()
+            var url = '/forceedit.json'
+            http.open('POST', url, true)
+            http.setRequestHeader('Content-type', 'application/json')
+            //
+            http.onreadystatechange = function() {
+              if(http.readyState == 4 && http.status == 200) {
+                let resp = JSON.parse(http.response)
+                if (resp.success === "true")
+                  location.reload();
+                else if (resp.success === "false" && resp.msg)
+                  alert(resp.msg)
+                else console.log('error', resp)
+              }
+            }
+            http.send(JSON.stringify(d))
+            
+          }
+          
         </script>
       `
       let allJobsPage = pageParts.head + body + pageParts.footer
@@ -1049,17 +1120,17 @@ async function snpics(req, res) {
       return undefined
     })
     if (auth) {
-      var body = '<div style="text-align: center; margin: 15px auto; font-size: 22px; font-weight: 600;">Последнее отправленное в соцсети</div><div>' + pageParts.cplink() + '</div><hr><ul>'
+      var body = '<div style="text-align: center; margin: 15px auto; font-size: 22px; font-weight: 600;">Последнее отправленное в соцсети</div><div>' + pageParts.cplink() + '</div>' + '<div><a href="/deleteSnpics.json">Удалить все</a></div>' + '<hr><ul>'
       let files = await fs.promises.readdir('./www/statics/sn_posted').catch(e => {})
         //  ./src/statics
       if (files) {
         files.forEach(file => {
           // console.log('ppp', file)
-          body += `<li style="width: 100%; margin-bottom: 15px; display:flex;align-items:center;"><img style="max-width: 300px; max-height: 200px; margin-right: 10px;" src="https://hunarmen.com/statics/sn_posted/${file}"> <a href="https://hunarmen.com/statics/sn_posted/${file}" download>${file}</a></li>`
+          body += `<li style="width: 100%; margin-bottom: 15px; display:flex;align-items:center;"><img style="max-width: 300px; max-height: 200px; margin-right: 10px;" src="https://hunarmen.com/statics/sn_posted/${file}"> <a href="https://hunarmen.com/statics/sn_posted/${file}?rand=${Date.now()}" download>${file}</a></li>`
         })
       }
       body += '</ul>'
-      body += '<div><a href="/deleteSnpics.json">Удалить все</a></div>'
+      
       let html = pageParts.head + body + pageParts.footer
       res.send(html)
     } else res.send(pageParts.noau)
@@ -1305,6 +1376,39 @@ async function closeJobByIdAdmin(req, res) {
     })
   } else {res.send('wrong userinfo(closeJBIA)')}
 }
+async function createSocialPicByParams(req, res) {
+  
+  if (req.cookies.sessioa && req.cookies.sessioa.length > 50 && req.cookies.user2) {
+    let que1st = `SELECT u2id FROM "users2" WHERE "u2coo" = $1 AND "u2mail" = $2`
+    let params1st = [req.cookies.sessioa, req.cookies.user2]
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        console.log(error)
+        res.send('step2')
+        //throw error
+        return false
+      }
+      if (results.rows.length < 1) {
+        console.log('no cookie found')
+        //Если юзера с таким куки не найдено, то выходим из функции прост
+        res.send('step3')
+        return false
+      }
+      console.log('cp1412', req.body)
+      let sal = salaryDeriv (req.body.sal_min, req.body.sal_max, req.body.cur)
+      const python = spawn('python', [
+        'justdraw.py',
+        req.body.title,
+        sal,
+        req.body.city,
+        req.body.contact_tel,
+        req.body.jid
+      ])
+      res.send('OK')
+    })
+    
+  } else res.status(400).send('Что-то пошло не туда')
+}
 
 
 async function approveJobByIdAdmin(req, res) {
@@ -1335,7 +1439,7 @@ async function approveJobByIdAdmin(req, res) {
       //если есть в базе и автор сам удаляющий
       //удалить
       
-      let que2nd = `UPDATE jobs SET (is_published, time_updated, closed_why) = (TRUE, NOW(), '') WHERE job_id = $1 RETURNING title, salary_min, salary_max, city, currency`
+      let que2nd = `UPDATE jobs SET (is_published, time_updated, closed_why) = (TRUE, NOW(), '') WHERE job_id = $1 RETURNING title, salary_min, salary_max, city, currency, contact_tel`
       let params2nd = [jid]
       pool.query(que2nd, params2nd, (error2, results2) => {
         if (error2) {
@@ -1343,15 +1447,23 @@ async function approveJobByIdAdmin(req, res) {
           res.status(400).send('error222')
           return false
         }
+        if (!results2.rows || results2.rows.length < 1) {
+          res.status(400).send('error223')
+          console.log('approveJobByIdAdmin Error3: ', error2)
+          addLog('Ошибка одобр(A)', 'Id вакансии: ' + jid, results.rows[0].u2id, '(Модератор) ' + req.cookies.user2)
+          return false
+        }
         res.status(200).send('OK')
         //here we go with telegram - start python script
+        // let sal = results2.rows[0].salary_min + ' - ' + results2.rows[0].salary_max + results2.rows[0].currency
+        // if (sal.startsWith('0 - 0')) sal = 'По итогам собеседования'
+        let sal = salaryDeriv(results2.rows[0].salary_min, results2.rows[0].salary_max, results2.rows[0].currency)
         const python = spawn('python', [
           'sn_bot.py',
           results2.rows[0].title,
-          results2.rows[0].salary_min + ' - ' + results2.rows[0].salary_max + results2.rows[0].currency,
-          // results2.rows[0].description.substring(0,50),
-          // results2.rows[0].description.substring(50, 100),
+          sal,
           results2.rows[0].city,
+          results2.rows[0].contact_tel,
           jid])
         // console.log('cp21', process.cwd())
         // console.log('cp22', results2.rows[0])
@@ -1362,6 +1474,60 @@ async function approveJobByIdAdmin(req, res) {
     })
   } else {res.send('wrong userinfo(approveJBIA)')}
 }
+
+
+async function forceEdit(req, res) {
+  const titleRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\+\$\%\(\)\№\:\#\/]*$/
+  if (req.cookies.sessioa && req.cookies.sessioa.length > 50 && req.cookies.user2) {
+    let que1st = `SELECT u2id FROM "users2" WHERE "u2coo" = $1 AND "u2mail" = $2`
+    let params1st = [req.cookies.sessioa, req.cookies.user2]
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        // res.send('step2')
+        res.send(JSON.stringify({"success": "false", "msg": "step2"}))
+        return false
+      }
+      if (!results.rows || results.rows.length != 1) {
+        // res.send('step3')
+        res.send(JSON.stringify({"success": "false", "msg": "step3"}))
+        return false
+      }
+      // console.log(req.body)
+      let data = req.body
+      let parsedData = {}
+      if (data.title && data.title.length > 1 && data.title.length < 76 && titleRegex.test(data.title)) {
+        parsedData.title = data.title
+      } else {
+        res.send(JSON.stringify({"success": "false", "msg": "title не прошел валидацию"}))
+        return false
+      }
+      if (data.desc && data.desc.length > 1 && data.desc.length < 2001) {
+        parsedData.description = data.desc
+      } else {
+        res.send(JSON.stringify({"success": "false", "msg": "Макс длина description 2000"}))
+        return false
+      }
+      let que2nd = `UPDATE "jobs" SET ("time_updated", "title", "description") =
+                    (NOW(), $1, $2)
+                    WHERE job_id = $3
+                    RETURNING job_id, title`
+      let params2nd = [parsedData.title, parsedData.description, data.jid]
+      // console.log('cp67', params2nd)
+      pool.query(que2nd, params2nd, (error2, results2) => {
+        if (error) {
+          res.send(JSON.stringify({"success": "false", "msg": "step22"}))
+          return false
+        }
+        if (results2.rows.length > 0) {
+          addLog('Вакансия исправлена(А)', parsedData.title, data.jid, '(Модератор) ' + req.cookies.user2)
+          res.send(JSON.stringify({"success": "true"}))
+        } else res.send(JSON.stringify({"success": "false", "msg": "Ошибка в бд"}))
+      })
+    })
+
+  } else res.send(JSON.stringify({"success": "false", "msg": "wrong userinfo"}))
+}
+
 
 async function deleteJobByIdAdmin(req, res) {
   const jid = parseInt(req.body.jid)
@@ -1470,7 +1636,7 @@ async function userStatRegen(req, res) {
       resubig.push(resu)
 
 
-      let que3 = 'SELECT salary_min, salary_max, currency FROM jobs'
+      let que3 = 'SELECT salary_min, salary_max, currency FROM jobs WHERE is_closed = false AND is_published = true'
       var result = await pool.query(que3, null).catch(error => {
         console.log('cp userStatRegen err5: ', error)
         return false
@@ -1507,7 +1673,7 @@ async function userStatRegen(req, res) {
         })
       }
 
-      let que4 = `SELECT title, job_id, salary_min, salary_max, currency FROM jobs WHERE time_updated > now() - interval '1 month'`
+      let que4 = `SELECT title, job_id, salary_min, salary_max, currency FROM jobs WHERE time_updated > now() - interval '1 month' AND is_closed = false AND is_published = true`
       var result = await pool.query(que4, null).catch(error => {
         console.log('cp userStatRegen err7: ', error)
         return false
@@ -1535,11 +1701,20 @@ async function userStatRegen(req, res) {
         `
         for (let x1 = 0; x1 < 6; x1++) {
           //first five
-          quex += `
-            UPDATE cached_salary_stats SET 
-            (statvalue, time_updated, statlabel, statcurrency, statlink) = (${dataa[x1].salary_max}, NOW(), '${dataa[x1].title}', 'm', ${dataa[x1].job_id})
-            WHERE statname = 'top${x1 + 1}';
-          `
+          if (x1 < dataa.length) {
+            quex += `
+              UPDATE cached_salary_stats SET 
+              (statvalue, time_updated, statlabel, statcurrency, statlink) = (${dataa[x1].salary_max}, NOW(), '${dataa[x1].title}', 'm', ${dataa[x1].job_id})
+              WHERE statname = 'top${x1 + 1}';
+            `
+          } else {
+            quex += `
+              UPDATE cached_salary_stats SET 
+              (statvalue, time_updated, statlabel, statcurrency, statlink) = (0, NOW(), '-', 'm', -1)
+              WHERE statname = 'top${x1 + 1}';
+            `
+          }
+          
         }
 
         var result = await pool.query(quex, null).catch(error => {
@@ -1658,5 +1833,7 @@ module.exports = {
   userStatRegen,
 
   snpics,
-  deleteSnpics
+  deleteSnpics,
+  createSocialPicByParams,
+  forceEdit
 }

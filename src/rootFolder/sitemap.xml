@@ -6,53 +6,171 @@
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
+
 <url>
   <loc>https://hunarmen.com/</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/companypage?id=20</loc>
+  <loc>https://hunarmen.com/companypage?id=119</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/jobpage?id=11</loc>
+  <loc>https://hunarmen.com/jobpage?id=109</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/jobpage?id=9</loc>
+  <loc>https://hunarmen.com/companypage?id=28</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/jobpage?id=10</loc>
+  <loc>https://hunarmen.com/jobpage?id=94</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/jobpage?id=5</loc>
+  <loc>https://hunarmen.com/jobpage?id=107</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/jobpage?id=7</loc>
+  <loc>https://hunarmen.com/jobpage?id=108</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/jobpage?id=8</loc>
+  <loc>https://hunarmen.com/jobpage?id=106</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/jobpage?id=4</loc>
+  <loc>https://hunarmen.com/jobpage?id=85</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/jobpage?id=6</loc>
+  <loc>https://hunarmen.com/jobpage?id=84</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/jobpage?id=3</loc>
+  <loc>https://hunarmen.com/jobpage?id=83</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://hunarmen.com/jobpage?id=2</loc>
+  <loc>https://hunarmen.com/jobpage?id=82</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
   <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=81</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=80</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=79</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=104</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=103</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=102</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=101</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=105</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=100</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=99</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=86</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=97</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=96</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=95</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=93</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=92</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=62</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=63</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/jobpage?id=52</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/companypage?id=27</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://hunarmen.com/companypage?id=29</loc>
+  <lastmod>2020-06-30T06:37:30+00:00</lastmod>
+  <priority>0.64</priority>
 </url>
 
 

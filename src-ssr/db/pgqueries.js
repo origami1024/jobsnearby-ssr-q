@@ -13,6 +13,8 @@ const bcrypt = require('bcryptjs')
 
 let nodeMailer = require('nodemailer')
 
+const fs = require('fs')
+
 const DAILY_JOBS_LIMIT = 30 //Макс кол-во вакансий в день(86400 сек, что указано ниже)
 const JOBS_LIMIT_DURATION = 86400 //86400 - 24 hours
 
@@ -108,7 +110,7 @@ function validateOneJob (data) {
     parsedData.langs = langsFiltered
   } else parsedData.langs = []
   //edu - необязат, от 2х символов до 20
-  if (data.edu && data.edu.length > 1 && data.edu.length < 21) {
+  if (data.edu && data.edu.length > 1 && data.edu.length < 61) {
     parsedData.edu = data.edu
   } else parsedData.edu = ''
   //experience - стаж в годах, дробное число от 0 до 250
@@ -120,7 +122,7 @@ function validateOneJob (data) {
     parsedData.jcategory = Math.round(Number(data.jcategory))
   } else parsedData.jcategory = 0 //без категории = 0
   //city - необязат, от 2х символов до 100
-  if (data.city && data.city.length > 1 && data.city.length < 101) {
+  if (data.city && data.city.length > 1 && data.city.length < 71) {
     parsedData.city = data.city
   } else parsedData.city = ''
   //jobtype - постоянная, временная или пусто
@@ -522,8 +524,7 @@ async function addJobs (req, res) {
     let last_posted = results.rows[0].last_posted
     let limitCount = parseInt(results.rows[0].new_jobs_count_today)
     if (!limitCount) limitCount = 0
-    // console.log('cp77', last_posted)
-    // console.log('cp78', limitCount)
+    
     if (limitCount >= DAILY_JOBS_LIMIT && parseInt(last_posted) != NaN && parseInt(last_posted) < 0 && parseInt(last_posted) > -JOBS_LIMIT_DURATION) {//-86400
       res.send({msg: 'error limits reached', added: 0, total: req.body.length})
       return false
@@ -992,49 +993,137 @@ async function updateOneCompany(req, res) {
 
 }
 
-async function updateOneCompanyPic(req, res) {
+async function updateOneCompanyPicX(req, res) {
+  //node version, receives pic file,
+  //!should delete old file by url from db, or do the replacement
+  //!in a way by storing by user name perhaps
+  //!url should not be set from outside
+  //check if file by url is in the proper dir
+  //need to think through how to make images not be lost between deployments
+  
   if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+    
     let que1st = `SELECT user_id, logo_url, role FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
     let params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
-        res.send('step2')
+        res.send({success: false, msg: 'step2 err'})
         console.log('updateOneCompanyPic Error: ', error)
         return false
       }
       if (results.rows.length != 1 || results.rows[0].role != 'company') {
-        res.send('step3')
+        res.send({success: false, msg: 'step3 err'})
         return false
       }
 
       let uid = results.rows[0].user_id
-      
       let logo_url = ''
-      //VALIDATE SHIET HERE!
-      if (req.body.logo_url && req.body.logo_url.length < 86) {
-        logo_url = req.body.logo_url
-      } else logo_url = results.rows[0].logo_url
+      let image = req.file
+      if (image.size < 409601) {
+        // console.log('cpx', image)
+        //delete old file ! done!
+        let ext = null
+        let path_part1 = 'uploads/' + uid
+        fs.unlink(path_part1 + '.png', (err) => {})
+        fs.unlink(path_part1 + '.jpg', (err) => {})
+        fs.unlink(path_part1 + '.gif', (err) => {})
+        fs.unlink(path_part1 + '.webp', (err) => {})
+        console.log(image.mimetype)
+        if (image.mimetype == 'image/png') ext = '.png'
+        else if (image.mimetype == 'image/jpeg') ext = '.jpg'
+        else if (image.mimetype == 'image/gif') ext = '.gif'
+        else if (image.mimetype == 'image/webp') ext = '.webp'
+        if (ext !== null) {
+          
+          let logo_url = path_part1 + ext  + '?rand=' + Date.now()
+          let dir = './www/uploads'
+          let fname = dir + '/' + uid + ext
+          if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+          }
+          fs.writeFile(fname, image.buffer, "binary", function(err) {
+            if(err) {
+              console.log(err);
+            }
+            // else console.log("The file was saved!");
+          })
 
-      let que2nd = `
-        UPDATE "users"
-        SET "logo_url" = $1
-        WHERE user_id = $2
-      `
-      let params2nd = [logo_url, uid]
+          let que2nd = `
+            UPDATE "users"
+            SET "logo_url" = $1
+            WHERE user_id = $2
+          `
+          let params2nd = [logo_url, uid]
 
-      pool.query(que2nd, params2nd, (error2, results2) => {
-        if (error2) {
-          console.log('updateOneCompanyPic, err2: ', error2)
-          res.send('error')
+          pool.query(que2nd, params2nd, (error2, results2) => {
+            if (error2) {
+              console.log('updateOneCompanyPic, err2: ', error2)
+              res.send({success: false, msg: 'step4 err'})
+              return false
+            }
+            res.send({success: true, link: logo_url})
+          })
+        } else {
+          res.send({success: false, msg: 'file ext error'})
           return false
         }
-        res.send('OK')
-      })
-
-
+      } else {
+        res.send({success: false, msg: 'file size error'})
+        return false
+      }
+      //send back link or error
+      //check file size
+      //save logo url
+      //for new users make new url pointing to placeholder
+      
+      
     })
-  } else res.send('auth error')
+  } else res.send({success: false, msg: 'auth error'})
+
 }
+// async function updateOneCompanyPic(req, res) {
+//   if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+//     let que1st = `SELECT user_id, logo_url, role FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
+//     let params1st = [req.signedCookies.session, req.signedCookies.mail]
+//     pool.query(que1st, params1st, (error, results) => {
+//       if (error) {
+//         res.send('step2')
+//         console.log('updateOneCompanyPic Error: ', error)
+//         return false
+//       }
+//       if (results.rows.length != 1 || results.rows[0].role != 'company') {
+//         res.send('step3')
+//         return false
+//       }
+
+//       let uid = results.rows[0].user_id
+      
+//       let logo_url = ''
+//       //VALIDATE SHIET HERE!
+//       if (req.body.logo_url && req.body.logo_url.length < 86) {
+//         logo_url = req.body.logo_url
+//       } else logo_url = results.rows[0].logo_url
+
+//       let que2nd = `
+//         UPDATE "users"
+//         SET "logo_url" = $1
+//         WHERE user_id = $2
+//       `
+//       let params2nd = [logo_url, uid]
+
+//       pool.query(que2nd, params2nd, (error2, results2) => {
+//         if (error2) {
+//           console.log('updateOneCompanyPic, err2: ', error2)
+//           res.send('error')
+//           return false
+//         }
+//         res.send('OK')
+//       })
+
+
+//     })
+//   } else res.send('auth error')
+// }
 
 async function getOwnCompanyJSON(req, res) {
   if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
@@ -1215,6 +1304,12 @@ async function cvurlupdate(req, res) {
     } else res.send('err2')
   } else res.send('err1')
 }
+
+async function cvUpdateX(req, res) {
+
+}
+//make delete too!!!
+
 
 async function getCVHitsHistory(req, res) {
   if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
@@ -1996,6 +2091,7 @@ module.exports = {
 
   getCVHitsHistory,
   cvurlupdate,
+  cvUpdateX,
   cvurldelete,
   changeuserstuff,
   changepw,
@@ -2004,7 +2100,8 @@ module.exports = {
 
   getOwnJobs,
   getOwnCompanyJSON,
-  updateOneCompanyPic,
+  // updateOneCompanyPic,
+  updateOneCompanyPicX,
   updateOneCompany,
 
   addOneJob,

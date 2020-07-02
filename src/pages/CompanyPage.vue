@@ -34,9 +34,7 @@
       <section>
         <h4 class="detailed__header">{{$t('companyPage.descHeader')}}</h4>
         <div class="subitem" >
-          <div itemprop="description" v-if="cdata.full_description && cdata.full_description.length > 0" class="descriptionHTML">
-            {{cdata.full_description}}
-          </div>
+          <div itemprop="description" v-if="cdata.full_description && cdata.full_description.length > 0" class="descriptionHTML">{{cdata.full_description}}</div>
           <div v-else>
             {{$t('companyPage.descPh')}}
           </div>
@@ -193,6 +191,7 @@ section
   line-height 1.1
   word-wrap break-word
   max-width 100%
+  white-space pre-wrap
 .ql-size-small
   font-size 12px
 .ql-size-large

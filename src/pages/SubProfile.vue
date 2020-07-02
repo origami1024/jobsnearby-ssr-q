@@ -19,11 +19,14 @@
           <div class="line" style="display: flex; width: 100%;">
             <div style="max-width: 300px; width: 100%; margin-bottom: 20px;">
 
-              <label for="cvInp" class="uploaderWrapper" tabindex="0">
-                <!-- class="uploaderWrapper" -->
+              <!-- <label for="cvInp" class="uploaderWrapper" tabindex="0">
                 <input id="cvInp" ref="cvUplInp" @change="uploadCV($refs.cvUplInp.files)" type="file" style="display:none" accept=".doc, .docx, .pdf, .rtf"/>
                 <span>{{$t('sub.loadCVHeader')}}</span>
-              </label>
+              </label> -->
+              <!-- <label for="cvInpX" class="uploaderWrapper" tabindex="0">
+                <input id="cvInpX" ref="cvUplInpX" @change="uploadCVX($refs.cvUplInpX.files)" type="file" style="display:none" accept=".doc, .docx, .pdf, .rtf"/>
+                <span>{{$t('sub.loadCVHeader')}}</span>
+              </label> -->
               <div class="urlpanel" style="display: flex; justify-content: space-between; align-items: center; font-size: 16px;">
                 {{(user.cvurl != null && user.cvurl != '') ? $t('sub.cvurlUploaded') + ':' : $t('sub.cvurlNone')}}
                 <a v-if="user.cvurl != null && user.cvurl != ''" :href="'https://docs.google.com/viewerng/viewer?url=' + user.cvurl" target="_blank">
@@ -208,6 +211,46 @@ export default {
       console.log('start cvu')
       var formData = new FormData()
       formData.append("cv", val[0])
+      //this.$refs.cvForm.reset()
+      this.$refs.cvUplInp.value = null
+      this.$axios
+        .post(dumper, formData, {
+          headers: {'Content-Type': 'multipart/form-data'}
+        })
+        .then(resp => {
+          if (resp.data && resp.data.startsWith('link:')) {
+            this.logo_upload_error = null
+            this.cvurlnew = resp.data.replace('link:', '')
+            //this.$q.notify('Резюме загружено')
+            this.updateCVLink()
+          } else {
+            console.log('error cv uploading: ', resp.data)
+            if (resp.data.startsWith('Error in file size')) {
+              this.cv_upload_error = this.$t('sub.cvTooBig')
+              this.$q.notify(this.$t('sub.cvTooBig'))
+            } else {
+              this.cv_upload_error = this.$t('sub.dataError')
+              this.$q.notify(this.$t('sub.dataError'))
+            }
+          }
+          //if (response.data === 'OK') {} else 
+        })
+    },
+    uploadCVX(files) {//ok
+      // let dumper = 'https://decreed-silk.000webhostapp.com/cvu.php'
+      if (files && files[0]) {
+        if (files[0].size < 409601) {
+          let url = '/cvupdx.json'
+          var formData = new FormData()
+          formData.append("cv", val[0])
+        } else {
+          this.$refs.fileInputX.value = ''
+          this.$q.notify(this.$t('sub.dataError'))
+        }
+        
+      }
+      
+      
       //this.$refs.cvForm.reset()
       this.$refs.cvUplInp.value = null
       this.$axios

@@ -90,10 +90,17 @@
             />
           </div>
           <div class="line" ref="fileInputWrap" style="display: flex; width: 100%; justify-content: space-between;" @drop="picDrop" >
-            <div style="width:100%">
+            <!-- <div style="width:100%">
               <label for="fileInp" class="cabout-label">{{$t('entProfile.dragLogo')}}</label>
               <label class="uploaderWrapper" tabindex="0">
-              <input id="fileInp" ref="fileInput" @change="readUrl($refs.fileInput.files)" type="file" style="display:none" accept=".gif,.jpg,.jpeg,.png,.webp,.svg"/>
+              <input id="fileInp" ref="fileInput" @change="readUrl($refs.fileInput.files)" type="file" style="display:none" accept=".gif,.jpg,.jpeg,.png,.webp"/>
+              <div class="logo-placeholder" :style="{ 'background-image' : `url('${ cabout.logo_url ? cabout.logo_url : 'statics/logoph.png'}')` } " ></div>
+              </label>
+            </div> -->
+            <div style="width:100%">
+              <label for="fileInpX" class="cabout-label">{{$t('entProfile.dragLogo')}}</label>
+              <label class="uploaderWrapper" tabindex="0">
+              <input id="fileInpX" ref="fileInputX" @change="setCompanyLogo($refs.fileInputX.files)" type="file" style="display:none" accept=".gif,.jpg,.jpeg,.png,.webp,.svg"/>
               <div class="logo-placeholder" :style="{ 'background-image' : `url('${ cabout.logo_url ? cabout.logo_url : 'statics/logoph.png'}')` } " ></div>
               </label>
             </div>
@@ -199,45 +206,92 @@ export default {
     ProfileNav
   },
   methods: {
-    picDrop(e) {//ok
+    picDrop(e) {
       if (e.dataTransfer.files.length == 1) {
         let n = e.dataTransfer.files[0].name
         let ext = n.substr(n.lastIndexOf(".")).toLowerCase()
         if (['.gif','.jpg','.jpeg','.png','.webp','.svg'].includes(ext)) {
-          this.readUrl(e.dataTransfer.files)
+          // this.readUrl(e.dataTransfer.files)
+          this.setCompanyLogo(e.dataTransfer.files)
         } else this.$q.notify('Неправильный формат картинки')
-        window.console.log(e.dataTransfer.files[0])
+        // window.console.log(e.dataTransfer.files[0])
       }
       window.console.log(e)
     },
-    readUrl(files) {//ok
-      if (files && files[0]) {
-        this.logofile = files[0]
+    // readUrl(files) {//php version of file uploading - replaced by setCompanyLogo
+    //   if (files && files[0]) {
+    //     this.logofile = files[0]
       
-        let dumper = 'https://decreed-silk.000webhostapp.com/outer.php'
-        console.log('start uploa1')
-        var formData = new FormData()
-        formData.append("image", this.logofile)
-        this.$axios
-          .post(dumper, formData, {
-            headers: {'Content-Type': 'multipart/form-data'}
-          })
-          .then(resp => {
-            if (resp.data && resp.data.startsWith('link:')) {
-              this.logo_upload_error = null
-              // this.cabout.logo_url = )
-              this.$store.dispatch('caboutPropUpd',{prop: 'logo_url', value: resp.data.replace('link:', '')})
-              this.$q.notify(this.$t('entProfile.picLoaded'))
-              // console.log(this.cabout.logo_url)
-              this.updateCompanyPic()
-            } else {
-              console.log('error uploading: ', resp.data)
-              if (resp.data.startsWith('Error in file size')) {
-                this.logo_upload_error = this.$t('entProfile.picTooBig')
-                this.$q.notify(this.$t('entProfile.picTooBig'))
+    //     let dumper = 'https://decreed-silk.000webhostapp.com/outer.php'
+    //     console.log('start uploa1')
+    //     var formData = new FormData()
+    //     formData.append("image", this.logofile)
+    //     this.$axios
+    //       .post(dumper, formData, {
+    //         headers: {'Content-Type': 'multipart/form-data'}
+    //       })
+    //       .then(resp => {
+    //         if (resp.data && resp.data.startsWith('link:')) {
+    //           this.logo_upload_error = null
+    //           // this.cabout.logo_url = )
+    //           this.$store.dispatch('caboutPropUpd',{prop: 'logo_url', value: resp.data.replace('link:', '')})
+    //           this.$q.notify(this.$t('entProfile.picLoaded'))
+    //           // console.log(this.cabout.logo_url)
+    //           this.updateCompanyPic()
+    //         } else {
+    //           console.log('error uploading: ', resp.data)
+    //           if (resp.data.startsWith('Error in file size')) {
+    //             this.logo_upload_error = this.$t('entProfile.picTooBig')
+    //             this.$q.notify(this.$t('entProfile.picTooBig'))
+    //           }
+    //         }
+    //       })
+    //   }
+    // },
+    setCompanyLogo(files) {
+      if (files && files[0]) {
+        //this.logofile = files[0]
+        // console.log('cp441', files[0].size)
+        if (files[0].size < 409601) {
+          //let dumper = 'https://decreed-silk.000webhostapp.com/outer.php'
+          let url1 = '/companyupdpicx.json'
+          // console.log('start uploa1X', files[0])
+          var formData = new FormData()
+          formData.append("image", files[0])
+          this.$axios
+            .post(url1, formData, {
+              headers: {'Content-Type': 'multipart/form-data'}
+            })
+            .then(resp => {
+              console.log(resp)
+              if (resp.data && resp.data.success === true && resp.data.link) {
+                this.logo_upload_error = null
+                this.$store.dispatch('caboutPropUpd',{prop: 'logo_url', value: resp.data.link})
+                this.$q.notify(this.$t('entProfile.picUploaded'))
+              
+              } else {
+                
+                console.log('error uploading: ', resp.data)
+                if (resp.data.msg && resp.data.msg) {
+                  if (resp.data.msg === 'file size error') {
+                    this.logo_upload_error = this.$t('entProfile.picTooBig')
+                    this.$q.notify(this.$t('entProfile.picTooBig'))
+                  } else if (resp.data.msg === 'file ext error') {
+                    this.logo_upload_error = this.$t('entProfile.picWrongExt')
+                    this.$q.notify(this.$t('entProfile.picWrongExt')) 
+                  }
+                  
+                } else {
+                  this.$q.notify(this.$t('entProfile.dataError'))
+                }
               }
-            }
-          })
+            })
+        } else {
+          // console.log(this.$refs.fileInputX.valu)
+          this.$refs.fileInputX.value = ''
+          this.logo_upload_error = this.$t('entProfile.picTooBig')
+          this.$q.notify(this.$t('entProfile.picTooBig'))
+        }
       }
     },
     viewHit(hit) {//ok
@@ -306,16 +360,16 @@ export default {
           } else this.$q.notify(this.$t('entProfile.dataError'))
       })
     },
-    updateCompanyPic() {//ok
-      let url = '/companyupdpic.json'
-      this.$axios
-        .post(url, {logo_url: this.cabout.logo_url}, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
-        .then(response => {
-          if (response.data == 'OK') {
-            this.$q.notify(this.$t('entProfile.picUploaded'))
-          } else this.$q.notify(this.$t('entProfile.dataError'))
-      })
-    },
+    // updateCompanyPic() {//php version!
+    //   let url = '/companyupdpic.json'
+    //   this.$axios
+    //     .post(url, {logo_url: this.cabout.logo_url}, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+    //     .then(response => {
+    //       if (response.data == 'OK') {
+    //         this.$q.notify(this.$t('entProfile.picUploaded'))
+    //       } else this.$q.notify(this.$t('entProfile.dataError'))
+    //   })
+    // },
     changeTabs(newT) {//ok
       //if (newT == 'published') this.$emit('getOwnJobs')
       newT != 'published' || this.$store.dispatch('getOwnJobs')

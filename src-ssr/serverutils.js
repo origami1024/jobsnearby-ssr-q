@@ -18,6 +18,27 @@ const SupremeValidator = {
 }
 
 
+function salaryDeriv (salary_min, salary_max, currency) {
+  // let currency = $t('App.currencyDic')[this.job.currency]
+  console.log('cp exx1', salary_min, salary_max, currency)
+  let res = ''
+  if (salary_min < 1) {
+    if (salary_max < 1) {
+      res = 'По итогам собеседования'
+      // res = $t('jobPage.salaryNone')
+    } else res = salary_max + ' ' + currency
+  } else {
+    if (salary_min < salary_max) {
+      res = `${salary_min} - ${salary_max}` + ' ' + currency
+    } else
+    if (salary_min == salary_max) {
+      res = `${salary_max}` + ' ' + currency
+    } else res = `${salary_max}` + ' ' + currency
+  }
+  return res
+}
+
 module.exports = {
   SupremeValidator,
+  salaryDeriv
 }

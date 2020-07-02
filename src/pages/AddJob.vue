@@ -370,7 +370,7 @@
               :hint="null"
               ref="edu"
               :rules="[
-                val => val.length < 21 || $t('addJob.eduValidationLengthMax'),
+                val => val.length < 61 || $t('addJob.eduValidationLengthMax'),
                 val => /^[a-zA-Zа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\(\)]*$/.test(val) || $t('addJob.eduValidationFormat')
               ]"
               :lazy-rules="lazyRulesAll"

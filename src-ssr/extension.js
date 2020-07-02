@@ -61,7 +61,29 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/getownjobs.json', db.getOwnJobs)
   // app.post('/getownjobscut.json', db.getOwnJobsCut)
   app.post('/ownCompany.json', db.getOwnCompanyJSON)
-  app.post('/companyupdpic.json', db.updateOneCompanyPic)
+  // app.post('/companyupdpic.json', db.updateOneCompanyPic)
+
+  const multer = require('multer')
+  const upload = multer()
+  // var storage = multer.diskStorage({
+  //   destination: function (req, image, cb) {
+  //     cb(null, './uploads')
+  //   },
+  //   filename: function (req, image, cb) {
+  //     if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+
+  //     }
+  //     console.log('cp13', req.signedCookies.session)
+  //     let ext = null
+  //     if (image.mimetype == 'image/png') ext = '.png'
+  //     cb(null, image.fieldname + '-' + Date.now())
+  //   }
+  // })
+  // upload = multer({ storage: storage })
+  app.post('/companyupdpicx.json', upload.single('image'), db.updateOneCompanyPicX)
+
+  app.post('/cvupdx.json', upload.single('cv'), db.cvUpdateX)
+
   app.post('/companyUpdate.json', db.updateOneCompany)
 
   app.post('/getresps', db.getResps)
@@ -106,6 +128,9 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/admnjobapr.json', adm.approveJobByIdAdmin)
   app.post('/auaction.json', adm.auaction)
   app.post('/userstatregen.json', adm.userStatRegen)
+  app.post('/forceedit.json', adm.forceEdit)
+  app.post('/socpicbyparams.json', adm.createSocialPicByParams)
+  
   // aa end
   
 
