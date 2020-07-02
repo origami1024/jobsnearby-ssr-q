@@ -14,6 +14,7 @@ const bcrypt = require('bcryptjs')
 let nodeMailer = require('nodemailer')
 
 const fs = require('fs')
+const { SSL_OP_CRYPTOPRO_TLSEXT_BUG } = require('constants')
 
 const DAILY_JOBS_LIMIT = 30 //Макс кол-во вакансий в день(86400 сек, что указано ниже)
 const JOBS_LIMIT_DURATION = 86400 //86400 - 24 hours
@@ -1017,7 +1018,6 @@ async function updateOneCompanyPicX(req, res) {
       }
 
       let uid = results.rows[0].user_id
-      let logo_url = ''
       let image = req.file
       if (image.size < 409601) {
         // console.log('cpx', image)
@@ -1045,7 +1045,6 @@ async function updateOneCompanyPicX(req, res) {
             if(err) {
               console.log(err);
             }
-            // else console.log("The file was saved!");
           })
 
           let que2nd = `
@@ -1306,7 +1305,76 @@ async function cvurlupdate(req, res) {
 }
 
 async function cvUpdateX(req, res) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+    let que1st = `SELECT user_id, cvurl FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'`
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
 
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        res.send({success: false, msg: 'step2 err'})
+        console.log('cvUpdateX Error: ', error)
+        return false
+      }
+      if (results.rows.length != 1) {
+        res.send({success: false, msg: 'step3 err'})
+        return false
+      }
+
+      let uid = results.rows[0].user_id
+      let cv = req.file
+      // console.log('cp315', cv)
+      if (cv.size < 309601) {
+        let ext = cv.originalname.split('.').pop()
+        console.log('cp318', req.headers.host)
+        let path_part1 = req.headers.host + '/uploads/cvs/' + uid
+        fs.unlink(path_part1 + '.doc', (err) => {})
+        fs.unlink(path_part1 + '.docx', (err) => {})
+        fs.unlink(path_part1 + '.pdf', (err) => {})
+        fs.unlink(path_part1 + '.rtf', (err) => {})
+        // console.log('cp-mime', cv.mimetype)
+        if (['doc', 'docx', 'pdf', 'rtf'].includes(ext.toLowerCase())) {
+          ext = '.' + ext
+          
+          let cv_url = path_part1 + ext  + '?rand=' + Date.now()
+          
+          let dir = './www/uploads/cvs'
+          let fname = dir + '/' + uid + ext
+          if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir, { recursive: true })
+          }
+          fs.writeFile(fname, cv.buffer, "binary", function(err) {
+            if(err) {
+              console.log(err);
+            }
+          })
+
+          let que2nd = `
+            UPDATE "users"
+            SET cvurl = $1
+            WHERE user_id = $2
+          `
+          let params2nd = [cv_url, uid]
+          pool.query(que2nd, params2nd, (error2, results2) => {
+            if (error2) {
+              console.log('cvUpdateX, err2: ', error2)
+              res.send({success: false, msg: 'step4 err'})
+              return false
+            }
+            res.send({success: true, link: cv_url})
+          })
+
+        } else {
+          res.send({success: false, msg: 'file ext error'})
+          return false
+        }
+      } else {
+        res.send({success: false, msg: 'file size error'})
+        return false
+      }
+
+    })
+
+  } else res.send({success: false, msg: 'auth error'})
 }
 //make delete too!!!
 

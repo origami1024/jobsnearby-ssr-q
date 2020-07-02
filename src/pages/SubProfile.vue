@@ -23,10 +23,10 @@
                 <input id="cvInp" ref="cvUplInp" @change="uploadCV($refs.cvUplInp.files)" type="file" style="display:none" accept=".doc, .docx, .pdf, .rtf"/>
                 <span>{{$t('sub.loadCVHeader')}}</span>
               </label> -->
-              <!-- <label for="cvInpX" class="uploaderWrapper" tabindex="0">
+              <label for="cvInpX" class="uploaderWrapper" tabindex="0">
                 <input id="cvInpX" ref="cvUplInpX" @change="uploadCVX($refs.cvUplInpX.files)" type="file" style="display:none" accept=".doc, .docx, .pdf, .rtf"/>
                 <span>{{$t('sub.loadCVHeader')}}</span>
-              </label> -->
+              </label>
               <div class="urlpanel" style="display: flex; justify-content: space-between; align-items: center; font-size: 16px;">
                 {{(user.cvurl != null && user.cvurl != '') ? $t('sub.cvurlUploaded') + ':' : $t('sub.cvurlNone')}}
                 <a v-if="user.cvurl != null && user.cvurl != ''" :href="'https://docs.google.com/viewerng/viewer?url=' + user.cvurl" target="_blank">
@@ -176,22 +176,22 @@ export default {
 
       })
     },
-    updateCVLink() {//OK
-      let url = '/cvupdate.json'
-      this.$axios
-        .post(url, {cvurl: this.cvurlnew}, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
-        .then(response => {
-          if (response.data == 'OK') {
-            this.$q.notify(this.$t('sub.dataChanged'))
-            // this.$emit('cvupd', this.cvurlnew)
-            this.$store.dispatch('updateCVUrl', this.cvurlnew)
-            console.log(this.$store.state.user)
-            localStorage.setItem('userData',JSON.stringify(this.$store.state.user))
-          } else this.$q.notify(this.$t('sub.dataError'))
-          this.cvurlnew = ''
-          //if error, show like popup or status update
-      })
-    },
+    // updateCVLink() {//OK
+    //   let url = '/cvupdate.json'
+    //   this.$axios
+    //     .post(url, {cvurl: this.cvurlnew}, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+    //     .then(response => {
+    //       if (response.data == 'OK') {
+    //         this.$q.notify(this.$t('sub.dataChanged'))
+    //         // this.$emit('cvupd', this.cvurlnew)
+    //         this.$store.dispatch('updateCVUrl', this.cvurlnew)
+    //         console.log(this.$store.state.user)
+    //         localStorage.setItem('userData',JSON.stringify(this.$store.state.user))
+    //       } else this.$q.notify(this.$t('sub.dataError'))
+    //       this.cvurlnew = ''
+    //       //if error, show like popup or status update
+    //   })
+    // },
     cvdel() {//OK
       let url = '/cvdelete.json'
       this.$axios
@@ -205,76 +205,69 @@ export default {
           //if error, show like popup or status update
       })
     },
-    uploadCV(val) {//ok
-      let dumper = 'https://decreed-silk.000webhostapp.com/cvu.php'
-      //logoUploader
-      console.log('start cvu')
-      var formData = new FormData()
-      formData.append("cv", val[0])
-      //this.$refs.cvForm.reset()
-      this.$refs.cvUplInp.value = null
-      this.$axios
-        .post(dumper, formData, {
-          headers: {'Content-Type': 'multipart/form-data'}
-        })
-        .then(resp => {
-          if (resp.data && resp.data.startsWith('link:')) {
-            this.logo_upload_error = null
-            this.cvurlnew = resp.data.replace('link:', '')
-            //this.$q.notify('Резюме загружено')
-            this.updateCVLink()
-          } else {
-            console.log('error cv uploading: ', resp.data)
-            if (resp.data.startsWith('Error in file size')) {
-              this.cv_upload_error = this.$t('sub.cvTooBig')
-              this.$q.notify(this.$t('sub.cvTooBig'))
-            } else {
-              this.cv_upload_error = this.$t('sub.dataError')
-              this.$q.notify(this.$t('sub.dataError'))
-            }
-          }
-          //if (response.data === 'OK') {} else 
-        })
-    },
+    // uploadCV(val) {//ok
+    //   let dumper = 'https://decreed-silk.000webhostapp.com/cvu.php'
+    //   //logoUploader
+    //   console.log('start cvu')
+    //   var formData = new FormData()
+    //   formData.append("cv", val[0])
+    //   //this.$refs.cvForm.reset()
+    //   this.$refs.cvUplInp.value = null
+    //   this.$axios
+    //     .post(dumper, formData, {
+    //       headers: {'Content-Type': 'multipart/form-data'}
+    //     })
+    //     .then(resp => {
+    //       if (resp.data && resp.data.startsWith('link:')) {
+    //         this.logo_upload_error = null
+    //         this.cvurlnew = resp.data.replace('link:', '')
+    //         //this.$q.notify('Резюме загружено')
+    //         this.updateCVLink()
+    //       } else {
+    //         console.log('error cv uploading: ', resp.data)
+    //         if (resp.data.startsWith('Error in file size')) {
+    //           this.cv_upload_error = this.$t('sub.cvTooBig')
+    //           this.$q.notify(this.$t('sub.cvTooBig'))
+    //         } else {
+    //           this.cv_upload_error = this.$t('sub.dataError')
+    //           this.$q.notify(this.$t('sub.dataError'))
+    //         }
+    //       }
+    //       //if (response.data === 'OK') {} else 
+    //     })
+    // },
     uploadCVX(files) {//ok
       // let dumper = 'https://decreed-silk.000webhostapp.com/cvu.php'
       if (files && files[0]) {
         if (files[0].size < 409601) {
-          let url = '/cvupdx.json'
+          let url1 = '/cvupdx.json'
           var formData = new FormData()
-          formData.append("cv", val[0])
+          formData.append("cv", files[0])
+
+          this.$axios
+            .post(url1, formData, {
+              headers: {'Content-Type': 'multipart/form-data'}
+            })
+            .then(resp => {
+              console.log('cp CVX', resp)
+              if (resp.data && resp.data.success === true && resp.data.link) {
+                this.$store.dispatch('updateCVUrl', resp.data.link)
+                this.$q.notify(this.$t('sub.dataChanged'))
+                localStorage.setItem('userData',JSON.stringify(this.$store.state.user))
+
+              } else {
+                this.$q.notify(this.$t('sub.dataError'), resp.data.msg)
+                this.$refs.cvUplInpX.value = ''
+              }
+            })
+
         } else {
-          this.$refs.fileInputX.value = ''
-          this.$q.notify(this.$t('sub.dataError'))
+          
+          this.$q.notify(this.$t('sub.cvTooBig'))
+          this.$refs.cvUplInpX.value = ''
         }
         
       }
-      
-      
-      //this.$refs.cvForm.reset()
-      this.$refs.cvUplInp.value = null
-      this.$axios
-        .post(dumper, formData, {
-          headers: {'Content-Type': 'multipart/form-data'}
-        })
-        .then(resp => {
-          if (resp.data && resp.data.startsWith('link:')) {
-            this.logo_upload_error = null
-            this.cvurlnew = resp.data.replace('link:', '')
-            //this.$q.notify('Резюме загружено')
-            this.updateCVLink()
-          } else {
-            console.log('error cv uploading: ', resp.data)
-            if (resp.data.startsWith('Error in file size')) {
-              this.cv_upload_error = this.$t('sub.cvTooBig')
-              this.$q.notify(this.$t('sub.cvTooBig'))
-            } else {
-              this.cv_upload_error = this.$t('sub.dataError')
-              this.$q.notify(this.$t('sub.dataError'))
-            }
-          }
-          //if (response.data === 'OK') {} else 
-        })
     },
     tryChangeUData() {//ok
       let url = '/changeuserstuff'

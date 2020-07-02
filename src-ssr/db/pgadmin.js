@@ -637,15 +637,18 @@ async function adminUsers(req, res) {
           .hidden {
             display: none;
           }
+          tr:nth-child(even) {background: #efe}
+          a {color:blue; text-decoration: none}
+          a:visited {color:blue}
         </style>
-        <h2 style="text-align:center; margin: 0;">Пользователи</h2>
+        <h3 style="text-align:center; margin: 0;">Пользователи</h3>
         ${pageParts.cplink()}
         <table style="width: 100%; font-size:14px">
           <thead style="background-color: green; color: white;">
             <tr style="padding: 5px">
               <td>uid</td>
-              <td>email</td>
-              <td>role</td>
+              <td>email<input id="title-filter-inp" style="margin-left: 10px;" type="text" placeholder="filter"></td>
+              <td>role <button id="roleSortBtn">&#x21D5;</button></td>
               <td>time_created</td>
               <td>last_logged_in</td>
               <td>name</td>
@@ -739,6 +742,63 @@ async function adminUsers(req, res) {
             }
             http.send(JSON.stringify(d))
           }
+          function filterInput() {
+            let needle = document.getElementById("title-filter-inp").value.toLowerCase()
+            let trs = [...document.querySelectorAll('[id^="tr_"]')]
+            trs.forEach(el => {
+              let currentText = el.querySelectorAll('td')[1].textContent.toLowerCase()
+              if (needle != '' && !currentText.includes(needle))
+                el.classList.add('hidden')
+              else
+                el.classList.remove('hidden')
+            })
+          }
+          document.getElementById("title-filter-inp").addEventListener('input', filterInput)
+
+          var roleSortState = false
+          function roleSortTable() {
+            roleSortState = !roleSortState
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementsByTagName("table")[0];
+            switching = true;
+            /* Make a loop that will continue until
+            no switching has been done: */
+            while (switching) {
+              // Start by saying: no switching is done:
+              switching = false;
+              rows = table.rows;
+              /* Loop through all table rows (except the
+              first, which contains table headers): */
+              for (i = 1; i < (rows.length - 1); i++) {
+                // Start by saying there should be no switching:
+                shouldSwitch = false;
+                /* Get the two elements you want to compare,
+                one from current row and one from the next: */
+                x = rows[i].getElementsByTagName("TD")[2];
+                y = rows[i + 1].getElementsByTagName("TD")[2];
+                // Check if the two rows should switch place:
+                // if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())
+                if (sorter(x.innerHTML.toLowerCase(), y.innerHTML.toLowerCase(), roleSortState)) {
+                  // If so, mark as a switch and break the loop:
+                  shouldSwitch = true;
+                  break;
+                }
+              }
+              if (shouldSwitch) {
+                /* If a switch has been marked, make the switch
+                and mark that a switch has been done: */
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+              }
+            }
+          }
+          function sorter(a, b, direction) {
+            if (direction)
+              return a > b
+            else
+              return a < b
+          }
+          document.getElementById("roleSortBtn").addEventListener('click', roleSortTable)
         </script>
       `
       let allUsersPage = pageParts.head + body + pageParts.footer
@@ -846,7 +906,7 @@ async function adminJobs(req, res) {
               }
               <a href="/statics/sn_posted/${val.job_id}.png?rand=${Date.now()}" download style="margin: 0 5px;">соцпик</a>
               <button title="Перегенерировать картинку" onclick='sendPicRegen(event, "${val.title}","${val.salary_min}", "${val.salary_max}", "${val.currency}","${val.city}", "${val.job_id}", "${val.contact_tel}")'>🔄</button>
-              <button title="Отредактировать название и описание" onclick='showEditModal(event, ${val.job_id}, "${val.title}", \`${val.description}\`)'>✍</button>
+              <button title="Отредактировать название и описание" onclick='showEditModal(event, ${val.job_id}, "${val.title}", \`${val.description}\`, "${val.jcategory}")'>✍</button>
             </td>
           </tr>
         `
@@ -856,7 +916,9 @@ async function adminJobs(req, res) {
       body += `<div id="jobQuickEditModal" class="hidden" style="position: relative; background-color: lightblue; padding: 15px; position: absolute; top: calc(50% - 200px); left: calc(50% - 250px); z-index: 1;">
         <input type="text" id="qem__title" style="display: block; width: 500px;">
         <textarea id="qem__desc" style="display: block; width: 500px; height: 400px;"></textarea>
+        <input type="number" id="qem__jcat" min="0" max="19">
         <button id="qem__btn" style="display: block" onclick="sendQuickEdits(event)" data-jid="-1">Отправить</button>
+        <table style="font-size: 12px; margin-top: 20px; background-color: white;"><tr><td>0</td><td>Не имеет значения</td></tr><tr><td>19</td><td>Бух учет, финансы</td></tr><tr><td>1</td><td>Гос служба</td></tr><tr><td>14</td><td>Дизайн, полиграфия</td></tr><tr><td>4</td><td>ИТ, Интернет</td></tr><tr><td>12</td><td>Красота, фитнес, спорт</td></tr><tr><td>10</td><td>Логистика, склад</td></tr><tr><td>13</td><td>Маркетинг, реклама</td></tr><tr><td>9</td><td>Медицина, Фармация, Ветеринария</td></tr><tr><td>3</td><td>Недвижимость, риэлтерские услуги</td></tr><tr><td>5</td><td>Нефть и Газ</td></tr><tr><td>6</td><td>Образование, репетиторство</td></tr><tr><td>7</td><td>Производство, агропром</td></tr><tr><td>8</td><td>Рестораны, питание</td></tr><tr><td>11</td><td>Строительство</td></tr><tr><td>2</td><td>Торговля</td></tr><tr><td>15</td><td>Транспорт, автосервис</td></tr><tr><td>16</td><td>Туризм, гостиницы</td></tr><tr><td>17</td><td>Юриспруденция</td></tr><tr><td>18</td><td>HR, кадры</td></tr></table>
         <button style="position: absolute; top: 0; right: 0;" onclick='document.getElementById("jobQuickEditModal").classList.add("hidden")'>X</button>
       </div>`
       body += `
@@ -953,20 +1015,23 @@ async function adminJobs(req, res) {
             http.send(JSON.stringify(d))
             event.target.previousElementSibling.setAttribute("href", "/statics/sn_posted/" + jid + ".png?rand=" + Date.now())
           }
-          function showEditModal(event, jid, title, description) {
+          function showEditModal(event, jid, title, description, jcategory) {
             document.getElementById("qem__title").value = title;
+            document.getElementById("qem__jcat").value = jcategory;
             document.getElementById("qem__desc").value = description;
             document.getElementById("qem__btn").setAttribute("data-jid", jid);
+            
             document.getElementById("jobQuickEditModal").classList.remove("hidden")
           }
           function sendQuickEdits(event) {
             let title = document.getElementById("qem__title").value
+            let jcategory = document.getElementById("qem__jcat").value
             let desc = document.getElementById("qem__desc").value
             let jid = document.getElementById("qem__btn").getAttribute("data-jid")
             document.getElementById("qem__btn").setAttribute("data-jid", -1)
             document.getElementById("jobQuickEditModal").classList.add("hidden")
             console.log(title, desc, jid)
-            let d = {title, desc, jid}
+            let d = {title, desc, jid, jcategory}
             var http = new XMLHttpRequest()
             var url = '/forceedit.json'
             http.open('POST', url, true)
@@ -1477,6 +1542,7 @@ async function approveJobByIdAdmin(req, res) {
 
 
 async function forceEdit(req, res) {
+  console.log('forceEdit cp, maybe error around. 03-Jul-2020')
   const titleRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\+\$\%\(\)\№\:\#\/]*$/
   if (req.cookies.sessioa && req.cookies.sessioa.length > 50 && req.cookies.user2) {
     let que1st = `SELECT u2id FROM "users2" WHERE "u2coo" = $1 AND "u2mail" = $2`
@@ -1507,11 +1573,18 @@ async function forceEdit(req, res) {
         res.send(JSON.stringify({"success": "false", "msg": "Макс длина description 2000"}))
         return false
       }
-      let que2nd = `UPDATE "jobs" SET ("time_updated", "title", "description") =
-                    (NOW(), $1, $2)
-                    WHERE job_id = $3
+      if (data.jcategory != undefined && isNaN(data.jcategory) === false && data.jcategory >= 0 && data.jcategory < 20) {
+        parsedData.jcategory = Math.round(Number(data.jcategory))
+      } else {
+        res.send(JSON.stringify({"success": "false", "msg": "jcategory задана не верно"}))
+        return false
+      }
+
+      let que2nd = `UPDATE "jobs" SET ("time_updated", "title", "description", "jcategory") =
+                    (NOW(), $1, $2, $3)
+                    WHERE job_id = $4
                     RETURNING job_id, title`
-      let params2nd = [parsedData.title, parsedData.description, data.jid]
+      let params2nd = [parsedData.title, parsedData.description, parsedData.jcategory, data.jid]
       // console.log('cp67', params2nd)
       pool.query(que2nd, params2nd, (error2, results2) => {
         if (error) {
