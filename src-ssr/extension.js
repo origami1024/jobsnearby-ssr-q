@@ -150,7 +150,8 @@ module.exports.extendApp = function ({ app, ssr }) {
       //empty or not valid auth data
       req.userData = 'noauth'
     }
-    req.rawjobs = await db.getJobsUserStatsSSR().catch(error => {
+    let page_num = (req.query && req.query.page) ? req.query.page : 1
+    req.rawjobs = await db.getJobsUserStatsSSR(page_num).catch(error => {
       console.log('getJobsUserStatsSSR. xxx', error)
       return undefined
     })

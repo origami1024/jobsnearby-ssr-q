@@ -56,10 +56,13 @@
         <a class="showContactsLink show550" @click.prevent="isContactsShown = !isContactsShown" href="#">
           {{$t('jc.contactsLabel_mobile')}}
         </a>
-        <a v-if="user.role != 'company' && !cved" class="sendCVLink" @click.prevent="$store.dispatch('hitcv', {job_id: job.job_id, notif: $q.notify, firstNote: $t('App.firstCVNote'), onlyReg: $t('App.onlyRegisteredCV')})" href="#">
+        <a v-if="user.role != 'company' && !cved && job.author_id != 21" class="sendCVLink" @click.prevent="$store.dispatch('hitcv', {job_id: job.job_id, notif: $q.notify, firstNote: $t('App.firstCVNote'), onlyReg: $t('App.onlyRegisteredCV')})" href="#">
           {{$t('jc.sendCVLabel')}}
         </a>
-        <div v-else-if="user.role == 'subscriber'" class="cvSentSpan">
+        <div v-else-if="user.role == 'subscriber' && job.author_id == 21" class="cvSentSpan">
+          Только прямые контакты
+        </div>
+        <div v-else-if="user.role == 'subscriber' && job.author_id != 21" class="cvSentSpan">
           <span class="cvsent_text">{{$t('jc.cvSent')}}</span>
           <q-tooltip v-if="hitcv">
             <p v-if="(hitcv && hitcv.date_created)" style="font-size: 15px; margin: 0">{{$t('jc.tooltipSent')}} {{formatDate(hitcv.date_created)}}</p>

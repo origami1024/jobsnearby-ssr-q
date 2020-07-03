@@ -163,6 +163,7 @@ export default {
         this.transformJCats()
         console.log(this.parsed[0])
         this.uploadStatus = 'Идет загрузка...'
+        this.$emit('scrollTo', 0)
         this.$axios
           .post('/entrance', this.parsed, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
           .then(response => {

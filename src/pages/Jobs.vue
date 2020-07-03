@@ -85,18 +85,19 @@
         </div>
         <JobsList/>
         <div v-if="pages && pages > 0" class="paginationWrap">
-          <button
+          <a 
             :class="{pageBtns: true, currentPage: page_current == i}"
             v-for="i of (
               page_current == 1
                 ? Math.min(pages, 3) 
                 : Math.min(pages, page_current + 1)
             )" :key="i"
-            @click="$store.dispatch('refreshjobs', {param: 'page', param2: i})"
+            @click.prevent="$store.dispatch('refreshjobs', {param: 'page', param2: i})"
             v-show="(i >= (page_current != pages ? page_current - 1 : page_current - 2))"
+            :href="'/?page=' + i"
           >
             {{i}}
-          </button>
+          </a>
         </div>
       </div>
       <UserStats/>
@@ -253,6 +254,8 @@ export default {
     font-size: 16px;
     line-height: 20px;
     color var(--violet-btn-color)
+    text-decoration none
+    margin 0 5px
     &:focus
       outline none
     &:hover

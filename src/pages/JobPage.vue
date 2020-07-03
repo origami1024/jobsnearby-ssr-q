@@ -21,7 +21,7 @@
         
       </section>
       <!-- <section style="display: flex; justify-content: space-between"></section> -->
-      <section v-if="user.role != 'company'" style="margin-bottom: 20px;">
+      <section v-if="user.role != 'company' && job.author_id != 21" style="margin-bottom: 20px;">
         <q-btn
         v-if="!user.ownCVs.find(val=>val.cvjob_id == job.job_id)"
         text-color="white"
@@ -30,6 +30,7 @@
         dense :label="$t('jobPage.sendCV')"
         @click.prevent="$store.dispatch('hitcv', job.job_id)"
         />
+        
         <!-- <a
           v-if="!user.ownCVs.find(val=>val.cvjob_id == job.job_id)"
           class="sendCVLink"
@@ -45,6 +46,9 @@
           ({{$t('jobPage.cvAlreadySent')}})
         </div>
       </section>
+      <div v-else-if="user.role == 'subscriber' && job.author_id == 21" class="cvSentSpan">
+        Только прямые контакты 
+      </div>
       <section>
         <div>
           <h4 class="detailed__header1">{{$t('jobPage.reqs')}}</h4>

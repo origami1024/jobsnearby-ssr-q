@@ -521,11 +521,17 @@ async function addJobs (req, res) {
 
     let processedlength = Math.min(req.body.length, 31)
     let totalLengthReport = processedlength
+    
     let uid = results.rows[0].user_id
     let last_posted = results.rows[0].last_posted
     let limitCount = parseInt(results.rows[0].new_jobs_count_today)
     if (!limitCount) limitCount = 0
     
+    if (results.rows[0].email == 'vepashv@gmail.com') {
+      limitCount = 0
+      console.log('moderator action - no limits')
+    }
+
     if (limitCount >= DAILY_JOBS_LIMIT && parseInt(last_posted) != NaN && parseInt(last_posted) < 0 && parseInt(last_posted) > -JOBS_LIMIT_DURATION) {//-86400
       res.send({msg: 'error limits reached', added: 0, total: req.body.length})
       return false
@@ -2107,11 +2113,18 @@ async function getJobDataSSR(id, addr) {
   return(job)
 }
 
-async function getJobsUserStatsSSR() {
+async function getJobsUserStatsSSR(page_num) {
   //get JOBS and USERSTATS in one
+  let page = 1
+  if (page_num && Number(page_num) > 0 && Number(page_num) < 15)
+    page = page_num
+  
   let perpage = '25'
+
+  let offset = (page - 1) * Number(perpage)
+  
   let sort = 'ORDER BY (jobs.time_updated, jobs.job_id) DESC'
-  let que =  `SELECT jobs.author_id, users.company as author, jobs.job_id, jobs.city, jobs.experience, jobs.title, jobs.currency, jobs.salary_min, jobs.salary_max, jobs.description, jobs.time_updated as updated, jobs.contact_mail, contact_tel FROM jobs, users WHERE jobs.author_id = users.user_id AND jobs.is_published = TRUE AND jobs.is_closed = FALSE AND jobs.time_updated > NOW() - interval '1 month' ${sort} LIMIT $1`
+  let que =  `SELECT jobs.author_id, users.company as author, jobs.job_id, jobs.city, jobs.experience, jobs.title, jobs.currency, jobs.salary_min, jobs.salary_max, jobs.description, jobs.time_updated as updated, jobs.contact_mail, contact_tel FROM jobs, users WHERE jobs.author_id = users.user_id AND jobs.is_published = TRUE AND jobs.is_closed = FALSE AND jobs.time_updated > NOW() - interval '1 month' ${sort} LIMIT $1 OFFSET ${offset}`
   let qparams = [perpage]
 
   let r1 = await pool.query(que, qparams).catch(error => {
@@ -2134,7 +2147,7 @@ async function getJobsUserStatsSSR() {
     console.log('getJobsForSSR 3. ', error)
     return 'erra3'
   })
-  return {...r2.rows[0], 'page': 1, 'perpage': perpage, rows: r1.rows, stats: r3.rows}
+  return {...r2.rows[0], 'page': page, 'perpage': perpage, rows: r1.rows, stats: r3.rows}
   
 }
 

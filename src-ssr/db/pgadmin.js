@@ -440,6 +440,7 @@ async function adminGetFB() {
   let que = `
     SELECT *
     FROM "feedbacks"
+    ORDER BY date_created DESC
   `
   let result = await pool.query(que, null).catch(error => {
     console.log('cp adminGetFB err1: ', error)
