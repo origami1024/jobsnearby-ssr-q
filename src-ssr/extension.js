@@ -65,21 +65,7 @@ module.exports.extendApp = function ({ app, ssr }) {
 
   const multer = require('multer')
   const upload = multer()
-  // var storage = multer.diskStorage({
-  //   destination: function (req, image, cb) {
-  //     cb(null, './uploads')
-  //   },
-  //   filename: function (req, image, cb) {
-  //     if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
 
-  //     }
-  //     console.log('cp13', req.signedCookies.session)
-  //     let ext = null
-  //     if (image.mimetype == 'image/png') ext = '.png'
-  //     cb(null, image.fieldname + '-' + Date.now())
-  //   }
-  // })
-  // upload = multer({ storage: storage })
   app.post('/companyupdpicx.json', upload.single('image'), db.updateOneCompanyPicX)
 
   app.post('/cvupdx.json', upload.single('cv'), db.cvUpdateX)

@@ -35,7 +35,7 @@ export default {
     dataChanged: 'Maglumatlar üýtgedilen',
     dataError: 'Maglumatlar düzedilende ýalňyşlyk boldy',
     cvDeleted: 'Rezýume pozuldy',
-    cvTooBig: 'Rezýume 100kb kän',
+    cvTooBig: 'Rezýume 400kb kän',
     wrongData: 'Ýalňyş maglumatlar',
     pwChanged: 'Parol üýtgedilen',
     namePh: 'Myrat',
@@ -136,6 +136,9 @@ export default {
     jobNotPublishedYet: 'Wezipe moderator tarapyndan barlanandan soň umumy spisokda görüner',
     cityWordStart: 'ş.',
     cityNotSet: 'Şäher görkezilmedik',
+    onlyReg: 'Rezýumeňizi tabşyrmak üçin hasaba alyň',
+    nonexistent: 'Bu şahsyýetnama bilen boş ýer ýok',
+    goToMain: 'Baş sahypa geç'
   },
   entProfile: {
     navPublishedLabel: 'Wezipeler',
@@ -242,7 +245,7 @@ export default {
     ],
     cityList: ["Aşgabat", "Daşoguz", "Mary", "Türkmenabat", "Türkmenbaşy"],
     firstCVNote: 'Ilki rezýumeňizi ýerleşdiriň!',
-    onlyRegisteredCV: 'Rezýumeni diňe <span style="color: red">registrasiýa</span> bolan ulanyjylar ugradyp bilýär',
+    onlyRegisteredCV: 'Rezýumeni diňe registrasiýa bolan ulanyjylar ugradyp bilýär',
     currencyDic: {
       '$': '$',
       'm': 'm',
@@ -335,6 +338,7 @@ export default {
     notSpecified: 'Görkezilmedik',
     cvSent: 'Rezýume ugradyldy',
     cityPrefix: 'ş.',
+    no_tel: 'Tel: -'
   },
   reg: {
     loginLabel: 'Giriş',
@@ -384,6 +388,7 @@ export default {
     nameValiMin: 'Azyndan 3 nyşan',
     nameVali0: 'Ady ýazyň',
     regSuccess: 'Registrasiýa üstünlikli geçdi',
+    regSubscriberSuccess: 'Ulanyjy hasaba alyndy',
     regAllFields: 'Hemme ýerleri doldyryň',
     regError1: 'Email ýa-da parol registrasiýa bolmadyk',
     regError2: 'Bu email öň registrasiýa edilen',

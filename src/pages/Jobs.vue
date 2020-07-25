@@ -115,6 +115,15 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'Jobs',
+  meta() {
+    return {
+      meta: {
+        ogTitle: { name: 'og:title', content: 'Hunarmen' },
+        ogDesc: { name: 'og:description', content: 'Работа в Туркменистане' },
+        description: { name: 'description', content: 'Работа в Туркменистане' }
+      }
+    }
+  },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
     if (ssrContext) {
       return store.dispatch('refreshJobsData', ssrContext.req.rawjobs)

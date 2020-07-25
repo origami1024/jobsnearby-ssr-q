@@ -7,7 +7,7 @@ const pool = new Pool({
 // console.log('debug2', process.env.SITE_URL)
 // console.log('debug3', process.env.GMAIL_FOR_VERIFICATIONS)
 // console.log('debug4', process.env.GMAIL_PW)
-const titleRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\+\$\%\(\)\№\:\#\/]*$/
+const titleRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\.\,\+\$\%\(\)\№\:\#\/\"]*$/
 
 const bcrypt = require('bcryptjs')
 
@@ -17,7 +17,7 @@ const fs = require('fs')
 const { SSL_OP_CRYPTOPRO_TLSEXT_BUG } = require('constants')
 
 const DAILY_JOBS_LIMIT = 30 //Макс кол-во вакансий в день(86400 сек, что указано ниже)
-const JOBS_LIMIT_DURATION = 86400 //86400 - 24 hours
+// const JOBS_LIMIT_DURATIO1 = 86400 //86400 - 24 hours
 
 const SupremeValidator = require('./../serverutils').SupremeValidator
 
@@ -30,7 +30,8 @@ const cookieConfig = {
 const cookieConfigNoRemember = {
   httpOnly: true, // to disable accessing cookie via client side js
   // secure: true, // to force https (if you use it)
-  signed: true // if you use the secret with cookieParser
+  signed: true, // if you use the secret with cookieParser
+  sameSite: true
 }
 
 function authPreValidation(session, mail) {
@@ -282,12 +283,12 @@ async function forgottenMail(url, mail) {
         pass: process.env.GMAIL_PW || 'g789451bb'
     }
   })
-  console.log('sending letter')
+  console.log('sending ащкпщееут mail')
   let baseUrl = process.env.SITE_URL || 'http://127.0.0.1:7777'
   let url1 = baseUrl + '/forgottenx2.json?n=' + url
   let mailOptions = {
     // should be replaced with real recipient's account
-    to: mail, //'origami1024@gmail.com',
+    to: mail,
     subject: 'Восстановление пароля на hunarmen.com',
     text: 'Для получения нового пароля нужно подтвердить восстановление, перейдя по ссылке ' + url1 + '. После этого вы получите второе письмо с новым паролем. Эта ссылка действительна в течении 2 часов.'
   }
@@ -532,13 +533,13 @@ async function addJobs (req, res) {
       console.log('moderator action - no limits')
     }
 
-    if (limitCount >= DAILY_JOBS_LIMIT && parseInt(last_posted) != NaN && parseInt(last_posted) < 0 && parseInt(last_posted) > -JOBS_LIMIT_DURATION) {//-86400
+    if (limitCount >= DAILY_JOBS_LIMIT) {//-86400
       res.send({msg: 'error limits reached', added: 0, total: req.body.length})
       return false
     }
-    if (parseInt(last_posted) < -JOBS_LIMIT_DURATION) {
-      limitCount = 0
-    }
+    // if (parseInt(last_posted) < -JOBS_LIMIT_DURATIO1) {
+    //   limitCount = 0
+    // }
     if (DAILY_JOBS_LIMIT - limitCount < processedlength) processedlength = DAILY_JOBS_LIMIT - limitCount
 
     
@@ -573,10 +574,10 @@ async function addJobs (req, res) {
     
     let que3rd = `UPDATE "users" SET "new_jobs_count_today" = $1 WHERE user_id = $2`
     let params3rd = [limitCount + processedlength, uid]
-    if (last_posted == null || parseInt(last_posted) == NaN || parseInt(last_posted) < -JOBS_LIMIT_DURATION) {
-      que3rd = `UPDATE "users" SET ("new_jobs_count_today", "new_jobs_count_date") = ($2, NOW()) WHERE user_id = $1`
-      params3rd = [uid, processedlength]
-    }
+    // if (last_posted == null || parseInt(last_posted) == NaN || parseInt(last_posted) < -JOBS_LIMIT_DURATIO1) {
+    //   que3rd = `UPDATE "users" SET ("new_jobs_count_today") = ($2) WHERE user_id = $1`
+    //   params3rd = [uid, processedlength]
+    // }
     pool.query(que3rd, params3rd, (error3, results3) => {
       if (error3) {
         res.send('step4')
@@ -890,7 +891,7 @@ async function addOneJob (req, res) {
       if (!limitCount) limitCount = 0
       // console.log('cp67', last_posted)
       // console.log('cp68', limitCount)
-      if (limitCount >= DAILY_JOBS_LIMIT && parseInt(last_posted) != NaN && parseInt(last_posted) < 0 && parseInt(last_posted) > -JOBS_LIMIT_DURATION) {//-86400
+      if (limitCount >= DAILY_JOBS_LIMIT) {//-86400
         res.send('error limits reached')
         return false
       }
@@ -917,12 +918,6 @@ async function addOneJob (req, res) {
         if (results2.rows.length > 0) {
           let que3rd = `UPDATE "users" SET "new_jobs_count_today" = $1 WHERE user_id = $2`
           let params3rd = [limitCount + 1, uid]
-          if (last_posted == null || parseInt(last_posted) == NaN || parseInt(last_posted) < -JOBS_LIMIT_DURATION) {
-            //if last_posted(first_posted) if converted from null or 
-            que3rd = `UPDATE "users" SET ("new_jobs_count_today", "new_jobs_count_date") = ('1', NOW()) WHERE user_id = $1`
-            params3rd = [uid]
-          }
-          
           
           pool.query(que3rd, params3rd, (error3, results3) => {
             if (error3) {
@@ -1329,9 +1324,9 @@ async function cvUpdateX(req, res) {
       let uid = results.rows[0].user_id
       let cv = req.file
       // console.log('cp315', cv)
-      if (cv.size < 309601) {
+      if (cv.size < 409601) {
         let ext = cv.originalname.split('.').pop()
-        console.log('cp318', req.headers.host)
+        
         let path_part1 = req.headers.host + '/uploads/cvs/' + uid
         fs.unlink(path_part1 + '.doc', (err) => {})
         fs.unlink(path_part1 + '.docx', (err) => {})
@@ -1852,6 +1847,22 @@ async function tryInsertMailVerification(hash1, userId, mail) {
   } return undefined
 }
 
+async function tryInsertMailVerificationNoMail(hash1, userId, mail) {
+  let que = `
+    UPDATE "users" SET (is_active, email_confirmed, block_reason) = (TRUE, TRUE, '') 
+    WHERE user_id = $1
+    `
+  let params = [userId]
+  let result = await pool.query(que, params).catch(error => {
+    console.log(error)
+    throw new Error('veri insertion failed')
+  })
+  if (result) {
+    return true
+  } return undefined
+}
+
+
 async function reg(req, res) {
   console.log('cp register', req.body)
   //first server-side literal validation
@@ -1918,13 +1929,24 @@ async function reg(req, res) {
     
     let hash1 = String(hashSome()) + userId + parseInt(Math.random()*1000000000, 10)
 
-    let success1 = await tryInsertMailVerification(hash1, userId, mail).catch(error => {
-      res.send('step5')
-      return undefined
-    })
+    //currently sending mail on registration depends on usertype(role)
+    let success1
+    if (usertype === 'subscriber') {
+      success1 = await tryInsertMailVerificationNoMail(hash1, userId, mail).catch(error => {
+        res.send('step5')
+        return undefined
+      })
+    } else {
+      success1 = await tryInsertMailVerification(hash1, userId, mail).catch(error => {
+        res.send('step5')
+        return undefined
+      })
+    }
     if (success1) {
-      testMail(hash1, mail)
-      console.log('it is successful registraion at this point')
+      if (usertype !== 'subscriber') {
+        testMail(hash1, mail)
+      }
+      //testMail(hash1, mail) - turn it back on for sending mails
       res.send('OK')
     } else {res.send('step6'); console.log('failed at creating the verification entry')}
     

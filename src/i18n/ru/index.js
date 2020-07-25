@@ -35,7 +35,7 @@ export default {
     dataChanged: 'Данные изменены',
     dataError: 'Ошибка при изменении данных',
     cvDeleted: 'Резюме удалено',
-    cvTooBig: 'Резюме больше 100кб',
+    cvTooBig: 'Резюме больше 400кб',
     wrongData: 'Неправильные данные',
     pwChanged: 'Пароль изменен',
     namePh: 'Василий',
@@ -136,6 +136,9 @@ export default {
     jobNotPublishedYet: 'Вакансия будет видна в общем списке после проверки модератором',
     cityWordStart: 'г.',
     cityNotSet: 'Город не указан',
+    onlyReg: 'Зарегистрируйтесь, чтобы отправить резюме',
+    nonexistent: 'Вакансии с таким ID не существует',
+    goToMain: 'Перейти на главную'
   },
   App: {
     login: 'Вход',
@@ -183,7 +186,7 @@ export default {
     ],
     cityList: ["Ашхабад", "Дашогуз", "Мары", "Туркменабад", "Туркменбаши"],
     firstCVNote: 'Сначала загрузите резюме!',
-    onlyRegisteredCV: 'Подавать резюме могут <span style="color: red">зарегистрированные</span> пользователи',
+    onlyRegisteredCV: 'Подавать резюме могут зарегистрированные пользователи',
     currencyDic: {
       '$': '$',
       'm': 'm',
@@ -275,6 +278,7 @@ export default {
     notSpecified: 'Не указан',
     cvSent: 'Резюме отправлено',
     cityPrefix: 'г.',
+    no_tel: 'Тел не указан'
   },
   reg: {
     loginLabel: 'Вход',
@@ -324,8 +328,9 @@ export default {
     nameValiMin: 'Минимальная длина 3 символа',
     nameVali0: 'Введите имя',
     regSuccess: 'На вашу почту выслано письмо с ссылкой для подтверждения регистрации.',
+    regSubscriberSuccess: 'Пользователь зарегистрирован',
     regAllFields: 'Заполните все поля',
-    regError1: 'Email или пароль не зарегестрированы',
+    regError1: 'Email или пароль не зарегистрированы',
     regError2: 'Такой email уже существует в базе данных',
     regError3: 'Регистрация не удалась, ошибки на сервере',
   },

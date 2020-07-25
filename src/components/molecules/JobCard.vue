@@ -74,7 +74,13 @@
     </div>
     <div :class="{heightTransition: isContactsShown}" class="contactsPanel line" style="margin-top: 10px;">
       <div><span style="font-weight: 300;">Email:</span> {{job.contact_mail != '' ? job.contact_mail : $t('jc.notSpecified')}}</div>
-      <div><span style="font-weight: 300;">Tel: </span><a style="color: var(--color1);" :href="telProcessed">{{job.contact_tel}}</a></div>
+      <div>
+        <span v-if="job.contact_tel && job.contact_tel.length > 0">
+          <span style="font-weight: 300;">Tel: </span>
+          <a style="color: var(--color1);" :href="telProcessed">{{job.contact_tel}}</a>
+        </span>
+        <span v-else>{{$t('jc.no_tel')}}</span>
+      </div>
     </div>
   </div>
 </template>

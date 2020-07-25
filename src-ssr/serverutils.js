@@ -37,8 +37,22 @@ function salaryDeriv (salary_min, salary_max, currency) {
   }
   return res
 }
+function expDeriv (exp_value) {
+  let exp
+      (1 > exp_value && exp_value>= 0) ?
+        exp = '\n' + 'Без опыта.'
+      :(exp_value >= 1 && 3 > exp_value) ?
+        exp = '\n' + 'Опыт: от 1 до 3 лет.'
+      :(exp_value >= 3 && 5 > exp_value) ?
+        exp = '\n' + 'Опыт: от 3 до 5 лет.'
+      :exp_value >= 5 ?
+        exp = '\n' + 'Опыт: от 5 лет.'
+      : exp = ''
+      return exp
+}
 
 module.exports = {
   SupremeValidator,
-  salaryDeriv
+  salaryDeriv,
+  expDeriv
 }

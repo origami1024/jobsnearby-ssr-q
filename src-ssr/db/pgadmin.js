@@ -16,6 +16,7 @@ const fs = require('fs')
 const SupremeValidator = require('./../serverutils').SupremeValidator
 const pageParts = require('./../pageParts')
 const salaryDeriv = require('./../serverutils').salaryDeriv
+const expDeriv = require('./../serverutils').expDeriv
 //Добавить лог
 async function addLog (action, body, author_id, author_mail) {
   //time, action, body, author_id, author_name
@@ -248,6 +249,9 @@ async function adminPanel(req, res) {
             }
             .cpul1 li a:hover {
               color: blue;
+            }
+            .cp_logs table tbody tr:nth-child(even) {
+              background-color: #eee5;
             }
           </style>
             <ul class="cpul1" style="list-style-type: none; width: 65%">
@@ -609,7 +613,7 @@ async function adminGetUsers() {
   let que = `
     SELECT *
     FROM "users"
-    ORDER BY time_updated DESC
+    ORDER BY time_created DESC
   `
   let result = await pool.query(que, null).catch(error => {
     console.log('cp adminGetUsers err1: ', error)
@@ -1505,7 +1509,7 @@ async function approveJobByIdAdmin(req, res) {
       //если есть в базе и автор сам удаляющий
       //удалить
       
-      let que2nd = `UPDATE jobs SET (is_published, time_updated, closed_why) = (TRUE, NOW(), '') WHERE job_id = $1 RETURNING title, salary_min, salary_max, city, currency, contact_tel`
+      let que2nd = `UPDATE jobs SET (is_published, time_updated, closed_why) = (TRUE, NOW(), '') WHERE job_id = $1 RETURNING title, salary_min, salary_max, city, currency, contact_tel, experience`
       let params2nd = [jid]
       pool.query(que2nd, params2nd, (error2, results2) => {
         if (error2) {
@@ -1524,13 +1528,16 @@ async function approveJobByIdAdmin(req, res) {
         // let sal = results2.rows[0].salary_min + ' - ' + results2.rows[0].salary_max + results2.rows[0].currency
         // if (sal.startsWith('0 - 0')) sal = 'По итогам собеседования'
         let sal = salaryDeriv(results2.rows[0].salary_min, results2.rows[0].salary_max, results2.rows[0].currency)
+        let exp = expDeriv(results2.rows[0].experience)
         const python = spawn('python', [
           'sn_bot.py',
           results2.rows[0].title,
           sal,
           results2.rows[0].city,
           results2.rows[0].contact_tel,
-          jid])
+          jid,
+          exp
+        ])
         // console.log('cp21', process.cwd())
         // console.log('cp22', results2.rows[0])
         //
@@ -1544,7 +1551,7 @@ async function approveJobByIdAdmin(req, res) {
 
 async function forceEdit(req, res) {
   console.log('forceEdit cp, maybe error around. 03-Jul-2020')
-  const titleRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\+\$\%\(\)\№\:\#\/]*$/
+  const titleRegex = /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\.\,\+\$\%\(\)\№\:\#\/\"]*$/
   if (req.cookies.sessioa && req.cookies.sessioa.length > 50 && req.cookies.user2) {
     let que1st = `SELECT u2id FROM "users2" WHERE "u2coo" = $1 AND "u2mail" = $2`
     let params1st = [req.cookies.sessioa, req.cookies.user2]
@@ -1568,9 +1575,10 @@ async function forceEdit(req, res) {
         res.send(JSON.stringify({"success": "false", "msg": "title не прошел валидацию"}))
         return false
       }
-      if (data.desc && data.desc.length > 1 && data.desc.length < 2001) {
+      if (data.desc && data.desc.length >= 0) {
         parsedData.description = data.desc
-      } else {
+      } else parsedData.description = ''
+      if (data.desc.length > 2000) {
         res.send(JSON.stringify({"success": "false", "msg": "Макс длина description 2000"}))
         return false
       }

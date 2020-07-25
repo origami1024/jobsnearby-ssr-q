@@ -52,6 +52,15 @@
 
 export default {
   name: 'companypage',
+  meta() {
+    return {
+      meta: {
+        ogTitle: { name: 'og:title', content: this.cdata.company },
+        ogDesc: { name: 'og:description', content: 'Работа в Туркменистане.' },
+        description: { name: 'description', content: 'Работа в Туркменистане.' }
+      }
+    }
+  },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
     if (ssrContext) {
       // console.log('cp91', ssrContext.req.companyData)

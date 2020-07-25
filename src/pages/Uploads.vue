@@ -140,9 +140,9 @@ export default {
       let itemindex = e.target.parentElement.getAttribute('itemindex')
       let propname = e.target.getAttribute('propname')
       let newContent = e.target.textContent
-      console.log('t ', e.target.getAttribute('propname'))
-      console.log('t1 ', e.target.textContent)
-      console.log('t2 ', e.target.parentElement.getAttribute('itemindex'))
+      // console.log('t ', e.target.getAttribute('propname'))
+      // console.log('t1 ', e.target.textContent)
+      // console.log('t2 ', e.target.parentElement.getAttribute('itemindex'))
       this.parsed[itemindex][propname] = newContent
     },
     resetParsed() {
@@ -153,7 +153,7 @@ export default {
       //в экселе указываются пока что только на русском
       const JCATS = {"Не имеет значения":0,"Бух учет, финансы":19,"Гос служба":1,"Дизайн, полиграфия":14,"ИТ, Интернет":4,"Красота, фитнес, спорт":12,"Логистика, склад":10,"Маркетинг, реклама":13,"Медицина, Фармация, Ветеринария":9,"Недвижимость, риэлтерские услуги":3,"Нефть и Газ":5,"Образование, репетиторство":6,"Производство, агропром":7,"Рестораны, питание":8,"Строительство":11,"Торговля":2,"Транспорт, автосервис":15,"Туризм, гостиницы":16,"Юриспруденция":17,"HR, кадры":18}
       this.parsed = this.parsed.map(one => {
-        console.log(one.jcategory)
+        // console.log(one.jcategory)
         one.jcategory = JCATS[one.jcategory]
         return one
       })
@@ -161,7 +161,7 @@ export default {
     sendNewJobs: function () {
       if (this.parsed.length > 0) {
         this.transformJCats()
-        console.log(this.parsed[0])
+        // console.log(this.parsed[0])
         this.uploadStatus = 'Идет загрузка...'
         this.$emit('scrollTo', 0)
         this.$axios

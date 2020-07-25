@@ -1,6 +1,6 @@
 <template>
-  <div class="jobpage" itemscope itemtype="http://schema.org/JobPosting">
-    <main class="detailed__main1">
+  <div class="jobpage">
+    <main v-if="job.title" class="detailed__main1" itemscope itemtype="http://schema.org/JobPosting">
       <div v-if="job.is_closed" style="color: red; font-size: 16px">
         {{$t('jobPage.jobClosed')}} {{job.closed_why != '' ? ', ' + $t('jobPage.reason') + ': ' + job.closed_why : ''}}
       </div>
@@ -28,8 +28,12 @@
         style="alignSelf: center; white-space: nowrap; margin-top:4px; margin-left: 10px; padding: 0 10px; font-weight: 700;"
         class="headerBtns1 headerBtnRed"
         dense :label="$t('jobPage.sendCV')"
-        @click.prevent="$store.dispatch('hitcv', job.job_id)"
-        />
+        @click.prevent="$store.dispatch('hitcv', {job_id: job.job_id, notif: $q.notify, onlyReg: $t('jobPage.onlyReg')})"
+        >
+          <q-tooltip v-if="user.role != 'subscriber'">
+            <p style="font-size: 14px; margin: 0">{{$t('jobPage.onlyReg')}}</p>
+          </q-tooltip>
+        </q-btn>
         
         <!-- <a
           v-if="!user.ownCVs.find(val=>val.cvjob_id == job.job_id)"
@@ -105,6 +109,7 @@
             </div>
         </div>
       </section>
+      <section v-else itemprop="description"></section>
       <section>
         <div>
             <h4 class="detailed__header1">{{$t('jobPage.contacts')}}</h4>
@@ -129,6 +134,24 @@
         </p>
       </section>
     </main>
+    <main v-else>
+      <p>
+        <img
+          src="~assets/sad.svg"
+          style="width:30vw;max-width:150px;"
+        >
+      </p>
+      <p class="text-faded" style="font-size: 16px; margin-top: 20px; margin-bottom: 20px;">
+        {{$t('jobPage.nonexistent')}} <strong>(Error 404)</strong>
+      </p>
+      <router-link
+        @click.native="$store.dispatch('refreshjobs', {param: 'logoclick'}); $store.dispatch('filtersOff')" to="/"
+        class="logolink"
+        style="font-size: 16px;"
+      >
+        <strong>{{$t('jobPage.goToMain')}}</strong>
+      </router-link>
+    </main>
   </div>
 </template>
 
@@ -136,10 +159,21 @@
 import { mapState } from 'vuex'
 export default {
   name: 'jobpage',
-  data() {return {
-    // currency: '',//this.$t('App.currencyDic')['m']
-    salary_deriv1: '',
-  }},
+  meta() {
+    return {
+      meta: {
+        ogTitle: { name: 'og:title', content: this.job.title },
+        ogDesc: {
+          name: 'og:description',
+          content: 'Зарплата: ' + this.salary_deriv + this.exp_deriv + '\nВакансия в городе: ' + this.job.city
+        },
+        description: {
+          name: 'description',
+          content: 'Зарплата ' + this.salary_deriv + this.exp_deriv + '.\nВакансия в городе: ' + this.job.city
+        }
+      }
+    }
+  },
   computed: {
     ...mapState(['user', ['role','ownCVs']]),
     job() {
@@ -169,6 +203,19 @@ export default {
         } else res = `${this.job.salary_max}` + ' ' + currency
       }
       return res
+    },
+    exp_deriv() {
+      let exp
+      (1 > this.job.experience && this.job.experience>= 0) ?
+        exp = '\n' + this.$t('jobPage.expNone')
+      :(this.job.experience >= 1 && 3 > this.job.experience) ?
+        exp = '\n' + this.$t('jobPage.exp1_3')
+      :(this.job.experience >= 3 && 5 > this.job.experience) ?
+        exp = '\n' + this.$t('jobPage.exp3_5')
+      :this.job.experience >= 5 ?
+        exp = '\n' + this.$t('jobPage.exp5_')
+      : exp = ''
+      return exp
     }
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {

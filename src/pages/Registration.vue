@@ -266,7 +266,7 @@ export default {
           .post('/reg', [this.mail.toLowerCase(), this.pw, this.usertype, this.usertype === 'subscriber' ? this.name : this.company, this.usertype === 'subscriber' ? this.surname : this.agency], {headers: {'Content-Type' : 'application/json' }})
           .then(response => {
             if (response.data == 'OK') {
-              this.$store.dispatch('setAuthStatus', this.$t('reg.regSuccess'))
+              this.$store.dispatch('setAuthStatus', this.usertype === 'subscriber' ? this.$t('reg.regSubscriberSuccess') : this.$t('reg.regSuccess'))
               this.mail = ''
               this.pw = ''
               this.pwc = ''

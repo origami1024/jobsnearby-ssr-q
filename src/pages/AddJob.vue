@@ -24,7 +24,8 @@
               val => (lazyRulesAll || !!val) || $t('addJob.titleValidationRequired'),
               val => (lazyRulesAll || val.length > 1) || $t('addJob.titleValidationMin'),
               val => val.length < 76 || $t('addJob.titleValidationMax'),
-              val => /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\.\,\+\$\%\(\)\№\:\#\/]*$/.test(val) || $t('addJob.titleValidationSymbols'),
+              
+              val => titleRegex.test(val) || $t('addJob.titleValidationSymbols'),
               ]"
             :lazy-rules="lazyRulesAll"
           />
@@ -436,6 +437,8 @@ if (process.env.CLIENT) {
   VueEditor = require('vue2-editor').VueEditor
 }
 
+
+
 export default {
   name: 'AddJob',
   computed: {
@@ -451,6 +454,7 @@ export default {
   },
   data() {
     return {
+      titleRegex: /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\.\,\+\$\%\(\)\№\:\#\/\"]*$/,
       salaryOn: false,
       returned: {
         title: '',
@@ -530,10 +534,7 @@ export default {
         this.job = Object.assign({}, this.jobInit, newObj)
         if (!newObj.salary_min && !newObj.salary_max) {
           this.salaryOn = true
-          console.log(newObj.salary_min, newObj.salary_max)
         }
-          
-        console.log('jobEditorWatcher cp')
       } else {
         this.job = Object.assign({}, this.jobInit)
       }
@@ -671,9 +672,7 @@ export default {
               this.returned.title = response.data.title
               this.returned.job_id = response.data.job_id
               this.$store.dispatch('setAJSentState', 'goodNew')
-              console.log(response)
             } else {
-              console.log('cp99', response)
               if (response.data && response.data == 'error limits reached') {
                 this.$store.dispatch('setAJSentState', 'limit')
               } else this.$store.dispatch('setAJSentState', 'fail')
