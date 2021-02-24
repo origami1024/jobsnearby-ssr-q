@@ -813,14 +813,14 @@ async function adminUsers(req, res) {
   } else res.send(pageParts.noau)
 }
 
-async function adminGetJobs() {
+async function adminGetJobs(page, perpage) {
   //no need to check auth, because this is not a route
-
       let que = `
         SELECT *
         FROM "jobs"
         ORDER BY time_updated DESC
-
+        LIMIT ${perpage || 300}
+        OFFSET ${page * (perpage || 300)}
       `
       let result = await pool.query(que, null).catch(error => {
         console.log('cp adminGetJobs err1: ', error)
@@ -841,7 +841,9 @@ async function adminJobs(req, res) {
       return undefined
     })
     if (auth) {
-      let data = await adminGetJobs().catch(error => {
+      let page = req.query.page || 0
+      let perpage = req.query.perpage || 300
+      let data = await adminGetJobs(page, perpage).catch(error => {
         console.log('cp adminGetJobs err1: ', error)
         return []
       })
@@ -856,7 +858,15 @@ async function adminJobs(req, res) {
         a {color:blue; text-decoration: none}
         a:visited {color:blue}
         </style>
-        <h2 style="text-align:center; margin: 0;">Вакансии (${data.length})</h2>
+        <h2 style="text-align:center; margin: 0;">Вакансии (${perpage * page} - ${perpage * page + data.length})</h2>
+        <div>
+          <span>Перейти на страницу (${perpage} вакансий на странице)</span>
+          <input placeholder="введи страницу" value="0" id="page-inp">
+          <button onclick="a = function () {document.location.href='/adminjobs.json?page=' + document.getElementById('page-inp').value${perpage && perpage !== 300 ? '&perpage=' + perpage : ''}}; a()">
+            Полетели
+          </button>
+          <script>document.addEventListener("DOMContentLoaded", () => {document.getElementById(\'page-inp\').value='${page}'})</script>
+        </div>
         ${pageParts.cplink()}
         <table style="width: 100%; font-size:14px">
           <thead style="background-color: purple; color: white;">
