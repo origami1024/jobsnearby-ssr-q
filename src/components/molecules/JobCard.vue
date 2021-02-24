@@ -6,7 +6,7 @@
           <span v-if="job.city.length > 0" class="cityOK">{{$t('jc.cityPrefix')}}</span>
           <p  itemprop="address" itemscope itemtype="http://schema.org/Place" class="city" v-html="filteredCity"></p>
         </div>
-        <a class="authorLink" :href="'/companypage?id=' + job.author_id" target="_blank" itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization">
+        <a class="authorLink" :href="'/companypage/' + job.author_id" target="_blank" itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization">
           <div itemprop="name" class="author joblink" v-html="filteredAuthor"></div>
         </a>
       </div>
@@ -19,7 +19,7 @@
     <meta itemprop="validThrough" :content="plusOneMonth">
     <div class="line lowres_twolines linetwo">
       <h4 class="cardHeader" itemprop="title">
-        <a :href="'/jobpage?id=' + job.job_id" target="_blank">
+        <a :href="'/jobpage/' + job.job_id" target="_blank">
           <strong class="joblink" v-html="filteredTitle"/>
         </a>
       </h4>

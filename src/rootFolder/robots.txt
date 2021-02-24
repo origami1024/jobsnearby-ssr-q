@@ -1,2 +1,18 @@
 User-agent: *
+Host: https://hunarmen.com
 Sitemap: https://hunarmen.com/sitemap.xml
+Disallow: /*&
+Disallow: /admin
+Disallow: /administrator
+Disallow: /manager
+Disallow: /registration
+Disallow: /*.css$
+Disallow: /cgi-bin/
+Disallow: /tmp/
+
+User-agent: Mediapartners-Google
+Disallow:
+User-agent: AdsBot-Google*
+Disallow:
+User-Agent: YandexDirect
+Disallow:

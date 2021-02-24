@@ -138,7 +138,8 @@ export default {
     cityNotSet: 'Şäher görkezilmedik',
     onlyReg: 'Rezýumeňizi tabşyrmak üçin hasaba alyň',
     nonexistent: 'Bu şahsyýetnama bilen boş ýer ýok',
-    goToMain: 'Baş sahypa geç'
+    goToMain: 'Baş sahypa geç',
+    onlyDirectContacts: 'Diňe göni aragatnaşyklar',
   },
   entProfile: {
     navPublishedLabel: 'Wezipeler',
@@ -428,7 +429,7 @@ export default {
     cityValidationLength: 'Iň käni 70 nyşan',
     cityValidationFormat: 'Diňe harplar',
     descLabel: 'Düşündiriş',
-    descValidation2000: '(Iň käni 2000 nyşan)',
+    descValidation3000: '(Iň käni 3000 nyşan)',
     moreLabel: 'Goşmaça',
     expLabel: 'Tejribe',
     jobTypeLabel: 'Işliligiň görnüşi',

@@ -883,8 +883,8 @@ async function adminJobs(req, res) {
         let tmp = `
           <tr id="jtr_${val.job_id}" ${(val.is_published == false && val.is_closed == false) ? 'style="font-weight: 700"' : ''}>
             <td>${val.job_id}</td>
-            <td><a href="/jobpage?id=${val.job_id}" target="_blank">${val.title}</a></td>
-            <td><a href="/companypage?id=${val.author_id}" target="_blank">${val.author_id}</a></td>
+            <td><a href="/jobpage/${val.job_id}" target="_blank">${val.title}</a></td>
+            <td><a href="/companypage/${val.author_id}" target="_blank">${val.author_id}</a></td>
             <td>${d}</td>
             <td id="td_apr_${val.job_id}">${val.is_published}</td>
             <td>${val.contact_mail}</td>
@@ -1578,8 +1578,8 @@ async function forceEdit(req, res) {
       if (data.desc && data.desc.length >= 0) {
         parsedData.description = data.desc
       } else parsedData.description = ''
-      if (data.desc.length > 2000) {
-        res.send(JSON.stringify({"success": "false", "msg": "Макс длина description 2000"}))
+      if (data.desc.length > 3000) {
+        res.send(JSON.stringify({"success": "false", "msg": "Макс длина description 3000"}))
         return false
       }
       if (data.jcategory != undefined && isNaN(data.jcategory) === false && data.jcategory >= 0 && data.jcategory < 20) {

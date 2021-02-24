@@ -54,10 +54,11 @@ export default {
   name: 'companypage',
   meta() {
     return {
+      title: this.cdata.company,
       meta: {
         ogTitle: { name: 'og:title', content: this.cdata.company },
-        ogDesc: { name: 'og:description', content: 'Работа в Туркменистане.' },
-        description: { name: 'description', content: 'Работа в Туркменистане.' }
+        ogDesc: { name: 'og:description', content: 'Работа в Туркменистане. Ежедневное обновление базы вакансий в Туркменистане. Вакансии Туркменистан. Работа в Ашхабаде Мары Хазар Балканабад. Найти работу в Ашхабаде. ' },
+        description: { name: 'description', content: 'Работа в Туркменистане. Ежедневное обновление базы вакансий в Туркменистане. Вакансии Туркменистан. Работа в Ашхабаде Мары Хазар Балканабад. Найти работу в Ашхабаде. ' }
       }
     }
   },

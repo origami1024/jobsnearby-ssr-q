@@ -14,7 +14,7 @@ const bcrypt = require('bcryptjs')
 let nodeMailer = require('nodemailer')
 
 const fs = require('fs')
-const { SSL_OP_CRYPTOPRO_TLSEXT_BUG } = require('constants')
+//const { SSL_OP_CRYPTOPRO_TLSEXT_BUG } = require('constants') 08AUG2020 - WHAT IS THIS AT ALL?
 
 const DAILY_JOBS_LIMIT = 30 //Макс кол-во вакансий в день(86400 сек, что указано ниже)
 // const JOBS_LIMIT_DURATIO1 = 86400 //86400 - 24 hours
@@ -132,7 +132,7 @@ function validateOneJob (data) {
   else if (data.jtype && data.jtype == 'v') parsedData.jobtype = 'v'
   else parsedData.jobtype = ''
   //description - необязат, от 2х символов до 500
-  if (data.description && data.description.length > 1 && data.description.length < 2001) {
+  if (data.description && data.description.length > 1 && data.description.length < 3001) {
     parsedData.description = data.description
   } else parsedData.description = ''
   //"contact_tel", "contact_mail", 
@@ -145,6 +145,11 @@ function validateOneJob (data) {
   if (data.contact_mail && data.contact_mail.length < 41 && /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test(data.contact_mail)) {
     parsedData.contact_mail = data.contact_mail
   } else parsedData.contact_mail = ''
+
+  //contact_amil or contact_tel must be present!
+  if (parsedData.contact_tel.length == 0 && parsedData.contact_mail.length == 0) {
+    return false
+  }
 
   return parsedData
 }
@@ -874,19 +879,21 @@ async function addOneJob (req, res) {
   // console.log('cp177', req.signedCookies)
   // console.log('cp178', req.signedCookies)
   if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
-    let que1st = `SELECT user_id, email, new_jobs_count_today, EXTRACT(EPOCH FROM new_jobs_count_date - 'now()'::timestamptz) AS last_posted FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
+    let que1st = `SELECT user_id, email, new_jobs_count_today FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company'`
     let params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
         res.send('step2')
         return false
       }
-      if (!results.rows || results.rows.length != 1) {
-        res.send('step3')
+      if (!results.rows) {
+        res.send('step3-1')
+        return false
+      } else if (results.rows.length != 1) {
+        res.send('step3-2: ' + results.rows.length)
         return false
       }
       let uid = results.rows[0].user_id
-      let last_posted = results.rows[0].last_posted
       let limitCount = parseInt(results.rows[0].new_jobs_count_today)
       if (!limitCount) limitCount = 0
       // console.log('cp67', last_posted)

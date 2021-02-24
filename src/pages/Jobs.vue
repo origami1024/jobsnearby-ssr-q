@@ -117,10 +117,11 @@ export default {
   name: 'Jobs',
   meta() {
     return {
+      title: 'Работа в Туркменистане.' + ((this.page_current > 1) ? ' Страница ' + this.page_current : ''),
       meta: {
-        ogTitle: { name: 'og:title', content: 'Hunarmen' },
-        ogDesc: { name: 'og:description', content: 'Работа в Туркменистане' },
-        description: { name: 'description', content: 'Работа в Туркменистане' }
+        ogTitle: { name: 'og:title', content: 'Hunarmen | Работа в Туркменистане' },
+        ogDesc: { name: 'og:description', content: 'Работа в Туркменистане. Ежедневное обновление базы вакансий в Туркменистане. Вакансии Туркменистан. Работа в Ашхабаде Мары Хазар Балканабад. Найти работу в Ашхабаде. ' },
+        description: { name: 'description', content: 'Работа в Туркменистане. Ежедневное обновление базы вакансий в Туркменистане. Вакансии Туркменистан. Работа в Ашхабаде Мары Хазар Балканабад. Найти работу в Ашхабаде. ' }
       }
     }
   },

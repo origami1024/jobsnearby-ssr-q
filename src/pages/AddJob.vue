@@ -151,6 +151,7 @@
                 :editorToolbar="customToolbar"
                 style="background-color: white; border-radius: 10px; box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);"
               />
+              <div style="text-align: right; margin-top: 3px;" :style="{'color': job.description.length > 3000 ? '#e00' : black }">{{job.description.length}} / 3000</div>
             </q-no-ssr>
           </div>
         </div>
@@ -417,7 +418,7 @@
         <q-btn style="margin-top: 12px;" color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
       </div>
       <div v-else-if="props.sent == 'fail'" :key="3" class="jobpage__wrapper">
-        <p style="color: var(--btn-color); font-size: 16px;">{{$t('addJob.sendJobError1')}}</p>
+        <p style="color: var(--btn-color); font-size: 16px;">{{$t('addJob.sendJobError1')}} ({{specificError}})</p>
         <q-btn style="margin-top: 12px;" color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/>
       </div>
       <div v-else-if="props.sent == 'limit'" :key="4" class="jobpage__wrapper">
@@ -454,6 +455,7 @@ export default {
   },
   data() {
     return {
+      specificError: '',
       titleRegex: /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\.\,\+\$\%\(\)\№\:\#\/\"]*$/,
       salaryOn: false,
       returned: {
@@ -551,10 +553,10 @@ export default {
   },
   methods:{
     descUpd(e) {//Ok
-      if (e.length < 2001) this.descError = ''
+      if (e.length < 3001) this.descError = ''
     },
     descBlur(e) {//Ok
-      if (e.root.innerHTML.length > 2000) {this.descError = this.$t('addJob.descValidation2000')}
+      if (e.root.innerHTML.length > 3000) {this.descError = this.$t('addJob.descValidation3000')}
     },
     resetFields() {//Ok
       this.job = Object.assign({}, this.jobInit)
@@ -599,8 +601,8 @@ export default {
         scrollPos = 190
       }
       //description
-      if (this.job.description.length > 2000) {
-        this.descError = this.$t('addJob.descValidation2000')
+      if (this.job.description.length > 3000) {
+        this.descError = this.$t('addJob.descValidation3000')
         scrollPos = 340
       }
       //age
@@ -673,9 +675,14 @@ export default {
               this.returned.job_id = response.data.job_id
               this.$store.dispatch('setAJSentState', 'goodNew')
             } else {
+              
               if (response.data && response.data == 'error limits reached') {
                 this.$store.dispatch('setAJSentState', 'limit')
-              } else this.$store.dispatch('setAJSentState', 'fail')
+                this.specificError = response.data
+              } else {
+                this.specificError = response
+                this.$store.dispatch('setAJSentState', 'fail')
+              }
             }
           })
       } else {

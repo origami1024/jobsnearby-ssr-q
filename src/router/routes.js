@@ -12,11 +12,11 @@ const routes = [
     props: true
   },
   {
-    path: '/jobpage',
+    path: '/jobpage/:jid',
     component: () => import('pages/JobPage.vue')
   },
   {
-    path: '/companypage',
+    path: '/companypage/:cid',
     component: () => import('pages/CompanyPage.vue')
   },
   {

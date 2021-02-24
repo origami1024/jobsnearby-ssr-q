@@ -13,10 +13,10 @@
           <p itemprop="baseSalary" class="salary-deriv">{{salary_deriv}}</p>
           <p class="jobpage__city_company" itemprop="address">{{(job.city && job.city.length > 0) ? $t('jobPage.cityWordStart') + job.city : $t('jobPage.cityNotSet')}}</p>
         </div>
-        <div itemprop="hiringOrganization" itemscope="itemscope" itemtype="http://schema.org/Organization" class="detailed__col" style="display: flex; flex-direction: column; justify-content: center;">
+        <div itemprop="hiringOrganization" itemscope="itemscope" itemtype="http://schema.org/Organization" class="detailed__col" style="display: flex; flex-direction: column; justify-content: center; min-height: 63px;">
           <img style="align-self: center;" class="detailed__logo1" :src="(job.logo_url && job.logo_url.length > 1) ? job.logo_url : '/statics/companyph.png'">
           <meta itemprop="name" :content="job.author">
-          <p class="author-link-wrapper"><a :href="'/companypage?id=' + job.author_id" target="_blank" class="detailed__author-link1 jobpage__city_company">{{job.author}}</a></p>  
+          <p style="min-height: 18px;"><a :href="'/companypage/' + job.author_id" target="_blank" class="detailed__author-link1 jobpage__city_company">{{job.author}}</a></p>  
         </div>
         
       </section>
@@ -51,7 +51,7 @@
         </div>
       </section>
       <div v-else-if="user.role == 'subscriber' && job.author_id == 21" class="cvSentSpan">
-        Только прямые контакты 
+        {{$t('jobPage.onlyDirectContacts')}}
       </div>
       <section>
         <div>
@@ -161,6 +161,7 @@ export default {
   name: 'jobpage',
   meta() {
     return {
+      title: this.job.title,
       meta: {
         ogTitle: { name: 'og:title', content: this.job.title },
         ogDesc: {
@@ -297,23 +298,12 @@ section
     margin-bottom 0
   li
     margin 5px 0
-// .detailed__button {
-//   background-color: #B4E873;
-//   padding: 5px;
-//   border: 0;
-//   font-size: 20px;
-//   cursor: pointer;
-// }
-// .detailed__button:hover {
-//   color: white;
-// }
 .detailed__author-link1
   color var(--main-borders-color)
   text-decoration none
   &:hover
     color var(--violet-btn-color)
 .detailed__logo1{
-  // text-align center
   width auto
   max-height 45px
   // line-height 50px
@@ -402,35 +392,4 @@ section
   margin-right 2px
   margin-left 10px
 
-// .sendCVLink
-//   background-color var(--color-graypink)
-//   color var(--color1)
-//   text-decoration none
-//   border: 2px solid var(--violet-btn-color)
-//   box-sizing: border-box;
-//   border-radius: 10px;
-//   font-family: Montserrat, sans-serif
-//   font-style: normal;
-//   font-weight: 500 !important;
-//   font-size: 15px;
-//   line-height: 18px;
-//   padding 9px 15px
-//   // padding-right 17px
-//   transition-duration 0.25s
-//   display block
-//   width 192px
-//   @media screen and (max-width: 950px)
-//     padding 5px 10px
-//     padding-right 8px
-//     line-height: 26px;
-//   @media screen and (max-width 550px)
-//     align-self flex-start
-//     font-size: 12px !important
-//     line-height: 15px !important
-//     padding 8px
-//     width 100%
-//     text-align center
-//   &:hover
-//     background-color var(--violet-btn-color)
-//     color white
 </style>

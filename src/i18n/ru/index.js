@@ -138,7 +138,8 @@ export default {
     cityNotSet: 'Город не указан',
     onlyReg: 'Зарегистрируйтесь, чтобы отправить резюме',
     nonexistent: 'Вакансии с таким ID не существует',
-    goToMain: 'Перейти на главную'
+    goToMain: 'Перейти на главную',
+    onlyDirectContacts: 'Только прямые контакты',
   },
   App: {
     login: 'Вход',
@@ -368,7 +369,7 @@ export default {
     cityValidationLength: 'Максимум 70 символов',
     cityValidationFormat: 'Только буквы',
     descLabel: 'Описание вакансии',
-    descValidation2000: '(2000 символов максимум)',
+    descValidation3000: '(3000 символов максимум)',
     moreLabel: 'Дополнительно',
     expLabel: 'Опыт работы',
     jobTypeLabel: 'Тип занятости',
