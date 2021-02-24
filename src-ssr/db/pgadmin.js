@@ -862,8 +862,11 @@ async function adminJobs(req, res) {
         <div>
           <span>Перейти на страницу (${perpage} вакансий на странице)</span>
           <input placeholder="введи страницу" value="0" id="page-inp">
-          <button onclick="a = function () {document.location.href='/adminjobs.json?page=' + document.getElementById('page-inp').value${perpage && perpage !== 300 ? '&perpage=' + perpage : ''}}; a()">
+          <button onclick="a = function () {document.location.href='/adminjobs.json?page=' + document.getElementById('page-inp').value + '${(perpage && perpage !== 300) ? "&perpage=" + perpage : ''}'}; a()">
             Полетели
+          </button>
+          <button onclick="a = function () {document.location.href='/adminjobs.json?page=0&perpage=99999'}; a()">
+            Вообще все
           </button>
           <script>document.addEventListener("DOMContentLoaded", () => {document.getElementById(\'page-inp\').value='${page}'})</script>
         </div>
