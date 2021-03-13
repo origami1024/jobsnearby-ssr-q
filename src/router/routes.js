@@ -38,7 +38,11 @@ const routes = [
   {
     path: '/feedback',
     component: () => import('pages/Feedback.vue')
-  }
+  },
+  {
+    path: '/cv/:action',
+    component: () => import('src/pages/AddCv.vue')
+  },
 ]
 
 // Always leave this as last one

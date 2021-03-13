@@ -118,17 +118,17 @@
           </div>
           <div style="display: flex; align-items: center;">
             <q-checkbox
-            for="salcb1"
-            class="salcb1"
-            dense
-            color="red-10"
-            v-model="salaryOn"
-            @input="$refs.salary_min.resetValidation();
-            $refs.salary_max.resetValidation();
-            salaryValidated = true"
-            
-          >
-          </q-checkbox>
+              for="salcb1"
+              class="salcb1"
+              dense
+              color="red-10"
+              v-model="salaryOn"
+              @input="$refs.salary_min.resetValidation();
+              $refs.salary_max.resetValidation();
+              salaryValidated = true"
+              
+            >
+            </q-checkbox>
             <label for="salcb1" @click="salaryOn = !salaryOn; $refs.salary_min.resetValidation(); $refs.salary_max.resetValidation(); salaryValidated = true" style="cursor: pointer; color: var(--color1); font-size: 14px; line-height: 17px; user-select: none; font-weight: 500;">
               {{$t('addJob.salaryCB1Hint')}}
             </label>
@@ -151,7 +151,7 @@
                 :editorToolbar="customToolbar"
                 style="background-color: white; border-radius: 10px; box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);"
               />
-              <div style="text-align: right; margin-top: 3px;" :style="{'color': job.description.length > 3000 ? '#e00' : black }">{{job.description.length}} / 3000</div>
+              <div style="text-align: right; margin-top: 3px;" :style="{'color': job.description.length > 3000 ? '#e00' : 'black' }">{{job.description.length}} / 3000</div>
             </q-no-ssr>
           </div>
         </div>
@@ -425,7 +425,7 @@
         <p style="color: var(--btn-color); font-size: 16px;">{{$t('addJob.sendJobErrorLimit')}}</p>
         <!-- <q-btn color="red-10" class="headerBtns1 headerBtnRed" @click="$store.dispatch('setAJSentState', 'none'); resetFields(); $store.dispatch('newJobInitAJ')" :label="$t('addJob.btnAddOneMore')"/> -->
       </div>
-      <div v-else-if="user.role == 'guestUnau' | user.role == 'guest'" :key="4" class="jobpage__wrapper">
+      <div v-else-if="user.role == 'guestUnau' || user.role == 'guest'" :key="4" class="jobpage__wrapper">
         {{$t('addJob.unauthorized')}}
       </div>
     </transition>

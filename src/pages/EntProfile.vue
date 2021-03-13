@@ -28,7 +28,12 @@
             >
               <template v-slot:header>
                 <div class="lvl1Wrap" style="display: flex; align-items: center; font-weight: 500;">
-                <a class="responseLinkLvl1" :href="'/jobpage?id=' + item" target="_blank" style="display: flex;">
+                <a
+                  class="responseLinkLvl1"
+                  :href="'/jobpage?id=' + item"
+                  target="_blank"
+                  style="display: flex;"
+                >
                   {{resps.find(val=>val.cvjob_id == item).title}}
                 </a>
                 <span style="margin-left: 5px; font-family: Montserrat, sans-serif; font-size: 14px; line-height: 17px;">({{respsJreformat[item].cvhits.length}})</span>
@@ -39,11 +44,30 @@
               <ol style="padding: 8px 15px; padding-bottom: 15px; margin: 0 28px; font-family: Montserrat, sans-serif; font-size: 14px; line-height: 17px;">
                 <li style="background-color: white !important; text-align: left; margin-bottom: 7px;" v-for="hit in respsJreformat[item].cvhits" :key="hit" :style="{backgroundColor: resps.find(val=>val.cvhit_id == hit).date_checked == null ? 'var(--color-graypink)' : 'white'}">
                   <span style="display: block; margin-bottom: 6px;">
-                    <a class="responseLinkLvl2" @click="viewHit(hit)" :href="'https://docs.google.com/viewerng/viewer?url=' + resps.find(val=>val.cvhit_id == hit).cv_url" target="_blank">
+                    <!-- <a class="responseLinkLvl2" @click="viewHit(hit)" :href="'https://docs.google.com/viewerng/viewer?url=' + resps.find(val=>val.cvhit_id == hit).cv_url" target="_blank">
                       {{
                         resps.find(val=>val.cvhit_id == hit).name + ' ' + 
                         resps.find(val=>val.cvhit_id == hit).surname
                       }}
+                    </a> -->
+                    <div style="display: inline-block; line-height: 24px; margin-right: 10px;">
+                      {{
+                        resps.find(val=>val.cvhit_id == hit).name + ' ' + 
+                        resps.find(val=>val.cvhit_id == hit).surname
+                      }}
+                    </div>
+                    <a @click="viewHit(hit)" :href="'https://docs.google.com/viewerng/viewer?url=' + resps.find(val=>val.cvhit_id == hit).cv_url" target="_blank" class="responseLinkLvl2"
+                    >
+                      <q-icon name="today" style="font-size: 24px;"></q-icon>
+                      <q-tooltip>
+                        <p style="font-size: 14px; margin: 0">{{$t('entProfile.previewHint')}}</p>
+                      </q-tooltip>
+                    </a>
+                    <a :href="'https://' + resps.find(val=>val.cvhit_id == hit).cv_url" download class="responseLinkLvl2">
+                      <q-tooltip>
+                        <p style="font-size: 14px; margin: 0">{{$t('entProfile.downloadHint')}}</p>
+                      </q-tooltip>
+                      <q-icon name="description" style="font-size: 24px;"></q-icon>
                     </a>
                     <span class="newhit" v-if="resps.find(val=>val.cvhit_id == hit).date_checked == null">*</span>
                   </span>
@@ -263,7 +287,6 @@ export default {
               headers: {'Content-Type': 'multipart/form-data'}
             })
             .then(resp => {
-              console.log(resp)
               if (resp.data && resp.data.success === true && resp.data.link) {
                 this.logo_upload_error = null
                 this.$store.dispatch('caboutPropUpd',{prop: 'logo_url', value: resp.data.link})
@@ -271,7 +294,6 @@ export default {
               
               } else {
                 
-                console.log('error uploading: ', resp.data)
                 if (resp.data.msg && resp.data.msg) {
                   if (resp.data.msg === 'file size error') {
                     this.logo_upload_error = this.$t('entProfile.picTooBig')

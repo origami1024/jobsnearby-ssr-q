@@ -174,6 +174,8 @@ export default {
     picUploaded: 'Surat ýerleşdirildi',
     cPh: 'HK “Iş orunlary”',
     entProfileTitle: 'Meniň kabinetim',
+    previewHint: 'Google docs öňunden seret',
+    downloadHint: 'Faýly skaçat et'
   },
   jobsStats: {
     title: 'Ady',

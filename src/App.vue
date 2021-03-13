@@ -1,118 +1,6 @@
 <template>
   <div id="q-app">
-    <div class="header-wrapper">
-      <header itemscope="" itemtype="http://schema.org/Organization">
-        <router-link
-          @click.native="$store.dispatch('refreshjobs', {param: 'logoclick'}); $store.dispatch('filtersOff')" to="/"
-          class="logolink"
-        >
-          <span class="logoText">
-            HUNAR<span style="color: #8645FF; margin-right: -7px">MEN</span>
-          </span>
-          <q-tooltip transition-show="rotate"
-          transition-hide="rotate">
-            <p style="font-size: 14px; margin: 0">{{$t('App.logoTooltip')}}</p>
-          </q-tooltip>
-        </router-link>
-          <div id="nav">
-            <router-link
-              class="headerBtn"
-              style="margin-right: 5px;"
-              v-if="user.role === 'company' && user.isagency == true" to="/uploads"
-              :style="{color: $route.name != 'uploads' ? 'green' : 'var(--violet-btn-color)'}"
-            >
-              <q-icon name="description" style="font-size: 32px;" class="nav-icon-upl multipleUploadsHeader"></q-icon>
-              <q-tooltip>
-                <p style="font-size: 15px; margin: 0">{{$t('addJob.xlsBtn')}}</p>
-              </q-tooltip>
-            </router-link>
-            <q-btn 
-              @click.native="$store.dispatch('newJobInitAJ')"
-              v-if="user.role == 'company'"
-              class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
-              text-color="white"
-              :label="$t('App.newJobHint')"
-              rounded
-              to="/addJob"
-            />
-            <q-btn
-              @click.native="authPls"
-              v-else-if="user.role != 'subscriber'"
-              class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
-              text-color="white" 
-              :label="$t('App.newJobHint')"
-              to="/registration"
-            />
-          </div>
-          <div id="authmenu">
-            <div class="colx user-status-bar">
-              <router-link 
-                style="padding: 0 20px; font-size: 14px;
-                  color: #fff; line-height: 40px; text-transform: uppercase; text-decoration: none;"
-                class="headerBtns1 violetBtns loginbtn"
-                @click.native="regState='login'"
-                v-if="user.role && user.role.startsWith('guest')"
-                to="/registration"
-              >
-                <span class="noshow-below550">{{$t('App.login')}}</span>
-              </router-link>
-              <router-link
-                v-if="user.role && user.role === 'subscriber'"
-                class="headerBtn marginLeft30pxOnBig"
-                to="/subprofile"
-                :style="{color: $route.name != 'subprofile' ? '' : 'var(--violet-btn-color)'}"
-              >
-                <q-icon name="person" style="font-size: 36px;" class="nav-icon"></q-icon>
-                <q-tooltip>
-                  <p style="font-size: 15px; margin: 0">{{$t('App.myProfile')}}</p>
-                </q-tooltip>
-              </router-link>
-
-              <router-link
-                @click.native="$store.dispatch('getOwnJobs')"
-                v-if="user.role && user.role === 'company' && $route.name == 'entprofile'"
-                class="headerBtn marginLeft30pxOnBig"
-                to="/entprofile"
-                :style="{color: $route.name != 'entprofile' ? '' : 'var(--violet-btn-color)'}"
-              >
-                <q-icon name="person" style="font-size: 36px;" class="nav-icon"></q-icon>
-                <q-tooltip>
-                  <p style="font-size: 15px; margin: 0">{{$t('App.myProfile')}}</p>
-                </q-tooltip>
-              </router-link>
-              <router-link
-                v-if="user.role && user.role === 'company' && $route.name != 'entprofile'"
-                class="headerBtn marginLeft30pxOnBig"
-                to="/entprofile"
-                :style="{color: $route.name != 'entprofile' ? '' : 'var(--violet-btn-color)'}"
-              >
-                <q-icon name="person" style="font-size: 36px;" class="nav-icon"></q-icon>
-                <q-tooltip>
-                  <p style="font-size: 15px; margin: 0">{{$t('App.myProfile')}}</p>
-                </q-tooltip>
-              </router-link>
-              <router-link
-                @click.native="logout(true)"
-                v-if="user.role && (user.role === 'company' || user.role === 'subscriber')"
-                class="headerBtn"
-                to="/"
-              >
-                <q-icon name="logout" style="font-size: 32px; font-weight: bold" class="nav-icon-logout"></q-icon>
-                <q-tooltip>
-                  <p style="font-size: 15px; margin: 0">{{$t('App.logoutHint')}}</p>
-                </q-tooltip>
-              </router-link>
-            </div>
-          </div>
-          <LangChanger class="header__langchanger" />
-        <!-- </div> -->
-        <q-ajax-bar
-          position="bottom"
-          color="red"
-          size="10px"
-        />
-      </header>
-    </div>
+    <Header />
     <keep-alive>
       <router-view class="r-view" @scrollTo="scrollTo"/>
     </keep-alive>
@@ -183,11 +71,11 @@
 import { scroll } from 'quasar'
 const { getScrollTarget, setScrollPosition } = scroll
 
-import LangChanger from 'components/atoms/LangChanger'
+import Header from 'components/organisms/Header'
 import { mapState } from 'vuex'
 export default {
   name: 'App',
-  data: ()=>{return {
+  data: () => { return {
     dismiss: null,
   }},
   computed: {
@@ -214,39 +102,11 @@ export default {
 
   },
   methods: {
-    authPls() {//OK
-      if (this.dismiss != null) this.dismiss()
-      this.dismiss = this.$q.notify(this.$t('App.doAuthForPublishing'))
-    },
     onStorageUpdate(event) {//OK
       // console.log('on stoarge updoto', JSON.parse(event.newValue))
       if (event.key == 'userData') {
         let userData = JSON.parse(event.newValue)
         this.$store.dispatch('storeAuth', userData)
-      }
-    },
-    logout(retry) {//OK
-      if (this.user_id !== -1) {
-        this.$axios
-          .post('/out', [], {withCredentials: true})
-      }
-      this.$store.dispatch('resetUser')
-      localStorage.setItem('userData',JSON.stringify({
-          identity: 'Гость',
-          role: 'guest',
-          user_id: -1,
-          username: '',
-          surname: '',
-          company: '',
-          isagency: false,
-          insearch: false,
-          cvurl: '',
-          ownJobs: [],
-          ownCVs: []
-        }))
-      if (this.$route.path != '/') {
-        this.$router.push("/")
-        if (retry === true) this.$store.dispatch('refreshjobs', {})
       }
     },
     scrollTo(yyy) {//Ok?
@@ -268,7 +128,6 @@ export default {
     $route (to, from){//CHANGE THIS TO PREFETCH IF POSSIBLE
       if (to.path === '/uploads') {
         this.$store.dispatch('getOwnJobs')
-        console.log('getOwnJobs dispatched')
       } else
       if (to.path === '/addjob') {
         this.$store.dispatch('setAJSentState', 'none')
@@ -276,7 +135,7 @@ export default {
     },
   },
   components: {
-    LangChanger
+    Header
   }
 }
 </script>

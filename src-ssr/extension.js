@@ -259,6 +259,19 @@ module.exports.extendApp = function ({ app, ssr }) {
     }
     next()
   })
+  app.get('/cv/:id', async function (req, res, next) {
+    //only auth here
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
+        console.log('getUserAuthByCookies. addCV', error)
+        return 'error1'
+      })
+    } else {
+      //empty or not valid auth data
+      req.userData = 'noauth'
+    }
+    next()
+  })
   app.get('/uploads', async function (req, res, next) {
     //only auth here
     if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {

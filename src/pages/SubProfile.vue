@@ -40,6 +40,15 @@
           <div style="max-width: 300px; display: flex; width: 100%;">
             <q-btn style="margin-left: auto;" dense class="headerBtns1" v-if="user.cvurl != null && user.cvurl != ''" color="red-10" :label="$t('sub.deleteCVBtn')" @click="cvdel" />
           </div>
+
+          <q-btn 
+            v-if="user.role === 'subscriber'"
+            class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
+            text-color="white"
+            :label="$t('sub.newCvHint')"
+            rounded
+            to="/cv/new"
+          />
         </q-tab-panel>
         <q-tab-panel name="sentCVS">
           <HitsList
