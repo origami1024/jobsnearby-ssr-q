@@ -91,6 +91,9 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.get('/resend.json', db.resend)
   app.post('/resender.json', db.resender)
 
+  app.post('/cv', db.cvCreateUpdate)
+  app.delete('/cv', db.cvDelete)
+  app.get('/cv', db.cvFetchForEdit)
 
   //CPSTART
   app.get('/cp.json', adm.adminPanel)
@@ -259,13 +262,17 @@ module.exports.extendApp = function ({ app, ssr }) {
     }
     next()
   })
-  app.get('/cv/:id', async function (req, res, next) {
+  app.get('/cv-editor', async function (req, res, next) {
     //only auth here
     if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
       req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
         console.log('getUserAuthByCookies. addCV', error)
         return 'error1'
       })
+      // req.cvData = await db.cvFetchForEditSSR(req, res).catch(error => {
+      //   console.log('cvFetchForEdit. addCV', error)
+      //   return 'error2'
+      // })
     } else {
       //empty or not valid auth data
       req.userData = 'noauth'

@@ -40,8 +40,12 @@ const routes = [
     component: () => import('pages/Feedback.vue')
   },
   {
-    path: '/cv/:action',
+    path: '/cv-editor',
     component: () => import('src/pages/AddCv.vue')
+  },
+  {
+    path: '/cv-list',
+    component: () => import('src/pages/CVs.vue')
   },
 ]
 

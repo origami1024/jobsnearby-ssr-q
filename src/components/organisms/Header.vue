@@ -14,6 +14,14 @@
             <p style="font-size: 15px; margin: 0">{{$t('addJob.xlsBtn')}}</p>
           </q-tooltip>
         </router-link>
+        <q-btn
+          v-if="user.role === 'company'"
+          class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
+          style="margin-right: 20px;"
+          text-color="white" 
+          :label="$t('cvList.cvListLabel')"
+          to="/cv-list"
+        />
         <q-btn 
           @click.native="$store.dispatch('newJobInitAJ')"
           v-if="user.role == 'company'"

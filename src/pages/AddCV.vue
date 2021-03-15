@@ -3,315 +3,324 @@
     <p class="pageHeader noshow-below550" v-if="isNew">{{$t('addCv.labelNew')}}</p>
     <p class="pageHeader noshow-below550" v-else>{{$t('addCv.labelEdit')}}</p>
     <transition name="bounce">
-      <div v-if="user.role === 'subscriber'">
-      <div class="cvpage__wrapper" :key="1" style="display: flex; flex-direction: column; align-items: center">
-        <p style="margin-top: 0; margin-bottom: 16px;" class="pageHeader displayblock-only550" v-if="isNew">
-          {{$t('addCv.labelNew')}}
-        </p>
-        <p style="margin-top: 0; margin-bottom: 16px;" class="pageHeader displayblock-only550" v-else>
-          {{$t('addCv.labelEdit')}}
-        </p>
-
-        <div class="w586 startP-header-wrapper">
-          <p class="startP startP-header" style="margin-bottom: 20px;">
-            {{$t('addCv.contactsLabel')}}
-          </p>
-        </div>
-        <div
-          class="w586"
-          ref="fileInputWrap"
-          style="display: flex; justify-content: space-between;"
-        >
-          <!-- @drop="picDrop" -->
-          <label class="uploaderWrapper" tabindex="0">
-            <input
-              id="fileInpX"
-              ref="fileInputX"
-              type="file"
-              style="display:none" accept=".gif,.jpg,.jpeg,.png,.webp,.svg"
-            >
-            <!-- @change="setCompanyLogo($refs.fileInputX.files)" -->
-            <div
-              class="logo-placeholder"
-              :style="{
-                backgroundImage : `url('${ cv.photo ? cv.photo : 'statics/subscriber-logo-ph.svg'}')`
-              }"
-            />
-          </label>
-        </div>
-
-        <TextField
-          v-model="cv.name" ref="name"
-          :label="$t('addCv.name')" :ph="$t('addCv.nameph')"
-          :rules="[
-            val => (lazyRulesAll || !!val) || $t('addCv.NameValidationRequired'),
-            val => (lazyRulesAll || val.length > 1) || $t('addCv.nameValidationMin'),
-            val => val.length < 76 || $t('addCv.nameValidationMax')
-          ]"
-          :reqd="true" :lazy="lazyRulesAll" :maxlength="75"
-        />
-        <TextField
-          v-model="cv.surname" ref="surname"
-          :label="$t('addCv.surname')" :ph="$t('addCv.surnameph')"
-          :rules="[
-            val => (lazyRulesAll || !!val) || $t('addCv.NameValidationRequired'),
-            val => (lazyRulesAll || val.length > 1) || $t('addCv.nameValidationMin'),
-            val => val.length < 76 || $t('addCv.nameValidationMax')
-          ]"
-          :reqd="true" :lazy="lazyRulesAll" :maxlength="75"
-        />
-        <TextField
-          v-model="cv.tel" ref="tel"
-          :label="$t('addCv.tel')" :ph="$t('addCv.telph')"
-          :rules="[
-            val => (lazyRulesAll || !!val) || $t('addCv.NameValidationRequired'),
-            val => (lazyRulesAll || val.length > 5) || $t('addCv.telValidationMin'),
-            val => val.length < 21 || $t('addCv.telValidationMax')
-          ]"
-          :reqd="true" :lazy="lazyRulesAll" :maxlength="20" :maxlhidden="true"
-        />
-        <TextField
-          v-model="cv.tel_home" ref="tel_home"
-          :label="$t('addCv.telHome')" :ph="$t('addCv.telph')"
-          :rules="[
-            val => (lazyRulesAll || val.length > 5) || $t('addCv.telValidationMin'),
-            val => val.length < 21 || $t('addCv.telValidationMax')
-          ]"
-          :maxlength="20" :maxlhidden="true"
-        />
-        <TextField
-          v-model="cv.email" ref="email"
-          :label="$t('addCv.email')" :ph="$t('addCv.emailph')"
-          :maxlength="75" :maxlhidden="true"
-        />
-
-        <div class="w586">
-          <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
-            <!-- <p class="star"> </p> -->
-            <p class="startP">{{$t('addCv.cityCurrent')}}</p>
-          </div>
-          <q-select
-            :value="cv.city_current"
-            @input="cityUpd"
-            dense
-            outlined
-            bg-color="white" color="deep-purple-10"
-            use-input
-            input-debounce="0"
-            fill-input
-            hide-selected
-            ref="city_current"
-            :options="cityOptions"
-            @filter="filterFn"
-            :hint="null"
-            :placeholder="$t('addCv.cityph')"
-            @keyup="addNewCity"
-            dropdown-icon="none"
-            class="dropdown-padding-adjust"
-            :rules="[
-              val => val.length < 71 || $t('addCv.cityValidationLength')
-            ]"
-            :lazy-rules="lazyRulesAll"
-          />
-        </div>
-        <div class="w586">
-          <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
-            <p class="startP">{{$t('addCv.cityBased')}}</p>
-          </div>
-          <q-select
-            :value="cv.city_based"
-            @input="cityBasedUpd"
-            dense
-            outlined
-            bg-color="white" color="deep-purple-10"
-            use-input
-            input-debounce="0"
-            fill-input
-            hide-selected
-            ref="city_based"
-            :options="cityOptions"
-            @filter="filterFn"
-            :hint="null"
-            :placeholder="$t('addCv.cityph')"
-            @keyup="addNewBasedCity"
-            dropdown-icon="none"
-            class="dropdown-padding-adjust"
-            :rules="[
-              val => val.length < 71 || $t('addCv.cityValidationLength')
-            ]"
-            :lazy-rules="lazyRulesAll"
-          />
-        </div>
-
-        <hr style="margin: 10px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
-
-        <div class="w586">
-          <p class="startP" style="font-weight: 600; margin-bottom: 20px;">{{$t('addCv.driversLabel')}}</p>
-          <label
-            style="
-              display: flex; align-items: center; margin: 12px 0;
-              cursor: pointer; color: var(--color1); font-size: 14px;
-              user-select: none; font-weight: 500;
-            "
-            v-for="(option, key, oidx) in cv.driver"
-            :key="key"
-          >
-            <q-checkbox
-              dense
-              class="salcb1"
-              color="red-10"
-              v-model="cv.driver[key]"
-            />
-            {{ driverOptions[oidx].label }}
-          </label>
-        </div>
-        <BoolField
-          :label="$t('addCv.carLabel')"
-          v-model="cv.car"
-          :labels="[$t('addCv.yes'), $t('addCv.no')]"
-        />
+      <div v-if="loading">
+        Загрузка....
       </div>
-      <div class="cvpage__wrapper" :key="2" style="display: flex; flex-direction: column; align-items: center">
-        <div class="w586">
-          <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
-            <p class="startP">{{$t('addCv.birthDate')}}</p>
+      <div v-else-if="user.role === 'subscriber'">
+        <div class="cvpage__wrapper" :key="1" style="display: flex; flex-direction: column; align-items: center">
+          <p style="margin-top: 0; margin-bottom: 16px;" class="pageHeader displayblock-only550" v-if="isNew">
+            {{$t('addCv.labelNew')}}
+          </p>
+          <p style="margin-top: 0; margin-bottom: 16px;" class="pageHeader displayblock-only550" v-else>
+            {{$t('addCv.labelEdit')}}
+          </p>
+
+          <div class="w586 startP-header-wrapper">
+            <p class="startP startP-header" style="margin-bottom: 20px;">
+              {{$t('addCv.contactsLabel')}}
+            </p>
           </div>
-          <q-input
-            dense
-            outlined
-            bg-color="white" color="deep-purple-10"
-            style="width: 100%;"
-            v-model="cv.birth"
-            mask="date"
-            :rules="['date']"
-            :placeholder="$t('addCv.birthDatePh')"
-            :lazy-rules="lazyRulesAll"
+          <div
+            class="w586"
+            ref="fileInputWrap"
+            style="display: flex; justify-content: space-between;"
           >
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date
-                    v-model="cv.birth"
-                  >
-                    <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Close" color="primary" flat />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-        </div>
-        <BoolField
-          :label="$t('addCv.sex')"
-          v-model="cv.sex"
-          :labels="[$t('addCv.sexM'), $t('addCv.sexF')]"
-          :vals="['m', 'f']"
-        />
-        <BoolField
-          :label="$t('addCv.family')"
-          v-model="cv.family"
-          :labels="[$t('addCv.familyYes'), $t('addCv.familyNo')]"
-        />
-        
-        <hr style="margin: 20px 0 10px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
-
-        <BoolField
-          :label="$t('addCv.exp')"
-          v-model="cv.exp"
-          :labels="[$t('addCv.expYes'), $t('addCv.expNo')]"
-        />
-
-        <hr style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
-
-        <TextField
-          v-model="cv.edu" ref="edu"
-          :label="$t('addCv.edu')" :ph="$t('addCv.eduph')"
-          :maxlength="30"
-          :maxlhidden="true"
-        />
-
-        <hr style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
-
-        <div class="w586">
-          <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
-            <p class="startP">{{$t('addJob.langsLabel')}}</p>
+            <!-- @drop="picDrop" -->
+            <label class="uploaderWrapper" tabindex="0">
+              <input
+                id="fileInpX"
+                ref="fileInputX"
+                type="file"
+                style="display:none" accept=".gif,.jpg,.jpeg,.png,.webp,.svg"
+              >
+              <!-- @change="setCompanyLogo($refs.fileInputX.files)" -->
+              <div
+                class="logo-placeholder"
+                :style="{
+                  backgroundImage : `url('${ cv.photo ? cv.photo : 'statics/subscriber-logo-ph.svg'}')`
+                }"
+              />
+            </label>
           </div>
-          <q-select
-            multiple
-            use-chips
-            dense
-            outlined
-            bg-color="white" color="deep-purple-10"
-            dropdown-icon="none"
-            class="dropdown-padding-adjust lang-select"
-            max-values="3"
-            v-model="cv.langs"
-            :options="$t('addJob.langOptions')"
-            :hint="null"
-          />
-        </div>
-        <div class="w586">
-          <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
-            <p class="startP">{{$t('addCv.skills')}}</p>
-          </div>
-          <q-input
-            v-model="cv.skills"
-            class="addCv__desc-inp"
-            outlined dense bg-color="white" color="deep-purple-10"
-            type="textarea"
-            counter maxlength="500"
-            :placeholder="$t('addCv.desc')"
-          />
-        </div>
 
-        <hr style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+          <TextField
+            v-model="cv.name" ref="name"
+            :label="$t('addCv.name')" :ph="$t('addCv.nameph')"
+            :rules="[
+              val => (lazyRulesAll || !!val) || $t('addCv.NameValidationRequired'),
+              val => (lazyRulesAll || val.length > 1) || $t('addCv.nameValidationMin'),
+              val => val.length < 76 || $t('addCv.nameValidationMax')
+            ]"
+            :reqd="true" :lazy="lazyRulesAll" :maxlength="75"
+          />
+          <TextField
+            v-model="cv.surname" ref="surname"
+            :label="$t('addCv.surname')" :ph="$t('addCv.surnameph')"
+            :rules="[
+              val => (lazyRulesAll || !!val) || $t('addCv.NameValidationRequired'),
+              val => (lazyRulesAll || val.length > 1) || $t('addCv.nameValidationMin'),
+              val => val.length < 76 || $t('addCv.nameValidationMax')
+            ]"
+            :reqd="true" :lazy="lazyRulesAll" :maxlength="75"
+          />
+          <TextField
+            v-model="cv.tel" ref="tel"
+            :label="$t('addCv.tel')" :ph="$t('addCv.telph')"
+            :rules="[
+              val => (lazyRulesAll || !!val) || $t('addCv.NameValidationRequired'),
+              val => (lazyRulesAll || val.length > 5) || $t('addCv.telValidationMin'),
+              val => val.length < 21 || $t('addCv.telValidationMax')
+            ]"
+            :reqd="true" :lazy="lazyRulesAll" :maxlength="20" :maxlhidden="true"
+          />
+          <TextField
+            v-model="cv.tel_home" ref="tel_home"
+            :label="$t('addCv.telHome')" :ph="$t('addCv.telph')"
+            :rules="[
+              val => val === null || (lazyRulesAll || val.length > 5) || $t('addCv.telValidationMin'),
+              val => val === null || val.length < 21 || $t('addCv.telValidationMax')
+            ]"
+            :lazy="lazyRulesAll"
+            :maxlength="20" :maxlhidden="true"
+          />
+          <TextField
+            v-model="cv.email" ref="email"
+            :label="$t('addCv.email')" :ph="$t('addCv.emailph')"
+            :maxlength="75" :maxlhidden="true"
+          />
 
-        <TextField
-          v-model="cv.wanted_job" ref="wanted_job"
-          :label="$t('addCv.wantedJob')" :ph="$t('addCv.wantedJobPh')"
-          :maxlength="75"
-          :maxlhidden="true"
-        />
-        <div class="w586">
-          <div class="sal-wrap">
+          <div class="w586">
             <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
-              <p class="startP">{{$t('addJob.salaryLabel')}}</p>
+              <!-- <p class="star"> </p> -->
+              <p class="startP">{{$t('addCv.cityCurrent')}}</p>
             </div>
-            <div class="line">
-              <q-input
-                class="salInputsAdaptable salInput1"
-                dense outlined
-                bg-color="white" color="deep-purple-10"
-                v-model="cv.salary_min"
-                ref="salary_min"
-                :placeholder="$t('addJob.salaryMinPH')" :hint="null"
-                :rules="[sal => (sal >= 0 && String(sal).length < 6 && sal < 100000) || $t('addJob.salaryValidationRange')]"
+            <q-select
+              :value="cv.city_current"
+              @input="cityUpd"
+              dense
+              outlined
+              bg-color="white" color="deep-purple-10"
+              use-input
+              input-debounce="0"
+              fill-input
+              hide-selected
+              ref="city_current"
+              :options="cityOptions"
+              @filter="filterFn"
+              :hint="null"
+              :placeholder="$t('addCv.cityph')"
+              @keyup="addNewCity"
+              dropdown-icon="none"
+              class="dropdown-padding-adjust"
+              :rules="[
+                val => val.length < 71 || $t('addCv.cityValidationLength')
+              ]"
+              :lazy-rules="lazyRulesAll"
+            />
+          </div>
+          <div class="w586">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addCv.cityBased')}}</p>
+            </div>
+            <q-select
+              :value="cv.city_based"
+              @input="cityBasedUpd"
+              dense
+              outlined
+              bg-color="white" color="deep-purple-10"
+              use-input
+              input-debounce="0"
+              fill-input
+              hide-selected
+              ref="city_based"
+              :options="cityOptions"
+              @filter="filterFn"
+              :hint="null"
+              :placeholder="$t('addCv.cityph')"
+              @keyup="addNewBasedCity"
+              dropdown-icon="none"
+              class="dropdown-padding-adjust"
+              :rules="[
+                val => val.length < 71 || $t('addCv.cityValidationLength')
+              ]"
+              :lazy-rules="lazyRulesAll"
+            />
+          </div>
+
+          <hr style="margin: 10px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+
+          <div class="w586">
+            <p class="startP" style="font-weight: 600; margin-bottom: 20px;">{{$t('addCv.driversLabel')}}</p>
+            <label
+              style="
+                display: flex; align-items: center; margin: 12px 0;
+                cursor: pointer; color: var(--color1); font-size: 14px;
+                user-select: none; font-weight: 500;
+              "
+              v-for="(option, key, oidx) in cv.driver"
+              :key="key"
+            >
+              <q-checkbox
+                dense
+                class="salcb1"
+                color="red-10"
+                v-model="cv.driver[key]"
               />
-              <q-input
-                class="salInputsAdaptable"
-                dense outlined
-                bg-color="white" color="deep-purple-10"
-                v-model="cv.salary_max"
-                ref="salary_max"
-                :placeholder="$t('addJob.salaryMaxPH')" :hint="null"
-                :rules="[
-                  sal => (sal >= 0 && String(sal).length < 6 && sal < 100000) || $t('addJob.salaryValidationRange'),
-                ]"
-              />
+              {{ driverOptions[oidx].label }}
+            </label>
+          </div>
+          <BoolField
+            :label="$t('addCv.carLabel')"
+            v-model="cv.car"
+            :labels="[$t('addCv.yes'), $t('addCv.no')]"
+          />
+        </div>
+        <div class="cvpage__wrapper" :key="2" style="display: flex; flex-direction: column; align-items: center">
+          <div class="w586">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addCv.birthDate')}}</p>
+            </div>
+            <q-input
+              dense
+              outlined
+              bg-color="white" color="deep-purple-10"
+              style="width: 100%;"
+              v-model="cv.birth"
+              mask="date"
+              :rules="['date']"
+              :placeholder="$t('addCv.birthDatePh')"
+              :lazy-rules="lazyRulesAll"
+            >
+              <template v-slot:append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                    <q-date
+                      v-model="cv.birth"
+                    >
+                      <div class="row items-center justify-end">
+                        <q-btn v-close-popup label="Close" color="primary" flat />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </div>
+          <BoolField
+            :label="$t('addCv.sex')"
+            v-model="cv.sex"
+            :labels="[$t('addCv.sexM'), $t('addCv.sexF')]"
+            :vals="['m', 'f']"
+          />
+          <BoolField
+            :label="$t('addCv.family')"
+            v-model="cv.family"
+            :labels="[$t('addCv.familyYes'), $t('addCv.familyNo')]"
+          />
+          
+          <hr style="margin: 20px 0 10px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+
+          <BoolField
+            :label="$t('addCv.exp')"
+            v-model="cv.exp"
+            :labels="[$t('addCv.expYes'), $t('addCv.expNo')]"
+          />
+
+          <hr style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+
+          <TextField
+            v-model="cv.edu" ref="edu"
+            :label="$t('addCv.edu')" :ph="$t('addCv.eduph')"
+            :maxlength="30"
+            :maxlhidden="true"
+          />
+
+          <hr style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+
+          <div class="w586">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addJob.langsLabel')}}</p>
+            </div>
+            <q-select
+              multiple
+              use-chips
+              dense
+              outlined
+              bg-color="white" color="deep-purple-10"
+              dropdown-icon="none"
+              class="dropdown-padding-adjust lang-select"
+              max-values="3"
+              v-model="cv.langs"
+              :options="$t('addJob.langOptions')"
+              :hint="null"
+            />
+          </div>
+          <div class="w586">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addCv.skills')}}</p>
+            </div>
+            <q-input
+              v-model="cv.skills"
+              class="addCv__desc-inp"
+              outlined dense bg-color="white" color="deep-purple-10"
+              type="textarea"
+              counter maxlength="500"
+              :placeholder="$t('addCv.desc')"
+            />
+          </div>
+
+          <hr style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+
+          <TextField
+            v-model="cv.wanted_job" ref="wanted_job"
+            :label="$t('addCv.wantedJob')" :ph="$t('addCv.wantedJobPh')"
+            :rules="[
+              val => (lazyRulesAll || !!val) || $t('addCv.NameValidationRequired'),
+              val => (lazyRulesAll || val.length > 1) || $t('addCv.nameValidationMin'),
+              val => val.length < 76 || $t('addCv.nameValidationMax')
+            ]"
+            :reqd="true" :lazy="lazyRulesAll"
+            :maxlength="75" :maxlhidden="true"
+          />
+          <div class="w586">
+            <div class="sal-wrap">
+              <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+                <p class="startP">{{$t('addJob.salaryLabel')}}</p>
+              </div>
+              <div class="line">
+                <q-input
+                  class="salInputsAdaptable salInput1"
+                  dense outlined
+                  bg-color="white" color="deep-purple-10"
+                  v-model="cv.salary_min"
+                  ref="salary_min"
+                  :placeholder="$t('addJob.salaryMinPH')" :hint="null"
+                  :rules="[sal => (sal >= 0 && String(sal).length < 6 && sal < 100000) || $t('addJob.salaryValidationRange')]"
+                />
+                <q-input
+                  class="salInputsAdaptable"
+                  dense outlined
+                  bg-color="white" color="deep-purple-10"
+                  v-model="cv.salary_max"
+                  ref="salary_max"
+                  :placeholder="$t('addJob.salaryMaxPH')" :hint="null"
+                  :rules="[
+                    sal => (sal >= 0 && String(sal).length < 6 && sal < 100000) || $t('addJob.salaryValidationRange'),
+                  ]"
+                />
+                
+              </div>
               
             </div>
-            
           </div>
         </div>
-      </div>
 
-      <q-btn
-        class="headerBtns1 weight600" 
-        style="align-self: center; background-color: var(--violet-btn-color); color: white; font-size: 12px; font-height: 15px; padding: 0 40px;"
-        :label="isNew ? $t('addCv.labelNew') : $t('addCv.labelEdit')"
-        @click="tryAdd"
-      />
+        <q-btn
+          class="headerBtns1 weight600" 
+          style="align-self: center; background-color: var(--violet-btn-color); color: white; font-size: 12px; font-height: 15px; padding: 0 26px; margin-top: 20px;"
+          :label="isNew ? $t('addCv.labelNew') : $t('addCv.labelEdit')"
+          @click="tryAdd"
+        />
       </div>
       <div v-else-if="user.role == 'guestUnau' || user.role == 'guest'" :key="3" class="cvpage__wrapper">
         {{$t('addJob.unauthorized')}}
@@ -329,10 +338,12 @@ export default {
   components: { TextField, BoolField },
   computed: {
     user () { return { role: this.$store.state.user.role } },
-    isNew () { return this.$route.params.action === 'new' }
+    isNew () { return !this.$store.state.user.cv_id }
   },
   data () {
     return {
+      loading: false,
+      preloaded: false,
       cvInit: {
         photo: null,
         name: '',
@@ -353,9 +364,9 @@ export default {
         birth: null, //date
         sex: null, //'f' / 'm'
         family: null, // boolean
-        exp: false, // bool
-        langs: [],
+        exp: null, // bool
         edu: '',
+        langs: [],
         skills: '',
         wanted_job: '',
         salary_min: null,
@@ -411,17 +422,43 @@ export default {
       scheduleOptions: this.scheduleList,
     }
   },
-
   activated () {
     if (this.isNew) {
       this.$set(this, 'cv', this.cvInit)
       this.lazyRulesAll = true
     } else {
-      this.$set(this, 'cv', this.cvInit) // redo this - always try to load external
-      this.lazyRulesAll = true
+      this.fetchData()
+      // this.$set(this, 'cv', this.cvInit) // redo this - always try to load external
+      // this.lazyRulesAll = true
     }
+    this.preloaded = false //trigger only once if its ssred
   },
   methods:{
+    fetchData () {
+      //do this for ssr case??? or maybe there is no need to hydrate that???
+      this.loading = true
+      this.$axios
+        .get('/cv', null, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+        .then(resp => {
+          const respd = resp.data
+          const driverDict = ['a', 'b', 'c', 'd']
+          respd.driver = respd.driver.split('').reduce((acc, cur, didx) => {
+            acc[driverDict[didx]] = !!Number(cur)
+            return acc
+          }, {})
+          this.$set(this, 'cv', respd)
+          this.lazyRulesAll = true
+          this.loading = false
+        })
+        .catch(err => {
+          this.$q.notify({
+            message: this.$t('addCv.cvInitialDataError') + ' ' + err,
+            color: 'red'
+          })
+          this.loading = false
+          this.$router.push('/subprofile')
+        })
+    },
     addNewCity (e) {
       this.cityUpd(e.target.value)
     },
@@ -442,114 +479,72 @@ export default {
     
     tryAdd() {
       //TODO: front validation after back validation is done
+      
       this.lazyRulesAll = false
       let scrollPos
-      //title
-      // this.$refs.name.$refs.qinput.validate()
-      // if (this.$refs.name.$refs.qinput.hasError) {
-      //   scrollPos = 130
-      // }
-      // //salary
-      // if (!this.salaryOn) {
-      //   if ((this.job.salary_min > 0) || (this.job.salary_max > 0))
-      //     this.salaryValidated = true
-      //   else
-      //     this.salaryValidated = false
+      //name
+      this.$refs.name.$refs.qinput.validate()
+      if (this.$refs.name.$refs.qinput.hasError) {
+        scrollPos = 130
+      }
+      this.$refs.surname.$refs.qinput.validate()
+      if (this.$refs.surname.$refs.qinput.hasError) {
+        scrollPos = 150
+      }
+      
+      this.$refs.tel.$refs.qinput.validate()
+      if (this.$refs.tel.$refs.qinput.hasError) {
+        scrollPos = 170
+      }
+      
+      this.$refs.tel_home.$refs.qinput.validate()
+      if (this.$refs.tel_home.$refs.qinput.hasError) {
+        scrollPos = 190
+      }
+      this.$refs.wanted_job.$refs.qinput.validate()
+      if (this.$refs.wanted_job.$refs.qinput.hasError) {
+        scrollPos = 1700
+      }
+      this.$refs.salary_min.validate()
+      if (this.$refs.salary_min.hasError) {
+        scrollPos = 1800
+      }
+      this.$refs.salary_max.validate()
+      if (this.$refs.salary_max.hasError) {
+        scrollPos = 1800
+      }
 
-      //   this.$refs.salary_min.validate()
-      //   this.$refs.salary_max.validate()
-        
-      //   if (this.$refs.salary_min.hasError || this.$refs.salary_max.hasError) {
-      //     if (!scrollPos) scrollPos = 150
-      //   }
-      // }
-      // //contacts
-      // if ((this.job.contact_mail && this.job.contact_mail.length > 0) || (this.job.contact_tel && this.job.contact_tel.length > 0))
-      //   this.contactsValidated = true
-      // else
-      //   this.contactsValidated = false
-      // this.$refs.contact_mail.validate()
-      // this.$refs.contact_tel.validate()
-      // if (this.$refs.contact_mail.hasError || this.$refs.contact_tel.hasError || this.contactsValidated == false) {
-      //   if (!scrollPos) scrollPos = 160
-      // }
-      // //city
-      // this.$refs.city.validate()
-      // if (this.$refs.city.hasError) {
-      //   scrollPos = 190
-      // }
-      // //description
-      // if (this.job.description.length > 3000) {
-      //   this.descError = this.$t('addJob.descValidation3000')
-      //   scrollPos = 340
-      // }
-      // //age
-      // this.$refs.age1.validate()
-      // this.$refs.age2.validate()
-      // if (this.$refs.age1.hasError || this.$refs.age2.hasError) {
-      //   scrollPos = 520
-      //   this.$refs.exp1.show()
-      // }
-      // //worktime
-      // this.$refs.worktime1.validate()
-      // this.$refs.worktime2.validate()
-      // if (this.$refs.worktime1.hasError || this.$refs.worktime2.hasError) {
-      //   scrollPos = 580
-      //   this.$refs.exp1.show()
-      // }
-      // //edu
-      // this.$refs.edu.validate()
-      // if (this.$refs.edu.hasError) {
-      //   scrollPos = 620
-      //   this.$refs.exp1.show()
-      // }
       if (scrollPos)
         this.$emit('scrollTo', scrollPos)
       else {
-        // if (this.props.newJobsPageType == 'new') this.addOneJob()
-        // else this.editJobSend()
-
-        //1 route for cre and edit
         this.sendCVData()
       }
     },
-    // editJobSend() {//Ok
-    //   let j = Object.assign({}, this.job)
-    //   if (!this.salaryOn) {
-    //     if (Number(j.salary_min) > Number(j.salary_max)) j.salary_max = j.salary_min
-    //   } else j.salary_min = '', j.salary_max = ''
-    //   j.currency = j.currency.value
-    //   j.experience = j.experience.value
-    //   j.jtype = j.jtype.value
-    //   j.jcategory = j.jcategory.value
-    //   j.description = j.description.split("\t").join("&emsp;")
-    //   if (j.title != '' && j.title.length > 1) {
-    //     this.$axios
-    //       .post('/updateJob', j, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
-    //       .then(response => {
-    //         if (response.data && response.data.result == 'OK') {
-    //           this.returned.title = response.data.title
-    //           this.returned.job_id = response.data.job_id
-    //           this.$store.dispatch('setAJSentState', 'goodEdited')
-    //           // console.log('cp editJob: OK')
-    //         } else {this.$store.dispatch('setAJSentState', 'fail'); console.log('trespasser')}
-            
-    //       })
-    //   } else console.log('NO TITLE in edit')
-    // },
     sendCVData() {
       this.$axios
         .post('/cv', this.cv, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
         .then(response => {
-          if (response.data && response.data.result == 'OK') {
-            this.returned.title = response.data.title
-            this.returned.job_id = response.data.job_id
-            this.$store.dispatch('setAJSentState', 'goodNew')
+          if (response.data && response.data.result === 'OK') {
+            // this.returned.title = response.data.title
+            // this.returned.job_id = response.data.job_id
+            if (response.data.new_cv_id) {
+              this.$store.commit('setCvId', response.data.new_cv_id)
+            }
+
             this.resetFields()
+            this.$q.notify({
+              message: this.$t('addCv.cvSaved'),
+              color: 'green'
+            })
+            //TODO: redirect to detail/preview screen
+            this.$router.push('/subprofile?tab=cv')
           } else {
-            
             // errors
             console.log('ERROR!', response)
+            this.$q.notify({
+              message: this.$t('addCv.cvSaveValidationError') + ' ' + response.data,
+              color: 'red'
+            })
             
             // if (response.data && response.data == 'error limits reached') {
             //   this.$store.dispatch('setAJSentState', 'limit')
@@ -562,6 +557,10 @@ export default {
         })
         .catch(err => {
           console.log('ERRRRR CATCH', err)
+          this.$q.notify({
+              message: this.$t('addCv.cvSaveValidationError'),
+              color: 'red'
+            })
         })
     },
     isValidMail(mail) {

@@ -4,7 +4,7 @@
       <ProfileNav
         :localRoute="tab"
         @setLocalRoute="setLocalRoute"
-        :localroutes="[{r: 'cv', l: $t('sub.navCV')}, {r: 'sentCVS', l: $t('sub.navSentCVs')}, {r: 'personal', l: $t('sub.navPersonal')}]"
+        :localroutes="[{r: 'cv', l: $t('sub.navCV')}, {r: 'sentcvs', l: $t('sub.navSentCVs')}, {r: 'personal', l: $t('sub.navPersonal')}]"
         :localroutesX="{r: 'settings', l: $t('sub.navSettings')}"
       />
       <q-tab-panels
@@ -41,16 +41,41 @@
             <q-btn style="margin-left: auto;" dense class="headerBtns1" v-if="user.cvurl != null && user.cvurl != ''" color="red-10" :label="$t('sub.deleteCVBtn')" @click="cvdel" />
           </div>
 
-          <q-btn 
+          <div
+            class="cv-controls"
             v-if="user.role === 'subscriber'"
-            class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
-            text-color="white"
-            :label="$t('sub.newCvHint')"
-            rounded
-            to="/cv/new"
-          />
+            style="display: flex; flex-direction: column;"
+          >
+            <q-btn
+              v-if="user.cv_id"
+              class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
+              style="margin-bottom: 8px;"
+              text-color="white"
+              :label="$t('sub.detailCvHint')"
+              rounded
+              :to="'/cvs/' + user.cv_id"
+            />
+            <q-btn
+              class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
+              style="margin-bottom: 8px;"
+              text-color="white"
+              :label="!user.cv_id ? $t('sub.newCvHint') : $t('sub.editCvHint')"
+              rounded
+              to="/cv-editor"
+            />
+            <q-btn 
+              v-if="user.cv_id"
+              class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
+              style="margin-bottom: 8px;"
+              text-color="white"
+              :label="$t('sub.deleteCvHint')"
+              rounded
+              @click="deleteCv"
+            />
+          </div>
+          {{ user.cv_id }}
         </q-tab-panel>
-        <q-tab-panel name="sentCVS">
+        <q-tab-panel name="sentcvs">
           <HitsList
             :cvhitsHistory="cvhitsHistory"
           />
@@ -156,10 +181,26 @@ export default {
     HitsList,
     ProfileNav
   },
+  activated () {
+    if (this.$route.query.tab && ['cv', 'sentcvs', 'personal', 'settings'].includes(this.$route.query.tab)) {
+      this.tab = this.$route.query.tab
+    }
+  },
   deactivated() {
     this.$destroy()
   },
   methods: {
+    deleteCv () {
+      this.$axios
+        .delete('/cv', null, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+        .then(resp => {
+          this.$store.commit('setCvId', null)
+          this.$q.notify('Резюме удалено')
+        })
+        .catch(err => {
+          console.log('cv deletion error', err)
+        })
+    },
     cvDrop(e) {
       if (e.dataTransfer.files.length == 1) {
         let n = e.dataTransfer.files[0].name
@@ -317,7 +358,7 @@ export default {
         this.userdata.surname = this.user.surname
         this.userdata.insearch = this.user.insearch
       } else
-      if (rou == 'sentCVS') {
+      if (rou == 'sentcvs') {
         //do axious shiet to get the listOfSentJobs
         this.getCVHitsHistory()
       }

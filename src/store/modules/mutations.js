@@ -46,6 +46,12 @@ export default {
   setCVUrl(state, cvurl) {
     state.user.cvurl = cvurl
   },
+  setCvId (state, cv_id) {
+    state.user.cv_id = cv_id
+  },
+  preFetchCv (state, cvData) {
+    state.cvData = cvData
+  },
   setFilter(state, {prop, value}) {
     state.jFilters[prop] = value
   },

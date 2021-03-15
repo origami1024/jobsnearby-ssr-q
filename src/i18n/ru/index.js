@@ -41,7 +41,10 @@ export default {
     namePh: 'Василий',
     surnamePh: 'Иванов',
 
-    newCvHint: 'Создать резюме'
+    newCvHint: 'Создать резюме',
+    editCvHint: 'Редактировать резюме',
+    deleteCvHint: 'Удалить резюме',
+    detailCvHint: 'Просмотр резюме'
   },
   upl: {
     header: 'Добавление нескольких вакансий',
@@ -254,7 +257,14 @@ export default {
     wantedJobPh: 'Маркетолог',
     salary: 'Желаемая зарплата',
     from: 'от',
-    to: 'до'
+    to: 'до',
+    eduValidationMax: 'Максимум 30 символов',
+    cvSaved: 'Резюме сохранено',
+    cvSaveValidationError: 'Ошибка валидации на сервере',
+    cvInitialDataError: 'Ошибка получения данных резюме с сервера'
+  },
+  cvList: {
+    cvListLabel: 'Поиск резюме'
   },
   filters: {
     searchHint: 'Поиск по полям название, автор, город, основной текст',
