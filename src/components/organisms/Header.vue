@@ -15,7 +15,7 @@
           </q-tooltip>
         </router-link>
         <q-btn
-          v-if="user.role === 'company'"
+          v-if="user.role === 'company' && $store.state.user.rights && $store.state.user.rights.includes('bauss')"
           class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
           style="margin-right: 20px;"
           text-color="white" 

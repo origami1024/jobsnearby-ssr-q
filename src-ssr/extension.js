@@ -94,6 +94,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.post('/cv', db.cvCreateUpdate)
   app.delete('/cv', db.cvDelete)
   app.get('/cv', db.cvFetchForEdit)
+  app.get('/cv/:id', db.cvGetDetail)
+  app.get('/cv-index', db.cvGetIndex)
 
   //CPSTART
   app.get('/cp.json', adm.adminPanel)
@@ -273,6 +275,32 @@ module.exports.extendApp = function ({ app, ssr }) {
       //   console.log('cvFetchForEdit. addCV', error)
       //   return 'error2'
       // })
+    } else {
+      //empty or not valid auth data
+      req.userData = 'noauth'
+    }
+    next()
+  })
+  app.get('/cvs/:id', async function (req, res, next) {
+    //only auth here
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
+        console.log('getUserAuthByCookies. addCV', error)
+        return 'error1'
+      })
+    } else {
+      //empty or not valid auth data
+      req.userData = 'noauth'
+    }
+    next()
+  })
+  app.get('/cv-list', async function (req, res, next) {
+    //only auth here
+    if (db.authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+      req.userData = await db.getUserAuthByCookies(req.signedCookies.session, req.signedCookies.mail).catch(error => {
+        console.log('getUserAuthByCookies. addCV', error)
+        return 'error1'
+      })
     } else {
       //empty or not valid auth data
       req.userData = 'noauth'

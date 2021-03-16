@@ -47,6 +47,10 @@ const routes = [
     path: '/cv-list',
     component: () => import('src/pages/CVs.vue')
   },
+  {
+    path: '/cvs/:id',
+    component: () => import('src/pages/CVDetail.vue')
+  },
 ]
 
 // Always leave this as last one

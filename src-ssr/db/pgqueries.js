@@ -944,6 +944,88 @@ async function addOneJob (req, res) {
 
   } else {res.send('auth fail')}
 }
+
+async function cvGetDetail(req, res) {
+  const id = parseInt(req.params.id)
+  if (isNaN(id) || id < 0 || String(id).length > 10) {
+    res.status(400).send('Неправильный id')
+    return false
+  }
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+    const que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company' AND rights = 'bauss'`
+    const params1st = [req.signedCookies.session, req.signedCookies.mail]
+
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        res.send('step2')
+        return false
+      }
+      if (!results.rows) {
+        res.send('step3-1')
+        return false
+      } else if (results.rows.length != 1) {
+        res.send('step3-2: ' + results.rows.length)
+        return false
+      }
+
+      console.log('cxzxcz', id)
+      const que2 = `SELECT * FROM "cvs" WHERE id = $1`
+      const params2 = [ id ]
+      pool.query(que2, params2, (err2, res2) => {
+        if (err2) {
+          res.send('step4. Error')
+          return false
+        }
+        if (!res2.rows.length) {
+          res.send('Error, does not exist')
+          return false
+        }
+        res.send(res2.rows[0])
+      })
+
+    })
+
+  } else {res.send('auth fail')}
+}
+
+async function cvGetIndex(req, res) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+    const que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company' AND rights = 'bauss'`
+    const params1st = [req.signedCookies.session, req.signedCookies.mail]
+
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        res.send('step2')
+        return false
+      }
+      if (!results.rows) {
+        res.send('step3-1')
+        return false
+      } else if (results.rows.length != 1) {
+        res.send('step3-2: ' + results.rows.length)
+        return false
+      }
+      const que2 = `SELECT * FROM "cvs" LIMIT 100`
+      pool.query(que2, null, (err2, res2) => {
+        if (err2) {
+          res.send('step4. Error')
+          return false
+        }
+        // const que3 = `SELECT COUNT(*) FROM "cvs"`
+        // pool.query(que3, null, (err3, res3) => {
+        //   if (err3) {
+        //     res.send('step5. Error')
+        //     return false
+        //   }
+          
+        //   res.status(200).json({...results2.rows[0], 'page': page, 'perpage': perpage, rows: results.rows})
+        
+        // })
+        res.send(res2.rows)
+      })
+    })
+  } else {res.send('auth fail')}
+}
 // async function cvFetchForEditSSR(req, res) {
 //   if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
 //     const que1st = `SELECT user_id, email, cv_id FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'`
@@ -2401,7 +2483,7 @@ async function login(req, res) {
     //get hash from db checking if mail exists
     let que = `
       SELECT pwhash, user_id, role, name, surname, 
-      insearch, company, isagency, cvurl, is_active, 
+      insearch, company, isagency, cvurl, is_active, cv_id, rights, 
       block_reason FROM "users" WHERE "email" = $1`
     let params = [mail]
     let userData = await pool.query(que, params).catch(error => {
@@ -2413,7 +2495,6 @@ async function login(req, res) {
       userData = userData.rows[0]
       userData.identity = mail
     }
-    
     if (userData) {
       //check if blockd
       if (userData.is_active == false) {
@@ -2478,7 +2559,7 @@ async function login(req, res) {
 
 async function getUserAuthByCookies(session, mail) {
   let que = `SELECT email AS identity, user_id, role, 
-    name, surname, company, insearch, isagency, cvurl, is_active, cv_id
+    name, surname, company, insearch, isagency, cvurl, is_active, cv_id, rights
     FROM "users" 
     WHERE ("auth_cookie" = $1 AND "email" = $2)`
   let params = [session, mail]
@@ -2644,6 +2725,8 @@ module.exports = {
   cvDelete,
   cvFetchForEdit,
   // cvFetchForEditSSR,
+  cvGetIndex,
+  cvGetDetail,
 
   //SSR
   getJobsUserStatsSSR,

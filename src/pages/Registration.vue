@@ -462,7 +462,7 @@ export default {
               // this.$emit('authed', response.data.slice(1))
               this.$store.dispatch('loginGo', response.data)
               localStorage.setItem('userData',JSON.stringify(response.data))
-              
+              console.log(response.data)
               this.$router.push('/')
               // this.$emit('refresh')
               this.$store.dispatch('refreshjobs', {})

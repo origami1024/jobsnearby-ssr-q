@@ -264,7 +264,14 @@ export default {
     cvInitialDataError: 'Ошибка получения данных резюме с сервера'
   },
   cvList: {
-    cvListLabel: 'Поиск резюме'
+    cvListLabel: 'Поиск резюме',
+    expYes: 'С опытом работы',
+    langs1:'Знание',
+    langs2:'языков',
+    edu: 'Образование'
+  },
+  cvDetail: {
+    goBack: 'К списку'
   },
   filters: {
     searchHint: 'Поиск по полям название, автор, город, основной текст',
