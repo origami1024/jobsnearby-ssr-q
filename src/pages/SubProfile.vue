@@ -44,6 +44,7 @@
           <div
             class="cv-controls"
             v-if="user.role === 'subscriber'"
+            v-show="false"
             style="display: flex; flex-direction: column;"
           >
             <q-btn
@@ -73,7 +74,6 @@
               @click="deleteCv"
             />
           </div>
-          {{ user.cv_id }}
         </q-tab-panel>
         <q-tab-panel name="sentcvs">
           <HitsList

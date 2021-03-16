@@ -1008,7 +1008,7 @@ async function cvGetIndex(req, res) {
       const que2 = `SELECT * FROM "cvs" LIMIT 100`
       pool.query(que2, null, (err2, res2) => {
         if (err2) {
-          res.send('step4. Error')
+          res.send('step4. Error', err2)
           return false
         }
         // const que3 = `SELECT COUNT(*) FROM "cvs"`

@@ -77,8 +77,8 @@
             v-model="cv.tel_home" ref="tel_home"
             :label="$t('addCv.telHome')" :ph="$t('addCv.telph')"
             :rules="[
-              val => val === null || (lazyRulesAll || val.length > 5) || $t('addCv.telValidationMin'),
-              val => val === null || val.length < 21 || $t('addCv.telValidationMax')
+              val => val === null || val === '' || (lazyRulesAll || val.length > 5) || $t('addCv.telValidationMin'),
+              val => val === null || val === '' || val.length < 21 || $t('addCv.telValidationMax')
             ]"
             :lazy="lazyRulesAll"
             :maxlength="20" :maxlhidden="true"
