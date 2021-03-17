@@ -3,18 +3,70 @@
         <div  class="lds-dual-ring"/>
     </div>
     <div class="cv-detail" v-else-if="$store.state.user.role === 'company' && $store.state.user.rights && $store.state.user.rights.includes('bauss')">
+        <p class="pageHeader">{{$t('cvDetail.label')}}</p>
         
-        <p class="pageHeader">{{$t('cvList.cvListLabel')}}</p>
-        
-        <div>
-            <pre>{{ cv }}</pre>
-            <q-btn
-                class="headerBtns1 headerBtnRed addJobMargin550 addJobSpecific"
-                style="margin-right: 20px;"
-                text-color="white" 
-                :label="$t('cvDetail.goBack')"
-                to="/cv-list"
-            />
+        <div class="cv-detail-inner">
+            <!-- <div class="left">
+                <pre>{{ cv }}</pre>
+            </div>
+            <div class="right"></div> -->
+            <div class="block-1">
+                <div class="cvd-header">{{cv.name + ' ' + cv.surname}}</div>
+                <div class="cvd-job">{{cv.wanted_job}}</div>
+                <div class="cvd-salary">
+                    Желаемая зарплата: 
+                    {{ cv.salary_min ? cv.salary_min + '$ - ' : ''}} {{ cv.salary_max ? cv.salary_max + '$' : ''}}
+                </div>
+            </div>
+            <div class="block-2">
+                <img width="auto" style="max-width: 100%; max-height: 188px;" src="/statics/rect68.png" alt="photo">
+            </div>
+            <div class="block-3">
+                <div>
+                    <div class="cvd-block-header">
+                        {{$t('cvDetail.exp')}}
+                    </div>
+                    <div class="cvd-text">
+                        ЭКОНОМИСТ ПАО «МЗ«Буран» Июнь-декабрь 2011 г. Планирование и расчет себестоимости производимой продукции; Анализ и планирование постоянных и переменных затрат; Подготовка периодической отчетности Подготовка и оформление материалов для заключения договоров Ежедневный анализ взаиморасчетов с контрагентами, составление план-графика платежей; МЕРЧЕНДАЙЗЕР PepsiCo Ukraine. ООО «Сандора» Май 2012 г.-сентябрь 2012 г. Выгодное размещение продукции Регулирование ценовой политики Учет и пополнение товарного запаса
+                    </div>
+                </div>
+                <div>
+                    <div class="cvd-block-header">
+                        {{$t('cvDetail.edu')}}
+                    </div>
+                    <div class="cvd-text">
+                        ЭКОНОМИСТ. Донецкий национальный технический университет 2006- 2012 гг ПСИХОЛОГКраснодарский национальный университет 2006- 2012 гг
+                    </div>
+                </div>
+            </div>
+            <div class="block-4">
+                <div>
+                    <div class="cvd-block-header">
+                        {{$t('cvDetail.contacts')}}
+                    </div>
+                    <div class="cvd-text">
+                        ЭКОНОМИСТ. Донецкий национальный технический университет 2006- 2012 гг ПСИХОЛОГКраснодарский национальный университет 2006- 2012 гг
+                    </div>
+                </div>
+            </div>
+            <div class="block-5">
+                <div>
+                    <div class="cvd-block-header">
+                        {{$t('cvDetail.langs')}}
+                    </div>
+                    <div class="cvd-text">
+                        ЭКОНОМИСТ. Донецкий национальный технический университет 2006- 2012 гг ПСИХОЛОГКраснодарский национальный университет 2006- 2012 гг
+                    </div>
+                </div>
+                <div>
+                    <div class="cvd-block-header">
+                        {{$t('cvDetail.skills')}}
+                    </div>
+                    <div class="cvd-text">
+                        ЭКОНОМИСТ. Донецкий национальный технический университет 2006- 2012 гг ПСИХОЛОГКраснодарский национальный университет 2006- 2012 гг
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <p class="pageHeader" style="margin: 40px auto;" v-else>404. Not found</p>
@@ -65,6 +117,51 @@ export default {
   @media screen and (max-width 550px)
     width 100%
     padding 0 20px
+
+.cv-detail-inner
+    background: #FFFFFF;
+    opacity: 0.99;
+    border: 0.5px solid rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 60px 30px 60px 50px
+    display: grid
+    grid-template-columns calc(56% - 30px) calc(44% - 30px)
+    column-gap 60px
+    row-gap 50px
+    grid-template-areas "block-1 block-2" "block-3 block-4" "block-3 block-5"
+    @media screen and (max-width 800px)
+        grid-template-columns 100%
+        row-gap 30px
+        padding 30px 25px
+        grid-template-areas "block-1" "block-2" "block-4" "block-3" "block-5"
+    div
+        background-color gray
+        color #fff
+    .block-1
+        grid-area block-1
+
+    .block-2
+        grid-area block-2
+        display flex
+    .block-3
+        grid-row span 2
+        grid-area block-3
+    .block-4
+        grid-area block-4
+    .block-5
+        grid-area block-5
+
+.cvd-block-header
+    font-family: Montserrat;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+    color: #C00027;
+
+
 
 .lds-dual-ring {
   display: inline-block;
