@@ -261,7 +261,28 @@ export default {
     eduValidationMax: 'Максимум 30 символов',
     cvSaved: 'Резюме сохранено',
     cvSaveValidationError: 'Ошибка валидации на сервере',
-    cvInitialDataError: 'Ошибка получения данных резюме с сервера'
+    cvInitialDataError: 'Ошибка получения данных резюме с сервера',
+    placeph: 'ООО “Киевоблэнерго”',
+    placeLabel: 'Место работы',
+    positionLabel: 'Должность',
+    positionph: 'Менеджер',
+    descLabel: 'Описание должностных обязаностей',
+    periodLabel: 'Период',
+    periodph: 'с год/месяц/число по год/месяц/число',
+    addMoreExp: 'Добавить место работы',
+    addMoreEdu: 'Добавить образование',
+    remove: 'Убрать',
+    eduPlaceLabel: 'Учебное заведение',
+    eduPlaceph: 'Технический университет',
+    fac: 'Факультет',
+    facph: 'Экономики и менеджмента',
+    spec: 'Специализация',
+    specph: 'Менеджмент',
+    yearEnd: 'Год окончания',
+    yearEndph: '2001',
+    eduOptions: ['Среднее', 'Среднее специальное', 'Высшее', 'Бакалавр'],
+    maxExts: 'до 5 пунктов',
+    removePhoto: 'удалить картинку'
   },
   cvList: {
     cvListLabel: 'Поиск резюме',
@@ -276,7 +297,8 @@ export default {
     edu: 'Образование',
     contacts: 'Контактные данные',
     langs: 'Знание языков',
-    skills: 'Навыки'
+    skills: 'Навыки',
+    carSkills: 'Водительское удостоверение категории'
   },
   filters: {
     searchHint: 'Поиск по полям название, автор, город, основной текст',

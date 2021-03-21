@@ -23,7 +23,7 @@
           <div
             class="w586"
             ref="fileInputWrap"
-            style="display: flex; justify-content: space-between;"
+            
           >
             <!-- @drop="picDrop" -->
             <label class="uploaderWrapper" tabindex="0">
@@ -32,15 +32,27 @@
                 ref="fileInputX"
                 type="file"
                 style="display:none" accept=".gif,.jpg,.jpeg,.png,.webp,.svg"
+                @change="uploadPhoto"
               >
               <!-- @change="setCompanyLogo($refs.fileInputX.files)" -->
               <div
                 class="logo-placeholder"
                 :style="{
-                  backgroundImage : `url('${ cv.photo ? cv.photo : 'statics/subscriber-logo-ph.svg'}')`
+                  backgroundImage : `url('${ photo ?  ('/uploads/cvpics/' + uid + photo) : 'statics/subscriber-logo-ph.svg'}')`
                 }"
               />
             </label>
+            <div
+              v-if="photo"
+              style="text-align: right;"
+            >
+              <q-btn
+                class="headerBtns1 weight600 text-white"
+                @click="removePhoto"
+              >
+                {{$t('addCv.removePhoto')}}
+              </q-btn>
+            </div>
           </div>
 
           <TextField
@@ -224,16 +236,189 @@
             :label="$t('addCv.exp')"
             v-model="cv.exp"
             :labels="[$t('addCv.expYes'), $t('addCv.expNo')]"
+            @input="expSwitch"
           />
 
-          <hr style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+          <hr
+            style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"
+          />
 
           <TextField
+            v-if="!cv.exp"
             v-model="cv.edu" ref="edu"
             :label="$t('addCv.edu')" :ph="$t('addCv.eduph')"
             :maxlength="30"
             :maxlhidden="true"
           />
+          
+          <div v-if="cv.exp && cvExt" style="width: calc(100% - 160px);">
+            <div
+              v-for="(exp, eidx) in cvExt.exps"
+              :key="'exp_' + eidx"
+            >
+              <TextField
+                v-model="cvExt.exps[eidx].place"
+                :label="$t('addCv.placeLabel')" :ph="$t('addCv.placeph')"
+                :maxlength="75" :maxlhidden="true"
+              />
+              <TextField
+                v-model="cvExt.exps[eidx].position"
+                :label="$t('addCv.positionLabel')" :ph="$t('addCv.positionph')"
+                :maxlength="75" :maxlhidden="true"
+              />
+
+              <!-- datepicker -->
+              <div class="w586" style="margin-bottom: 20px;">
+                <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+                  <p class="startP">{{$t('addCv.periodLabel')}}</p>
+                </div>
+                <q-input
+                  dense
+                  outlined
+                  bg-color="white" color="deep-purple-10"
+                  style="width: 100%;"
+                  :value="cvExt.exps[eidx].range
+                    ? (cvExt.exps[eidx].range.from
+                      ? 'с ' + cvExt.exps[eidx].range.from + ' '
+                      : '') + (cvExt.exps[eidx].range.to
+                        ? 'по ' + cvExt.exps[eidx].range.to
+                        : '')
+                    : ''
+                  "
+                  :placeholder="$t('addCv.periodph')"
+                  :lazy-rules="lazyRulesAll"
+                >
+                <!-- v-model="cvExt.exps[eidx].range" -->
+                  <!-- mask="date"
+                  :rules="['date']" -->
+                  <template v-slot:append>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                        <q-date
+                          v-model="cvExt.exps[eidx].range"
+                          range
+                        >
+                          <div class="row items-center justify-end">
+                            <q-btn v-close-popup label="Close" color="primary" flat />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
+
+              <div class="w586">
+                <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+                  <p class="startP">{{$t('addCv.descLabel')}}</p>
+                </div>
+                <q-input
+                  v-model="cvExt.exps[eidx].desc"
+                  class="addCv__desc-inp"
+                  outlined dense bg-color="white" color="deep-purple-10"
+                  type="textarea"
+                  counter maxlength="800"
+                  :placeholder="$t('addCv.desc')"
+                />
+              </div>
+              <div style="text-align: right;">
+                <q-btn
+                  class="headerBtns1 weight600 text-white"
+                  @click="cvExt.exps.splice(eidx, 1)"
+                >
+                  {{$t('addCv.remove')}}
+                </q-btn>
+              </div>
+            </div>
+            <div v-if="cv.exp" style="text-align: right;">
+              <div v-if="!cvExt.exps || !cvExt.exps.length" class="addJoblabel" style="display: flex; margin-bottom:8px;">
+                <p class="startP">{{$t('addCv.placeLabel')}}</p>
+              </div>
+              <q-btn
+                :disabled="cvExt.exps.length > 4"
+                @click="addOneExp"
+                class="headerBtns1 weight600 text-white"
+                style="margin-top: 8px;"
+              >
+                {{$t('addCv.addMoreExp')}}
+              </q-btn>
+              <div v-if="cvExt.exps.length > 4" style="margin: 6px 0 12px;">
+                {{ $t('addCv.maxExts') }}
+              </div>
+            </div>
+
+            <hr style="margin: 20px 0 30px -90px; width: calc(100% + 180px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+
+            <div
+              v-for="(edu, uidx) in cvExt.edus"
+              :key="'edu_' + uidx"
+            >
+              <div class="w586">
+                <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+                  <p class="startP">{{$t('addCv.edu')}}</p>
+                </div>
+                <q-select
+                  dense
+                  outlined
+                  use-input
+                  fill-input
+                  hide-selected
+                  bg-color="white" color="deep-purple-10"
+                  dropdown-icon="none"
+                  :maxlength="75"
+                  class="dropdown-padding-adjust lang-select"
+                  :placeholder="$t('addCv.eduph')"
+                  v-model="cvExt.edus[uidx].general"
+                  :options="$t('addCv.eduOptions')"
+                  :hint="null"
+                />
+              </div>
+              <TextField
+                v-model="cvExt.edus[uidx].place"
+                :label="$t('addCv.eduPlaceLabel')" :ph="$t('addCv.eduPlaceph')"
+                :maxlength="75" :maxlhidden="true"
+              />
+              <TextField
+                v-model="cvExt.edus[uidx].fac"
+                :label="$t('addCv.fac')" :ph="$t('addCv.facph')"
+                :maxlength="75" :maxlhidden="true"
+              />
+              <TextField
+                v-model="cvExt.edus[uidx].spec"
+                :label="$t('addCv.spec')" :ph="$t('addCv.specph')"
+                :maxlength="75" :maxlhidden="true"
+              />
+              <TextField
+                v-model="cvExt.edus[uidx].year"
+                :label="$t('addCv.yearEnd')" :ph="$t('addCv.yearEndph')"
+                :maxlength="20" :maxlhidden="true"
+              />
+              <div style="text-align: right;">
+                <q-btn
+                  class="headerBtns1 weight600 text-white"
+                  @click="cvExt.edus.splice(uidx, 1)"
+                >
+                  {{$t('addCv.remove')}}
+                </q-btn>
+              </div>
+            </div>
+            <div v-if="cv.exp" style="text-align: right;">
+              <div v-if="!cvExt.edus || !cvExt.edus.length" class="addJoblabel" style="display: flex; margin-bottom:8px;">
+                <p class="startP">{{$t('addCv.edu')}}</p>
+              </div>
+              <q-btn
+                :disabled="cvExt.edus.length > 4"
+                @click="addOneEdu"
+                class="headerBtns1 weight600 text-white"
+                style="margin-top: 8px;"
+              >
+                {{$t('addCv.addMoreEdu')}}
+              </q-btn>
+              <div v-if="cvExt.edus.length > 4" style="margin: 6px 0 12px;">
+                {{ $t('addCv.maxExts') }}
+              </div>
+            </div>
+          </div>
 
           <hr style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
 
@@ -316,7 +501,7 @@
         </div>
 
         <q-btn
-          class="headerBtns1 weight600" 
+          class="headerBtns1 weight600"
           style="align-self: center; background-color: var(--violet-btn-color); color: white; font-size: 12px; font-height: 15px; padding: 0 26px; margin-top: 20px;"
           :label="isNew ? $t('addCv.labelNew') : $t('addCv.labelEdit')"
           @click="tryAdd"
@@ -337,6 +522,8 @@ export default {
   name: 'AddCv',
   components: { TextField, BoolField },
   computed: {
+    photo () { return this.$store.state.user.logo_url },
+    uid () { return this.$store.state.user.user_id },
     user () { return { role: this.$store.state.user.role } },
     isNew () { return !this.$store.state.user.cv_id }
   },
@@ -345,7 +532,6 @@ export default {
       loading: false,
       preloaded: false,
       cvInit: {
-        photo: null,
         name: '',
         surname: '',
         tel: '',
@@ -373,6 +559,25 @@ export default {
         salary_max: null
       },
       cv: {},
+      // photo: null,
+      expBlueprint: {
+        place: '',
+        position: '',
+        range: null,
+        desc: ''
+      },
+      eduBlueprint: {
+        general: null,
+        place: '',
+        fac: '',
+        spec: '',
+        year: null
+      },
+      cvExt: null,
+      // cvExt: { // extended params - exp and edu
+      //   exps: [],
+      //   edus: []
+      // },
 
       driverOptions: [
         {
@@ -434,6 +639,98 @@ export default {
     this.preloaded = false //trigger only once if its ssred
   },
   methods:{
+    removePhoto () {
+      this.$store.commit('setSubscriberPhoto', null)
+      this.$axios
+        .delete('/cvphoto.json', null, {
+          headers: {'Content-Type': 'multipart/form-data'}
+        })
+    },
+    uploadPhoto ($evt) {
+      console.log('arf', $evt.target)
+      const files = this.$refs.fileInputX.files
+      if (files && files[0]) {
+        if (files[0].size < 409601) {
+          const url1 = '/cvphoto.json'
+          var formData = new FormData()
+          formData.append("photo", files[0])
+          this.$axios
+            .post(url1, formData, {
+              headers: {'Content-Type': 'multipart/form-data'}
+            })
+            .then(resp => {
+              if (resp.data && resp.data.success === true && resp.data.link) {
+                this.logo_upload_error = null
+                // this.$store.dispatch('caboutPropUpd',{prop: 'logo_url', value: resp.data.link})
+                //TODO: show it on the form
+                //TODO: backend stuff
+                // this.photo = resp.data.link
+                this.$store.commit('setSubscriberPhoto', resp.data.link)
+                this.$q.notify(this.$t('entProfile.picUploaded'))
+              
+              } else {
+                if (resp.data.msg) {
+                  if (resp.data.msg === 'file size error') {
+                    this.photo = null
+                    this.logo_upload_error = this.$t('entProfile.picTooBig')
+                    this.$q.notify(this.$t('entProfile.picTooBig'))
+                  } else if (resp.data.msg === 'file ext error') {
+                    this.photo = null
+                    this.logo_upload_error = this.$t('entProfile.picWrongExt')
+                    this.$q.notify(this.$t('entProfile.picWrongExt')) 
+                  } else {
+                    this.photo = null
+                    this.$q.notify(resp.data.msg) 
+                  }
+                }
+              }
+            })
+            .catch(err => this.$q.notify(err))
+        } else {
+          this.$refs.fileInputX.value = ''
+          this.logo_upload_error = this.$t('entProfile.picTooBig')
+          this.$q.notify(this.$t('entProfile.picTooBig'))
+        }
+      } else {
+        console.log('file change no file')
+      }
+    },
+    addOneEdu () {
+      console.log('aaaa', this.cvExt)
+      if (this.cvExt) {
+        if (!this.cvExt.edus) {
+          this.$set(this.cvExt, 'edus', [])
+        }
+        this.$set(this.cvExt, 'edus', this.cvExt.edus.concat(
+          Object.assign({}, this.eduBlueprint)
+        ))
+      }
+    },
+    addOneExp () {
+      if (this.cvExt && this.cvExt.exps) {
+        this.$set(this.cvExt, 'exps', this.cvExt.exps.concat(
+          Object.assign({}, this.expBlueprint)
+        ))
+      }
+    },
+    expSwitch () {
+      // this.cv.exp
+      if (!this.cv.exp) {
+        this.$set(this, 'cvExt', null)
+        // this.cvExt = null
+      } else {
+        this.$set(this, 'cvExt', {
+          exps: [ Object.assign({}, this.expBlueprint) ],
+          edus: [ Object.assign({}, this.eduBlueprint) ]
+        })
+        // this.cvExt = {
+        //   exps: [ Object.assign({}, this.expBlueprint) ],
+        //   edus: [ Object.assign({}, this.eduBlueprint) ]
+        // }
+      }
+      console.log(this.cv.exp)
+      console.log(this.cvExt)
+    },
     fetchData () {
       //do this for ssr case??? or maybe there is no need to hydrate that???
       this.loading = true
@@ -446,7 +743,24 @@ export default {
             acc[driverDict[didx]] = !!Number(cur)
             return acc
           }, {})
+          if (respd.city_current === null) respd.city_current = ''
+          if (respd.city_based === null) respd.city_based = ''
+          
+          // if (this.$store.state && this.$store.state.user) {
+          //   this.photo = this.$store.state.user.logo_url || null
+          // }
+
+          if (respd.cvExt) {
+            if (respd.cvExt.exps && respd.cvExt.exps.length) {
+              respd.cvExt.exps.forEach(exp => {
+                exp.range = {from: exp.start ? exp.start.substring(0,10) : null, to: exp.end ? exp.end.substring(0,10) : null}
+              })
+            }
+            this.$set(this, 'cvExt', respd.cvExt)
+            delete respd.cvExt
+          }
           this.$set(this, 'cv', respd)
+          
           this.lazyRulesAll = true
           this.loading = false
         })
@@ -522,13 +836,13 @@ export default {
     },
     sendCVData() {
       this.$axios
-        .post('/cv', this.cv, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+        .post('/cv', { ...this.cv, cvExt: this.cvExt }, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
         .then(response => {
           if (response.data && response.data.result === 'OK') {
             // this.returned.title = response.data.title
             // this.returned.job_id = response.data.job_id
-            if (response.data.new_cv_id) {
-              this.$store.commit('setCvId', response.data.new_cv_id)
+            if (response.data.cv_id) {
+              this.$store.commit('setCvId', response.data.cv_id)
             }
 
             this.resetFields()

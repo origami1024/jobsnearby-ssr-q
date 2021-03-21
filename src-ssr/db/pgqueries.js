@@ -952,7 +952,7 @@ async function cvGetDetail(req, res) {
     return false
   }
   if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
-    const que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company' AND rights = 'bauss'`
+    const que1st = `SELECT user_id, email, role, rights, cv_id FROM "users" WHERE auth_cookie = $1 AND email = $2`
     const params1st = [req.signedCookies.session, req.signedCookies.mail]
 
     pool.query(que1st, params1st, (error, results) => {
@@ -968,7 +968,14 @@ async function cvGetDetail(req, res) {
         return false
       }
 
-      console.log('cxzxcz', id)
+      const role = results.rows[0].role
+      const rights = results.rows[0].rights
+      const cv_id = results.rows[0].cv_id
+      if (!(role === 'company' && rights === 'bauss') && !(role === 'subscriber' && cv_id && cv_id == id)) {
+        res.send('Step3-3. Authorization problems. ' + role + ' ' + cv_id)
+        return false
+      }
+
       const que2 = `SELECT * FROM "cvs" WHERE id = $1`
       const params2 = [ id ]
       pool.query(que2, params2, (err2, res2) => {
@@ -1090,13 +1097,161 @@ async function cvFetchForEdit(req, res) {
           return false
         }
 
-        res.send(results2.rows[0])
+        const que3 = `SELECT * FROM "cv_exps" WHERE cv_id = $1`
+        
+        pool.query(que3, params2, (error3, results3) => {
+          if (error3) {
+            res.status(400).send('error33')
+            return false
+          }
+
+          const que4 = `SELECT * FROM "cv_edus" WHERE cv_id = $1`
+          
+          pool.query(que4, params2, (error4, results4) => {
+            if (error4) {
+              res.status(400).send('error44')
+              return false
+            }
+
+            if (results3.rows && results3.rows.length) {
+              results3.rows.forEach(row => {
+                delete row.cv_id
+              })
+            }
+
+            if (results4.rows && results4.rows.length) {
+              results4.rows.forEach(row => {
+                delete row.cv_id
+              })
+            }
+            results2.rows[0].cvExt = {
+              exps: results3.rows,
+              edus: results4.rows
+            }
+
+            // console.log('cp 1220', results2.rows[0])
+            res.send(results2.rows[0])
+
+          })
+
+        })
 
       })
 
     })
 
   } else res.send('Step 1. Auth fail')
+}
+
+async function cvPhotoDelete (req, res) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+    let que1st = `SELECT user_id, logo_url, role FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'`
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        res.send({success: false, msg: 'step2 err'})
+        console.log('updateOneCvPic Error: ', error)
+        return false
+      }
+      if (results.rows.length != 1 || results.rows[0].role != 'subscriber') {
+        res.send({success: false, msg: 'step3 err'})
+        return false
+      }
+
+      let uid = results.rows[0].user_id
+      let logo_url = results.rows[0].logo_url
+
+      let queDel = 'UPDATE users SET logo_url = $1 WHERE user_id = $2'
+      let paramsDel = [null, uid]
+      pool.query(queDel, paramsDel, (error2, results2) => {
+        if (error2) {
+          console.log('update cv photo, err2: ', error2)
+          res.send({success: false, error: error2})
+          return false
+        }
+
+        let ext = logo_url.split('?')[0]
+        let dir = './www/uploads/cvpics'
+
+        fs.unlink(dir + '/' + uid + ext,  err => 0)
+
+        res.send({success: true})
+      })
+    })
+  } else res.send({success: false, msg: 'auth error'})
+}
+
+async function updateOneCvPic (req, res) {
+  if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
+    let que1st = `SELECT user_id, logo_url, role FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'`
+    let params1st = [req.signedCookies.session, req.signedCookies.mail]
+    pool.query(que1st, params1st, (error, results) => {
+      if (error) {
+        res.send({success: false, msg: 'step2 err'})
+        console.log('updateOneCvPic Error: ', error)
+        return false
+      }
+      if (results.rows.length != 1 || results.rows[0].role != 'subscriber') {
+        res.send({success: false, msg: 'step3 err'})
+        return false
+      }
+
+      let uid = results.rows[0].user_id
+      let image = req.file
+      if (image.size < 409601) {
+        let ext = null
+        let path_part1 = 'uploads/cvpics/' + uid
+        let dir = './www/uploads/cvpics'
+
+        fs.unlink(dir + '/' + uid + '.png',  err => 0)
+        fs.unlink(dir + '/' + uid + '.jpg',  err => 1)
+        fs.unlink(dir + '/' + uid + '.gif',  err => 2)
+        fs.unlink(dir + '/' + uid + '.webp', err => 3)
+
+        if (image.mimetype == 'image/png') ext = '.png'
+        else if (image.mimetype == 'image/jpeg') ext = '.jpg'
+        else if (image.mimetype == 'image/gif') ext = '.gif'
+        else if (image.mimetype == 'image/webp') ext = '.webp'
+
+        if (ext !== null) {
+          // let photo_url = path_part1 + ext + '?rand=' + Date.now()
+          let photo_url = ext + '?rand=' + Date.now()
+          let fname = dir + '/' + uid + ext
+          if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+          }
+          fs.writeFile(fname, image.buffer, "binary", function(err) {
+            if(err) {
+              console.log(err);
+            }
+          })
+          let que2nd = `
+            UPDATE "users"
+            SET "logo_url" = $1
+            WHERE user_id = $2
+          `
+          let params2nd = [photo_url, uid]
+
+          pool.query(que2nd, params2nd, (error2, results2) => {
+            if (error2) {
+              console.log('update cv photo, err2: ', error2)
+              res.send({success: false, msg: 'step4 err'})
+              return false
+            }
+            res.send({success: true, link: photo_url})
+          })
+
+        } else {
+          res.send({success: false, msg: 'file ext error'})
+          return false
+        }
+      } else {
+        res.send({success: false, msg: 'file size error'})
+        return false
+      }
+    })
+
+  } else res.send({success: false, msg: 'auth error'})
 }
 
 async function cvDelete(req, res) {
@@ -1122,9 +1277,11 @@ async function cvDelete(req, res) {
         res.send('step4: cv already deleted')
         return false
       }
-      const que21 = `UPDATE "users" SET cv_id = $1 WHERE user_id = $2`
+      console.log('DELETION! CP1')
+      const que21 = 'UPDATE "users" SET cv_id = $1, logo_url = $3 WHERE user_id = $2'
       const que22 = `DELETE FROM "cvs" WHERE id = $1;`
-      const params21 = [null, uid]
+      // there is cascade deletion for cv_exps and cv_edus
+      const params21 = [null, uid, null]
       const params22 = [cv_id]
       pool.query(que21, params21, (error21, results21) => {
         if (error21) {
@@ -1149,11 +1306,6 @@ async function cvDelete(req, res) {
 async function cvCreateUpdate (req, res) {
   if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     const que1st = `SELECT user_id, email, cv_id FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'subscriber'`
-    // const que1st = `
-    //   SELECT users.user_id, users.email, cvs.id FROM users
-    //   LEFT JOIN cvs ON cvs.user_id=users.user_id
-    //   WHERE users.auth_cookie = $1 AND users.email = $2 AND users.role = 'subscriber'
-    // `
     const params1st = [req.signedCookies.session, req.signedCookies.mail]
     pool.query(que1st, params1st, (error, results) => {
       if (error) {
@@ -1168,7 +1320,7 @@ async function cvCreateUpdate (req, res) {
         return false
       }
       const uid = results.rows[0].user_id
-      const cv_id = results.rows[0].cv_id
+      let cv_id = results.rows[0].cv_id
       const userEmail = results.rows[0].email
 
       const parsedData = validateCV(req.body)
@@ -1203,19 +1355,22 @@ async function cvCreateUpdate (req, res) {
           res.send('step4-1, error in db: ' + error2)
           return false
         }
+        
+
         if (!cv_id) {
           //cv_id is still null on the user
           if (results2.rows && results2.rows[0] && results2.rows[0].id) {
             
             const que3 = `UPDATE "users" SET cv_id = $1 WHERE user_id = $2`
-            const new_cv_id = results2.rows[0].id
+            cv_id = results2.rows[0].id
+            
 
-            pool.query(que3, [new_cv_id, uid], (error3, results3) => {
+            pool.query(que3, [cv_id, uid], (error3, results3) => {
               if (error3) {
                 console.log('Trouble saving cv_id on user')
               }
             })
-            res.send({ result: 'OK', new_cv_id })
+            res.send({ result: 'OK', cv_id })
           } else {
             res.send('step5. Error saving to the user')
           }
@@ -1223,10 +1378,88 @@ async function cvCreateUpdate (req, res) {
           res.send({ result: 'OK' })
         }
 
+        const parsedExts = validateCVExts(req.body.cvExt)
+        
+        if (parsedExts.error) {
+          console.log('error parsing cvExts', parsedExts.error)
+        }
+        if (parsedExts && !parsedExts.error) {
+          // exps
+          // delete first
+          const queExpsDelete = `DELETE FROM cv_exps WHERE cv_id = $1`
+          const queExpsParams = [cv_id]
+          pool.query(queExpsDelete, queExpsParams, (error4, results4) => {
+            if (error4) {
+              console.log('Trouble removing old cv_exps', error4)
+            }
+            if (parsedExts.exps && parsedExts.exps.length) {
+              let vals = ''
+              parsedExts.exps.forEach((exp, eidx) => {
+                let local = ''
+                for (let index = 1; index < 7; index++) {
+                  local += '$' + ((eidx * 6) + index) + ','
+                }
+                vals += `(${local.slice(0, -1)}),`
+              })
+              
+              const queExps = `INSERT INTO cv_exps ("cv_id", "place", "position", "start", "end", "desc") VALUES ${vals.slice(0, -1)};`
+              const paramsExps = parsedExts.exps.reduce((acc, exp) => acc.concat([
+                Number(cv_id),
+                exp.place,
+                exp.position,
+                (exp.range && exp.range.from) ? exp.range.from : null,
+                (exp.range && exp.range.to) ? exp.range.to : null,
+                exp.desc
+              ]), [])
+              
+              pool.query(queExps, paramsExps, (error5, results5) => {
+                if (error5) {
+                  console.log('Trouble saving cv_exps', error5)
+                }
+              })
+            }
+          })
+
+          // edus
+          const queEdusDelete = `DELETE FROM cv_edus WHERE cv_id = $1`
+          const queEdusParams = [cv_id]
+          pool.query(queEdusDelete, queEdusParams, (error4, results4) => {
+            if (error4) {
+              console.log('Trouble removing old cv_edus', error4)
+            }
+            if (parsedExts.edus && parsedExts.edus.length) {
+              let vals = ''
+              parsedExts.edus.forEach((edu, eidx) => {
+                let local = ''
+                for (let index = 1; index < 7; index++) {
+                  local += '$' + ((eidx * 6) + index) + ','
+                }
+                vals += `(${local.slice(0, -1)}),`
+              })
+              
+              const queEdus = `INSERT INTO cv_edus ("cv_id", "general", "place", "fac", "spec", "year") VALUES ${vals.slice(0, -1)};`
+              const paramsEdus = parsedExts.edus.reduce((acc, edu) => acc.concat([
+                Number(cv_id),
+                edu.general,
+                edu.place,
+                edu.fac,
+                edu.spec,
+                edu.year
+              ]), [])
+              
+              pool.query(queEdus, paramsEdus, (error5, results5) => {
+                if (error5) {
+                  console.log('Trouble saving cv_edus', error5)
+                }
+              })
+            }
+          })
+        }
+        
         addLog(
           cv_id ? 'Резюме изменено' : 'Резюме создано',
-          parsedData.name,
-          parsedData.user_id,
+          parsedData.name + ((parsedExts && parsedExts.exps && parsedExts.edus) ? '. Опыт: ' + parsedExts.exps.length + ', Образование: ' + parsedExts.edus.length : ''),
+          uid,
           userEmail
         )
       })
@@ -1236,6 +1469,44 @@ async function cvCreateUpdate (req, res) {
     //also just edit ur own one if exists, so you need to check if it exists every time
 
   } else {res.send('Step 1. Auth fail')}
+}
+
+function validateCVExts (data) {
+  try {
+    let parsedExts = {
+      exps: [],
+      edus: []
+    }
+    if (data.exps && Array.isArray(data.exps) && data.exps.length) {
+      data.exps.slice(0, 5).forEach(exp => {
+        if (exp.place &&
+          exp.place.length < 76 && 
+          (!exp.position || exp.position.length < 76) &&
+          (!exp.range || (!exp.range.from || exp.range.from.length < 30) || (!exp.range.to || exp.range.to.length < 30)) &&
+          (!exp.desc || exp.desc.length < 801)
+        ) {
+          parsedExts.exps.push(exp)
+        }
+      })
+    }
+
+    if (data.edus && Array.isArray(data.edus) && data.edus.length) {
+      data.edus.slice(0, 5).forEach(edu => {
+        if (edu.general && edu.general.length < 76 &&
+          (!edu.place || edu.place.length < 76) &&
+          (!edu.fac || edu.fac.length < 76) &&
+          (!edu.spec || edu.spec.length < 76) &&
+          (!edu.year || edu.year.length < 20)
+        ) {
+          parsedExts.edus.push(edu)
+        }
+      })
+    }
+
+    return parsedExts
+  } catch (error) {
+    return { error: 'validation failed: some field had an unpredicted error' + error }
+  }
 }
 
 function validateCV (data) {
@@ -2482,8 +2753,8 @@ async function login(req, res) {
     //console.log('user validated')
     //get hash from db checking if mail exists
     let que = `
-      SELECT pwhash, user_id, role, name, surname, 
-      insearch, company, isagency, cvurl, is_active, cv_id, rights, 
+      SELECT pwhash, user_id, role, name, surname,
+      insearch, company, isagency, cvurl, is_active, cv_id, rights, logo_url
       block_reason FROM "users" WHERE "email" = $1`
     let params = [mail]
     let userData = await pool.query(que, params).catch(error => {
@@ -2559,7 +2830,7 @@ async function login(req, res) {
 
 async function getUserAuthByCookies(session, mail) {
   let que = `SELECT email AS identity, user_id, role, 
-    name, surname, company, insearch, isagency, cvurl, is_active, cv_id, rights
+    name, surname, company, insearch, isagency, cvurl, is_active, cv_id, rights, logo_url
     FROM "users" 
     WHERE ("auth_cookie" = $1 AND "email" = $2)`
   let params = [session, mail]
@@ -2727,6 +2998,8 @@ module.exports = {
   // cvFetchForEditSSR,
   cvGetIndex,
   cvGetDetail,
+  updateOneCvPic,
+  cvPhotoDelete,
 
   //SSR
   getJobsUserStatsSSR,

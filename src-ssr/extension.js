@@ -96,6 +96,8 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.get('/cv', db.cvFetchForEdit)
   app.get('/cv/:id', db.cvGetDetail)
   app.get('/cv-index', db.cvGetIndex)
+  app.post('/cvphoto.json', upload.single('photo'), db.updateOneCvPic)
+  app.delete('/cvphoto.json', db.cvPhotoDelete)
 
   //CPSTART
   app.get('/cp.json', adm.adminPanel)

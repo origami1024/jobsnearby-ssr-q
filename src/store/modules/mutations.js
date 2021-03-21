@@ -49,6 +49,9 @@ export default {
   setCvId (state, cv_id) {
     state.user.cv_id = cv_id
   },
+  setSubscriberPhoto (state, link) {
+    state.user.logo_url = link
+  },
   preFetchCv (state, cvData) {
     state.cvData = cvData
   },
