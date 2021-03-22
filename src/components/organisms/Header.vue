@@ -155,8 +155,8 @@ export default {
         }))
       if (this.$route.path != '/') {
         this.$router.push("/")
-        if (retry === true) this.$store.dispatch('refreshjobs', {})
       }
+      if (retry) this.$store.dispatch('refreshjobs', {})
     },
   }
 }

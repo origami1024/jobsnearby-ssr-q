@@ -44,7 +44,7 @@
           <div
             class="cv-controls"
             v-if="user.role === 'subscriber'"
-            v-show="true"
+            v-show="false"
             style="display: flex; flex-direction: column;"
           >
             <q-btn
@@ -299,7 +299,6 @@ export default {
               headers: {'Content-Type': 'multipart/form-data'}
             })
             .then(resp => {
-              console.log('cp CVX', resp)
               if (resp.data && resp.data.success === true && resp.data.link) {
                 this.$store.dispatch('updateCVUrl', resp.data.link)
                 this.$q.notify(this.$t('sub.dataChanged'))

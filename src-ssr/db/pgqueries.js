@@ -978,16 +978,53 @@ async function cvGetDetail(req, res) {
 
       const que2 = `SELECT * FROM "cvs" WHERE id = $1`
       const params2 = [ id ]
-      pool.query(que2, params2, (err2, res2) => {
+      pool.query(que2, params2, (err2, results2) => {
         if (err2) {
           res.send('step4. Error')
           return false
         }
-        if (!res2.rows.length) {
+        if (!results2.rows.length) {
           res.send('Error, does not exist')
           return false
         }
-        res.send(res2.rows[0])
+
+
+        const que3 = `SELECT * FROM "cv_exps" WHERE cv_id = $1`
+        
+        pool.query(que3, params2, (error3, results3) => {
+          if (error3) {
+            res.status(400).send('error33', error3)
+            return false
+          }
+
+          const que4 = `SELECT * FROM "cv_edus" WHERE cv_id = $1`
+          
+          pool.query(que4, params2, (error4, results4) => {
+            if (error4) {
+              res.status(400).send('error44')
+              return false
+            }
+
+            if (results3.rows && results3.rows.length) {
+              results3.rows.forEach(row => {
+                delete row.cv_id
+              })
+            }
+
+            if (results4.rows && results4.rows.length) {
+              results4.rows.forEach(row => {
+                delete row.cv_id
+              })
+            }
+            results2.rows[0].cvExt = {
+              exps: results3.rows,
+              edus: results4.rows
+            }
+
+            res.send(results2.rows[0])
+          })
+
+        })
       })
 
     })
@@ -1101,7 +1138,7 @@ async function cvFetchForEdit(req, res) {
         
         pool.query(que3, params2, (error3, results3) => {
           if (error3) {
-            res.status(400).send('error33')
+            res.status(400).send('error33', error3)
             return false
           }
 
@@ -1515,7 +1552,9 @@ function validateCV (data) {
     let parsedData = {}
     // .photo = .photo
     //TODO: deal with the photo later
-
+    if (data.photo) {
+      parsedData.photo = data.photo
+    }
     // name
     if (!data.name) {
       parsedData.error = 'name is required'
@@ -1638,7 +1677,9 @@ function validateCV (data) {
     }
 
     //edu
-    if (data.edu) {
+    if (parsedData.exp) {
+      parsedData.edu = null
+    } else if (data.edu) {
       if (data.edu.length > 30) {
         parsedData.error = 'edu: max length is 30 characters'
       } else {
@@ -1695,7 +1736,7 @@ function validateCV (data) {
     } else parsedData.salary_max = null
 
     //salary order check
-    if (parsedData.salary_max < parsedData.salary_min) {
+    if (parsedData.salary_min && parsedData.salary_max < parsedData.salary_min) {
       const tmp = parsedData.salary_max
       parsedData.salary_max = parsedData.salary_min
       parsedData.salary_min = tmp

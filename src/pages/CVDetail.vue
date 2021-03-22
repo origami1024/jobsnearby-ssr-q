@@ -26,11 +26,17 @@
                 <div class="cvd-job">{{cv.wanted_job}}</div>
                 <div class="cvd-salary">
                     <span>Желаемая зарплата: </span>
-                    {{ cv.salary_min ? cv.salary_min + '$ - ' : ''}} {{ cv.salary_max ? cv.salary_max + '$' : ''}}
+                    {{ cv.salary_min ? cv.salary_min + ' m - ' : ''}} {{ cv.salary_max ? cv.salary_max + ' m' : ''}}
                 </div>
             </div>
             <div class="block-2">
-                <img width="auto" style="max-width: 100%; max-height: 188px;" src="/statics/rect68.png" alt="photo">
+                <img
+                    width="auto"
+                    style="max-width: 100%; max-height: 188px;"
+                    :src="'/uploads/cvpics/' + cv.photo"
+                    alt="photo"
+                />
+                <!-- src="/statics/rect68.png" -->
             </div>
             <div class="block-3">
                 <div>
@@ -38,15 +44,55 @@
                         {{$t('cvDetail.exp')}}
                     </div>
                     <div class="cvd-text">
-                        ЭКОНОМИСТ ПАО «МЗ«Буран» Июнь-декабрь 2011 г. Планирование и расчет себестоимости производимой продукции; Анализ и планирование постоянных и переменных затрат; Подготовка периодической отчетности Подготовка и оформление материалов для заключения договоров Ежедневный анализ взаиморасчетов с контрагентами, составление план-графика платежей; МЕРЧЕНДАЙЗЕР PepsiCo Ukraine. ООО «Сандора» Май 2012 г.-сентябрь 2012 г. Выгодное размещение продукции Регулирование ценовой политики Учет и пополнение товарного запаса
+                        <div
+                            v-for="(exp, eidx) in cv.cvExt.exps"
+                            :key="eidx"
+                            style="margin-bottom: 20px;"
+                        >
+                            <div class="cv-enitity">
+                                {{ exp.position }}
+                            </div>
+                            <div class="cv-place">
+                                <span>{{ exp.place }}</span>
+                                <span class="cv-year" v-if="exp.range">
+                                    <span v-if="exp.range.from">
+                                        {{$t('addCv.from')}} {{exp.range.from}}
+                                    </span>
+                                    <span v-if="exp.range.from">
+                                        {{$t('addCv.to')}} {{exp.range.to}}
+                                    </span>
+                                    {{ $t('cvDetail.yearPostfix')}}
+                                </span>
+                            </div>
+                            <div class="cv-dsc">
+                                {{exp.desc}}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div>
+                <div v-if="cv.edu || (cv.cvExt && cv.cvExt.edus && cv.cvExt.edus.length)">
                     <div class="cvd-block-header">
                         {{$t('cvDetail.edu')}}
                     </div>
-                    <div class="cvd-text">
-                        ЭКОНОМИСТ. Донецкий национальный технический университет 2006- 2012 гг ПСИХОЛОГКраснодарский национальный университет 2006- 2012 гг
+                    <div v-if="cv.edu" class="cvd-text">
+                        {{ cv.edu }}
+                    </div>
+                    <div v-else class="cvd-text">
+                        <div
+                            v-for="(edu, eidx) in cv.cvExt.edus"
+                            :key="eidx"
+                            style="margin-bottom: 20px;"
+                        >
+                            <div class="cv-enitity">
+                                {{ edu.spec }}
+                            </div>
+                            <div class="cv-place">
+                                <span>{{ edu.place }}</span>
+                                <span class="cv-year">
+                                    {{ edu.year }} {{ $t('cvDetail.yearPostfix')}}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -89,12 +135,18 @@
                 </div>
             </div>
             <div class="block-5">
-                <div>
+                <div v-if="cv.langs && cv.langs.length">
                     <div class="cvd-block-header">
                         {{$t('cvDetail.langs')}}
                     </div>
                     <div class="cvd-text">
-                        ЭКОНОМИСТ. Донецкий национальный технический университет 2006- 2012 гг ПСИХОЛОГКраснодарский национальный университет 2006- 2012 гг
+                        <div
+                            v-for="(lang, lidx) in cv.langs"
+                            :key="lidx"
+
+                        >
+                            {{ lang }}
+                        </div>
                     </div>
                 </div>
                 <div v-if="cv.car || cv.driver.a || cv.driver.b || cv.driver.c || cv.driver.d">
@@ -106,7 +158,7 @@
                             {{ $t('addCv.carLabel') }}
                         </div>
                         <div class="cvd-line" v-if="cv.driver.a || cv.driver.b || cv.driver.c || cv.driver.d">
-                            {{ $t('cvDetails.carSkills') }} {{['', 'A'][+cv.driver.a]}} {{['', 'B'][+cv.driver.b]}} {{['', 'C'][+cv.driver.c]}} {{['', 'D'][+cv.driver.d]}}
+                            {{ $t('cvDetail.carSkills') }} {{['', 'A'][+cv.driver.a]}} {{['', 'B'][+cv.driver.b]}} {{['', 'C'][+cv.driver.c]}} {{['', 'D'][+cv.driver.d]}}
                         </div>
                     </div>
                 </div>
@@ -185,17 +237,22 @@ export default {
     @media screen and (max-width 800px)
         grid-template-columns 100%
         row-gap 30px
-        padding 30px 25px
+        padding 30px 20px
         grid-template-areas "block-1" "block-2" "block-4" "block-3" "block-5"
     div
         // background-color gray
         // color #fff
     .block-1
         grid-area block-1
+        @media screen and (max-width 800px)
+            text-align center
 
     .block-2
         grid-area block-2
         display flex
+        @media screen and (max-width 800px)
+            img
+                margin 0 auto
     .block-3
         grid-row span 2
         grid-area block-3
@@ -263,5 +320,19 @@ export default {
   100% {
     transform: rotate(360deg);
   }
+}
+.cv-enitity {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 23px;
+    color: #181059;
+    text-transform: uppercase;
+}
+.cv-place {
+    font-weight: 500;
+    color: #8645FF;
+}
+.cv-year {
+    color: rgba(24, 16, 89, 1);
 }
 </style>

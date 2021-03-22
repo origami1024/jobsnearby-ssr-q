@@ -31,7 +31,7 @@
                 id="fileInpX"
                 ref="fileInputX"
                 type="file"
-                style="display:none" accept=".gif,.jpg,.jpeg,.png,.webp,.svg"
+                style="display:none" accept=".gif,.jpg,.jpeg,.png,.webp"
                 @change="uploadPhoto"
               >
               <!-- @change="setCompanyLogo($refs.fileInputX.files)" -->
@@ -647,7 +647,6 @@ export default {
         })
     },
     uploadPhoto ($evt) {
-      console.log('arf', $evt.target)
       const files = this.$refs.fileInputX.files
       if (files && files[0]) {
         if (files[0].size < 409601) {
@@ -661,10 +660,6 @@ export default {
             .then(resp => {
               if (resp.data && resp.data.success === true && resp.data.link) {
                 this.logo_upload_error = null
-                // this.$store.dispatch('caboutPropUpd',{prop: 'logo_url', value: resp.data.link})
-                //TODO: show it on the form
-                //TODO: backend stuff
-                // this.photo = resp.data.link
                 this.$store.commit('setSubscriberPhoto', resp.data.link)
                 this.$q.notify(this.$t('entProfile.picUploaded'))
               
@@ -696,7 +691,6 @@ export default {
       }
     },
     addOneEdu () {
-      console.log('aaaa', this.cvExt)
       if (this.cvExt) {
         if (!this.cvExt.edus) {
           this.$set(this.cvExt, 'edus', [])
@@ -707,29 +701,24 @@ export default {
       }
     },
     addOneExp () {
-      if (this.cvExt && this.cvExt.exps) {
+      if (this.cvExt) {
+        if (!this.cvExt.exps) {
+          this.$set(this.cvExt, 'exps', [])
+        }
         this.$set(this.cvExt, 'exps', this.cvExt.exps.concat(
           Object.assign({}, this.expBlueprint)
         ))
       }
     },
     expSwitch () {
-      // this.cv.exp
       if (!this.cv.exp) {
         this.$set(this, 'cvExt', null)
-        // this.cvExt = null
       } else {
         this.$set(this, 'cvExt', {
           exps: [ Object.assign({}, this.expBlueprint) ],
           edus: [ Object.assign({}, this.eduBlueprint) ]
         })
-        // this.cvExt = {
-        //   exps: [ Object.assign({}, this.expBlueprint) ],
-        //   edus: [ Object.assign({}, this.eduBlueprint) ]
-        // }
       }
-      console.log(this.cv.exp)
-      console.log(this.cvExt)
     },
     fetchData () {
       //do this for ssr case??? or maybe there is no need to hydrate that???
@@ -746,10 +735,6 @@ export default {
           if (respd.city_current === null) respd.city_current = ''
           if (respd.city_based === null) respd.city_based = ''
           
-          // if (this.$store.state && this.$store.state.user) {
-          //   this.photo = this.$store.state.user.logo_url || null
-          // }
-
           if (respd.cvExt) {
             if (respd.cvExt.exps && respd.cvExt.exps.length) {
               respd.cvExt.exps.forEach(exp => {
@@ -836,7 +821,7 @@ export default {
     },
     sendCVData() {
       this.$axios
-        .post('/cv', { ...this.cv, cvExt: this.cvExt }, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+        .post('/cv', { ...this.cv, photo: this.$store.state.user.user_id + this.$store.state.user.logo_url, cvExt: this.cvExt }, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
         .then(response => {
           if (response.data && response.data.result === 'OK') {
             // this.returned.title = response.data.title
