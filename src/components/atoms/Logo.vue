@@ -51,10 +51,14 @@ export default {
 
 <style lang="stylus" scoped>
 .logo-icon
-  margin-top -8px;
+  margin-top -8px
   margin-left 8px
   order 3
   @media screen and (max-width 550px)
-    margin-left 0
-    order 1
+    display none
+    // margin-left 0
+    // order 1
+    // position: absolute;
+    // z-index: -1;
+    // top: 6px;
 </style>

@@ -48,6 +48,10 @@ const routes = [
     component: () => import('src/pages/CVs.vue')
   },
   {
+    path: '/cv-search',
+    component: () => import('src/pages/CVSearch.vue')
+  },
+  {
     path: '/cvs/:id',
     component: () => import('src/pages/CVDetail.vue')
   },

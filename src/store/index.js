@@ -54,6 +54,9 @@ export default function (/* { ssrContext } */) {
     },
     mutations,
     actions: {
+      setSubscriberPhoto (context, link) {
+        context.commit('setSubscriberPhoto', link)
+      },
       filtersOff(context) {
         context.commit('filtersOff')
       },

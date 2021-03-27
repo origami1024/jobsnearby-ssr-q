@@ -44,7 +44,7 @@
           <div
             class="cv-controls"
             v-if="user.role === 'subscriber'"
-            v-show="false"
+            v-show="true"
             style="display: flex; flex-direction: column;"
           >
             <q-btn

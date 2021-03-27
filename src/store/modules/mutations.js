@@ -51,6 +51,7 @@ export default {
   },
   setSubscriberPhoto (state, link) {
     state.user.logo_url = link
+    state.user = { ...state.user, logo_url: link}
   },
   preFetchCv (state, cvData) {
     state.cvData = cvData

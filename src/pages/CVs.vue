@@ -38,10 +38,13 @@
                 <div
                     class="cv-col-photo"
                     :style="{
-                        backgroundImage: 'url(/statics/subscriber-logo-ph.svg)'
+                        backgroundSize: cv.photo ? '100%' : '',
+                        backgroundImage: `url('${ cv.photo ?  ('/uploads/cvpics/' + cv.photo) : 'statics/subscriber-logo-ph.svg'}')`
                     }"
                 >
-                    {{ cv.photo }}
+                <!-- /statics/rect68.png -->
+                <!-- backgroundImage: 'url(/statics/subscriber-logo-ph.svg)' -->
+                    <!-- {{ cv.photo }} -->
                 </div>
                 <div class="cv-col-mid">
                     <div class="cv-top-line">
@@ -74,6 +77,21 @@
         <!-- <div class="cvpage__wrapper" :key="1" style="display: flex; flex-direction: column; align-items: center">
             xxxxx
         </div> -->
+        <div v-if="pages && pages > 0" class="paginationWrap">
+          <a 
+            :class="{pageBtns: true, currentPage: page_current == i}"
+            v-for="i of (
+              page_current == 1
+                ? Math.min(pages, 3) 
+                : Math.min(pages, page_current + 1)
+            )" :key="i"
+            @click.prevent="fetchCvs(i)"
+            v-show="(i >= (page_current != pages ? page_current - 1 : page_current - 2))"
+            :href="'/?page=' + i"
+          >
+            {{i}}
+          </a>
+        </div>
     </div>
     <p class="pageHeader" style="margin: 40px auto;" v-else>404. Not found</p>
 </template>
@@ -92,7 +110,33 @@ export default {
         return {
             loading: true,
             cvs: [],
-            searchLine: ''
+            searchLine: '',
+            // 
+            pages: 1,
+            page_current: 1
+        }
+    },
+    methods: {
+        fetchCvs (page_go) {
+            this.loading = true
+            const url = '/cv-index' + (page_go > 1 ? '?page=' + page_go : '')
+            this.$axios
+                .get(url, null, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+                .then(resp => {
+                    if (resp.data && resp.data.rows && Array.isArray(resp.data.rows)) {
+                        this.cvs = resp.data.rows
+                        this.pages = Math.ceil(Number(resp.data.count) / Number(resp.data.perpage))
+                        this.page_current = resp.data.page
+                        this.loading = false
+                    } else {
+                        this.$q.notify('Error receiving cvs from the server')
+                        this.loading = false
+                    }
+                })
+                .catch(err => {
+                    this.$q.notify('Unknown error with cvs', err)
+                    this.loading = false
+                })
         }
     },
     activated () {
@@ -103,22 +147,7 @@ export default {
             this.$router.push('/')
             return false
         }
-        this.loading = true
-        this.$axios
-            .get('/cv-index', null, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
-            .then(resp => {
-                if (resp.data && Array.isArray(resp.data)) {
-                    this.cvs = resp.data
-                    this.loading = false
-                } else {
-                    this.$q.notify('Error receiving cvs from the server')
-                    this.loading = false
-                }
-            })
-            .catch(err => {
-                this.$q.notify('Unknown error with cvs', err)
-                this.loading = false
-            })
+        this.fetchCvs()
     }
 }
 </script>
@@ -383,4 +412,33 @@ export default {
             background-color transparent !important
             filter: brightness(1.5)
 
+.pageBtns
+    cursor pointer
+    border 0
+    background-color transparent
+    font-family: Montserrat, sans-serif
+    font-size: 16px;
+    line-height: 20px;
+    color var(--violet-btn-color)
+    text-decoration none
+    margin 0 5px
+    &:focus
+        outline none
+    &:hover
+        color var(--color1)
+    @media screen and (max-width 550px)
+        font-size: 13px;
+        line-height: 16px;
+        margin 0 10px
+    .currentPage
+        font-weight bold
+.paginationWrap
+    padding 22px 0
+    padding-bottom 10px//32
+    margin-bottom 20px
+    @media screen and (max-width: 1160px)
+        padding 12px 0
+        padding-bottom 6px//22
+    @media screen and (max-width 550px)
+        padding-top 7px
 </style>

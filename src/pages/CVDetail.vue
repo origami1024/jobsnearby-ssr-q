@@ -23,10 +23,24 @@
             <div class="right"></div> -->
             <div class="block-1">
                 <div class="cvd-header">{{cv.name + ' ' + cv.surname}}</div>
+                <div class="cvd-subheader">
+                    <span v-if="cv.birth">
+                        {{(new Date(cv.birth)).toLocaleDateString()}}
+                        ({{Math.abs(new Date(Date.now() - +(new Date(cv.birth))).getUTCFullYear() - 1970)}}
+                        {{$t('cvDetail.agePostfix')}}){{cv.sex ? ',' : ''}}
+                    </span>
+                    <span v-if="cv.sex">
+                        {{
+                            {m: $t('addCv.sexM'), f: $t('addCv.sexF')}[cv.sex].substring(0,3).toLowerCase()
+                        }}
+                    </span>
+                </div>
                 <div class="cvd-job">{{cv.wanted_job}}</div>
                 <div class="cvd-salary">
                     <span>Желаемая зарплата: </span>
-                    {{ cv.salary_min ? cv.salary_min + ' m - ' : ''}} {{ cv.salary_max ? cv.salary_max + ' m' : ''}}
+                    <span class="cvd-sal-line">
+                        {{ cv.salary_min ? cv.salary_min : ''}}{{ (cv.salary_max && cv.salary_min) ? ' - ' : '' }}{{ cv.salary_max ? cv.salary_max : '' }}{{(cv.salary_max || cv.salary_min) ? ' m' : '-'}}
+                    </span>
                 </div>
             </div>
             <div class="block-2">
@@ -54,14 +68,15 @@
                             </div>
                             <div class="cv-place">
                                 <span>{{ exp.place }}</span>
-                                <span class="cv-year" v-if="exp.range">
-                                    <span v-if="exp.range.from">
-                                        {{$t('addCv.from')}} {{exp.range.from}}
+                                <span class="cv-year" v-if="exp.start || exp.end">
+                                    {{ exptwoDates(exp.start, exp.end) }}
+                                    <!-- <span v-if="exp.start">
+                                        {{$t('addCv.from')}} {{expDate(exp.start)}}
                                     </span>
-                                    <span v-if="exp.range.from">
-                                        {{$t('addCv.to')}} {{exp.range.to}}
+                                    <span v-if="exp.end">
+                                        {{$t('addCv.to')}} {{expDate(exp.end)}}
                                     </span>
-                                    {{ $t('cvDetail.yearPostfix')}}
+                                    {{ $t('cvDetail.yearPostfix')}} -->
                                 </span>
                             </div>
                             <div class="cv-dsc">
@@ -92,6 +107,18 @@
                                     {{ edu.year }} {{ $t('cvDetail.yearPostfix')}}
                                 </span>
                             </div>
+                            <div class="cvd-line" v-if="edu.fac">
+                                <span class="bold">
+                                    {{$t('addCv.fac')}}:
+                                </span>
+                                {{ edu.fac }}
+                            </div>
+                            <div class="cvd-line" v-if="edu.spec">
+                                <span class="bold">
+                                    {{$t('addCv.spec')}}:
+                                </span>
+                                {{ edu.spec }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,16 +135,17 @@
                             </span>
                             {{cv.tel}}
                         </div>
+                        <div class="cvd-line">
+                            <span class="bold">
+                                {{$t('addCv.telHome')}}: 
+                            </span>
+                            {{cv.tel_home}}
+                        </div>
                         <div class="cvd-line" v-if="cv.email">
                             <span class="bold">
                                 {{$t('addCv.email')}}: 
                             </span>
                             {{cv.email}}
-                        </div>
-                        <div class="cvd-line" v-if="cv.family === true || cv.family === false">
-                            <span class="bold">
-                                {{cv.family ? $t('addCv.familyYes') : $t('addCv.familyNo')}}
-                            </span>
                         </div>
                         <div class="cvd-line" v-if="cv.city_current">
                             <span class="bold">
@@ -130,6 +158,11 @@
                                 {{$t('addCv.cityBased')}}: 
                             </span>
                             {{cv.city_based}}
+                        </div>
+                        <div class="cvd-line" v-if="cv.family === true || cv.family === false">
+                            <span class="bold">
+                                {{cv.family ? $t('addCv.familyYes') : $t('addCv.familyNo')}}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -158,7 +191,10 @@
                             {{ $t('addCv.carLabel') }}
                         </div>
                         <div class="cvd-line" v-if="cv.driver.a || cv.driver.b || cv.driver.c || cv.driver.d">
-                            {{ $t('cvDetail.carSkills') }} {{['', 'A'][+cv.driver.a]}} {{['', 'B'][+cv.driver.b]}} {{['', 'C'][+cv.driver.c]}} {{['', 'D'][+cv.driver.d]}}
+                            {{ $t('cvDetail.carCategory') }} {{['', 'A'][+cv.driver.a]}} {{['', 'B'][+cv.driver.b]}} {{['', 'C'][+cv.driver.c]}} {{['', 'D'][+cv.driver.d]}}
+                        </div>
+                        <div style="margin-top: 5px;" class="cvd-line bold" v-if="cv.skills">
+                            {{cv.skills}}
                         </div>
                     </div>
                 </div>
@@ -173,6 +209,31 @@ export default {
         return {
             loading: true,
             cv: {}
+        }
+    },
+    methods: {
+        exptwoDates(dstrfrom, dstrto) {
+            const d1 = new Date(dstrfrom)
+            const d2 = new Date(dstrto)
+            if (d1.getFullYear() !== d2.getFullYear()) {
+                return this.$t('cvDetail.monthsFull')[d1.getMonth()] +
+                    ' ' +
+                    d1.getUTCFullYear() +
+                    this.$t('cvDetail.yearPostfix2') +
+                    ' - ' +
+                    this.$t('cvDetail.monthsFull')[d2.getMonth()] +
+                    ' ' +
+                    d2.getUTCFullYear() +
+                    this.$t('cvDetail.yearPostfix2')
+            } else {
+                return this.$t('cvDetail.monthsFull')[d1.getMonth()] +
+                    ' ' +
+                    ' - ' +
+                    this.$t('cvDetail.monthsFull')[d2.getMonth()] +
+                    ' ' +
+                    d2.getUTCFullYear() +
+                    this.$t('cvDetail.yearPostfix2')
+            }
         }
     },
     activated () {
@@ -276,6 +337,7 @@ export default {
         font-size: 28px;
         line-height: 34px;
         color: #C00027;
+    .cvd-subheader
         margin-bottom 50px
     .cvd-job
         font-weight: 600;
@@ -289,6 +351,11 @@ export default {
         color: #181059;
         span
             font-weight: 600;
+        @media screen and (max-width 800px)
+            display: flex;
+            flex-direction: column;
+    .cvd-sal-line
+        display: inline-block;
     .cvd-text
         font-size: 16px;
         line-height: 23px;
@@ -334,5 +401,6 @@ export default {
 }
 .cv-year {
     color: rgba(24, 16, 89, 1);
+    font-style: italic;
 }
 </style>

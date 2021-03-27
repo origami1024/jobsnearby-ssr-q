@@ -1,6 +1,9 @@
 <template>
   <div class="w586">
-    <p class="startP" style="font-weight: 600; margin: 20px 0 20px;">{{label}}</p>
+    <p class="startP"
+      style="font-weight: 600;"
+      :style="noStarPMarginTop ? 'margin-bottom: 20px' : 'margin: 20px 0 20px'"
+    >{{label}}</p>
     <label
       style="display: flex; align-items: center; margin: 12px 0;
         cursor: pointer; color: var(--color1); font-size: 14px;
@@ -50,6 +53,10 @@ export default {
     label: {
       type: String,
       default: ''
+    },
+    noStarPMarginTop: {
+      type: Boolean,
+      default: false
     },
     // reqd: {
     //   type: Boolean,

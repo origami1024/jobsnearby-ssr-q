@@ -38,6 +38,7 @@
               <div
                 class="logo-placeholder"
                 :style="{
+                  backgroundSize: photo ? '100%' : '',
                   backgroundImage : `url('${ photo ?  ('/uploads/cvpics/' + uid + photo) : 'statics/subscriber-logo-ph.svg'}')`
                 }"
               />
@@ -124,6 +125,7 @@
               @keyup="addNewCity"
               dropdown-icon="none"
               class="dropdown-padding-adjust"
+              :maxlength="70"
               :rules="[
                 val => val.length < 71 || $t('addCv.cityValidationLength')
               ]"
@@ -152,6 +154,7 @@
               @keyup="addNewBasedCity"
               dropdown-icon="none"
               class="dropdown-padding-adjust"
+              :maxlength="70"
               :rules="[
                 val => val.length < 71 || $t('addCv.cityValidationLength')
               ]"
@@ -159,7 +162,7 @@
             />
           </div>
 
-          <hr style="margin: 10px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+          <hr class="cv-hr" style="margin: 10px 0 30px;"/>
 
           <div class="w586">
             <p class="startP" style="font-weight: 600; margin-bottom: 20px;">{{$t('addCv.driversLabel')}}</p>
@@ -197,11 +200,11 @@
               outlined
               bg-color="white" color="deep-purple-10"
               style="width: 100%;"
-              v-model="cv.birth"
-              mask="date"
-              :rules="['date']"
+              :value="getBirthDisplay"
+              ref="birth"
+              clearable
+              @clear="cv.birth = null"
               :placeholder="$t('addCv.birthDatePh')"
-              :lazy-rules="lazyRulesAll"
             >
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
@@ -217,6 +220,7 @@
                 </q-icon>
               </template>
             </q-input>
+
           </div>
           <BoolField
             :label="$t('addCv.sex')"
@@ -230,7 +234,7 @@
             :labels="[$t('addCv.familyYes'), $t('addCv.familyNo')]"
           />
           
-          <hr style="margin: 20px 0 10px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+          <hr class="cv-hr" style="margin: 20px 0 10px; "/>
 
           <BoolField
             :label="$t('addCv.exp')"
@@ -240,18 +244,47 @@
           />
 
           <hr
-            style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"
+            class="cv-hr"
+            style="margin: 20px 0 30px;"
           />
 
-          <TextField
+          <!-- <TextField
             v-if="!cv.exp"
             v-model="cv.edu" ref="edu"
             :label="$t('addCv.edu')" :ph="$t('addCv.eduph')"
             :maxlength="30"
             :maxlhidden="true"
-          />
+          /> -->
+          <div
+            class="w586"
+            v-if="!cv.exp"
+          >
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="startP">{{$t('addCv.edu')}}</p>
+            </div>
+            <q-select
+              :value="cv.edu"
+              @input="cv.edu = $event"
+              dense
+              outlined
+              bg-color="white" color="deep-purple-10"
+              use-input
+              input-debounce="0"
+              fill-input
+              hide-selected
+              ref="edu"
+              :options="eduOpts"
+              @filter="filterFnEdu"
+              :hint="null"
+              :placeholder="$t('addCv.eduph')"
+              @keyup="cv.edu = $event.target.value"
+              dropdown-icon="none"
+              class="dropdown-padding-adjust"
+              :maxlength="30"
+            />
+          </div>
           
-          <div v-if="cv.exp && cvExt" style="width: calc(100% - 160px);">
+          <div v-if="cv.exp && cvExt" class="exts-wrapper">
             <div
               v-for="(exp, eidx) in cvExt.exps"
               :key="'exp_' + eidx"
@@ -277,14 +310,7 @@
                   outlined
                   bg-color="white" color="deep-purple-10"
                   style="width: 100%;"
-                  :value="cvExt.exps[eidx].range
-                    ? (cvExt.exps[eidx].range.from
-                      ? 'с ' + cvExt.exps[eidx].range.from + ' '
-                      : '') + (cvExt.exps[eidx].range.to
-                        ? 'по ' + cvExt.exps[eidx].range.to
-                        : '')
-                    : ''
-                  "
+                  :value="getFromToRange(cvExt.exps[eidx].range)"
                   :placeholder="$t('addCv.periodph')"
                   :lazy-rules="lazyRulesAll"
                 >
@@ -420,25 +446,58 @@
             </div>
           </div>
 
-          <hr style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+          <hr class="cv-hr" style="margin: 20px 0 30px;"/>
 
-          <div class="w586">
+          <div class="w586" style="margin-bottom: 18px;">
             <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
               <p class="startP">{{$t('addJob.langsLabel')}}</p>
             </div>
-            <q-select
-              multiple
-              use-chips
-              dense
-              outlined
-              bg-color="white" color="deep-purple-10"
-              dropdown-icon="none"
-              class="dropdown-padding-adjust lang-select"
-              max-values="3"
-              v-model="cv.langs"
-              :options="$t('addJob.langOptions')"
-              :hint="null"
-            />
+            <!-- @keyup="cv.langs = $event.target.value" -->
+            <!-- @input="langsInput" -->
+            <div class="flex">
+              <q-select
+                v-model="tmpLang"
+                :options="langOpts"
+                @filter="filterFnLangs"
+                @new-value="langsEnter"
+                @input-value="langInputShenanigans"
+                use-input
+                input-debounce="0"
+                fill-input
+                hide-selected
+                :placeholder="$t('addCv.langph')"
+                dense
+                outlined
+                bg-color="white" color="deep-purple-10"
+                dropdown-icon="none"
+                class="dropdown-padding-adjust lang-select"
+                style="flex-grow: 1; margin-right: 8px;"
+                :hint="null"
+                ref="lang"
+              />
+              <q-btn @click="langsEnterOuter" style="background-color: var(--violet-btn-color); color: white; border-radius: 10px; display: block; height: 36px;">
+                {{$t('addCv.addLang')}}
+              </q-btn>
+            </div>
+            
+            <div style="display: flex; flex-direction: column;">
+              <!-- langs wrapper -->
+              <div style="text-align: left; font-size: 14px;">
+                {{$t('addCv.addedLangs')}}:
+                <span v-if="!cv.langs || !cv.langs.length">
+                  {{$t('addCv.noAddedLangs')}}
+                </span>
+              </div>
+              <q-chip
+                style="line-height: 20px; margin: 4px 8px; max-width: 220px; background-color: var(--violet-btn-color);"
+                v-for="lang in cv.langs"
+                :key="lang"
+                removable
+                @remove="cv.langs.splice(cv.langs.findIndex(l => l === lang),1)"
+                text-color="white"
+                :label="lang"
+              />
+            </div>
           </div>
           <div class="w586">
             <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
@@ -454,7 +513,7 @@
             />
           </div>
 
-          <hr style="margin: 20px 0 30px; width: calc(100% + 20px); border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;"/>
+          <hr class="cv-hr" style="margin: 20px 0 30px;"/>
 
           <TextField
             v-model="cv.wanted_job" ref="wanted_job"
@@ -525,7 +584,17 @@ export default {
     photo () { return this.$store.state.user.logo_url },
     uid () { return this.$store.state.user.user_id },
     user () { return { role: this.$store.state.user.role } },
-    isNew () { return !this.$store.state.user.cv_id }
+    isNew () { return !this.$store.state.user.cv_id },
+    getBirthDisplay () {
+      if (!this.cv || !this.cv.birth) {
+        return ''
+      }
+      let d = new Date(this.cv.birth)
+      if (!d) {
+        return ''
+      }
+      return d.toLocaleDateString()
+    }
   },
   data () {
     return {
@@ -597,8 +666,7 @@ export default {
           value: 'd'
         }
       ],
-
-      props: {},
+      tmpLang: '',
       specificError: '',
       titleRegex: /^[\wа-яА-ЯÇçÄä£ſÑñňÖö$¢Üü¥ÿýŽžŞş\s\-\.\,\+\$\%\(\)\№\:\#\/\"]*$/,
       salaryOn: false,
@@ -611,6 +679,10 @@ export default {
 
       cityList: this.$t('App.cityList'),//["Ашхабад", "Дашогуз", "Мары", "Туркменабад", "Туркменбаши"],
       scheduleList: this.$t('addJob.scheduleList'),//["5/2", "6/1", "2/2", "3/2", "3/1", "15/15"],
+      eduList: this.$t('addCv.eduOptions'),
+      eduOpts: this.eduList,
+      langList: this.$t('addJob.langOptions'),
+      langOpts: this.langList,
       
       customToolbar: [
         ["bold", "italic", "underline"],
@@ -639,6 +711,62 @@ export default {
     this.preloaded = false //trigger only once if its ssred
   },
   methods:{
+    // langsInput ($event) {
+    //   // this.tmpLang = $event
+    //   // console.log('asdasd', this.tmpLang)
+    //   this.langsEnterOuter()
+    //   this.$refs.lang.blur()
+    // },
+    langInputShenanigans (val) {
+      this.tmpLang = val
+    },
+    langsEnterOuter () {
+      if (this.tmpLang !== '') {
+        if (this.cv.langs.length < 3) {
+          if (!this.cv.langs.includes(this.tmpLang)) {
+            this.cv.langs.push(this.tmpLang)
+          } else {
+            this.$q.notify(this.$t('addCv.langDuplicate'))
+          }
+        } else {
+          this.$q.notify(this.$t('addCv.langMax'))
+        }
+        this.tmpLang = ''
+      }
+    },
+    langsEnter (val, done) {
+      if (val !== '') {
+        if (this.cv.langs.length < 3) {
+          if (!this.cv.langs.includes(val)) {
+            this.cv.langs.push(val)
+          } else {
+            this.$q.notify(this.$t('addCv.langDuplicate'))
+          }
+        } else {
+          this.$q.notify(this.$t('addCv.langMax'))
+        }
+        
+        return done('', null)
+      }
+    },
+    getFromToRange (range) {
+      if (!range || !range.from || !range.to) {
+        return ''
+      }
+      let dfrom = new Date(range.from)
+      let dto = new Date(range.to)
+      if (!dfrom || !dto) {
+        return ''
+      }
+      return `с ${dfrom.toLocaleDateString()} по ${dto.toLocaleDateString()}`
+      // cvExt.exps[eidx].range
+      //               ? (cvExt.exps[eidx].range.from
+      //                 ? 'с ' + cvExt.exps[eidx].range.from + ' '
+      //                 : '') + (cvExt.exps[eidx].range.to
+      //                   ? 'по ' + cvExt.exps[eidx].range.to
+      //                   : '')
+      //               : ''
+    },
     removePhoto () {
       this.$store.commit('setSubscriberPhoto', null)
       this.$axios
@@ -660,7 +788,7 @@ export default {
             .then(resp => {
               if (resp.data && resp.data.success === true && resp.data.link) {
                 this.logo_upload_error = null
-                this.$store.commit('setSubscriberPhoto', resp.data.link)
+                this.$store.dispatch('setSubscriberPhoto', resp.data.link)
                 this.$q.notify(this.$t('entProfile.picUploaded'))
               
               } else {
@@ -734,16 +862,16 @@ export default {
           }, {})
           if (respd.city_current === null) respd.city_current = ''
           if (respd.city_based === null) respd.city_based = ''
-          
           if (respd.cvExt) {
             if (respd.cvExt.exps && respd.cvExt.exps.length) {
               respd.cvExt.exps.forEach(exp => {
-                exp.range = {from: exp.start ? exp.start.substring(0,10) : null, to: exp.end ? exp.end.substring(0,10) : null}
+                exp.range = {from: exp.start, to: exp.end}
               })
             }
             this.$set(this, 'cvExt', respd.cvExt)
             delete respd.cvExt
           }
+          
           this.$set(this, 'cv', respd)
           
           this.lazyRulesAll = true
@@ -800,6 +928,7 @@ export default {
       if (this.$refs.tel_home.$refs.qinput.hasError) {
         scrollPos = 190
       }
+
       this.$refs.wanted_job.$refs.qinput.validate()
       if (this.$refs.wanted_job.$refs.qinput.hasError) {
         scrollPos = 1700
@@ -820,8 +949,14 @@ export default {
       }
     },
     sendCVData() {
+      const res = {
+        ...this.cv,
+        photo: this.$store.state.user.user_id + this.$store.state.user.logo_url,
+        cvExt: this.cvExt
+      }
+      console.log('cpxxx', res)
       this.$axios
-        .post('/cv', { ...this.cv, photo: this.$store.state.user.user_id + this.$store.state.user.logo_url, cvExt: this.cvExt }, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+        .post('/cv', res, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
         .then(response => {
           if (response.data && response.data.result === 'OK') {
             // this.returned.title = response.data.title
@@ -873,6 +1008,18 @@ export default {
       update(() => {
         const needle = val.toLowerCase()
         this.cityOptions = this.cityList.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    filterFnEdu (val, update, abort) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.eduOpts = this.eduList.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    filterFnLangs (val, update, abort) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.langOpts = this.langList.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterSchedule (val, update, abort) {
@@ -1136,4 +1283,15 @@ div.q-field__messages
   box-sizing border-box
   transition-duration 0.3s
 
+.exts-wrapper
+  width calc(100% - 160px)
+  @media screen and (max-width 800px)
+    width 100%
+
+.cv-hr
+  border: 0;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.2) !important;
+  width calc(100% + 20px)
+  @media screen and (max-width 800px)
+    width calc(100% + 68px)
 </style>

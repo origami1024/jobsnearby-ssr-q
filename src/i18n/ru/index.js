@@ -269,8 +269,8 @@ export default {
     descLabel: 'Описание должностных обязаностей',
     periodLabel: 'Период',
     periodph: 'с год/месяц/число по год/месяц/число',
-    addMoreExp: 'Добавить место работы',
-    addMoreEdu: 'Добавить образование',
+    addMoreExp: 'Добавить место',
+    addMoreEdu: 'Добавить место',
     remove: 'Убрать',
     eduPlaceLabel: 'Учебное заведение',
     eduPlaceph: 'Технический университет',
@@ -282,7 +282,13 @@ export default {
     yearEndph: '2001',
     eduOptions: ['Среднее', 'Среднее специальное', 'Высшее', 'Бакалавр'],
     maxExts: 'до 5 пунктов',
-    removePhoto: 'удалить картинку'
+    removePhoto: 'удалить картинку',
+    langDuplicate: 'Язык уже добавлен',
+    langMax: 'Максимум 3 языка',
+    addLang: 'Добавить язык',
+    langph: 'Введите язык, затем нажмите добавить',
+    addedLangs: 'Добавленные языки',
+    noAddedLangs: 'Языки не выбраны'
   },
   cvList: {
     cvListLabel: 'Поиск резюме',
@@ -291,6 +297,14 @@ export default {
     langs2:'языков',
     edu: 'Образование'
   },
+  cvSearch: {
+    position1: 'Должность',
+    expLabelYears: 'Опыт работы (лет)',
+    expName: 'Опыт (должность)',
+    expNamePh: 'Название',
+    tel: 'Поиск по номеру',
+    telph: '+789 8990',
+  },
   cvDetail: {
     label: 'Резюме',
     exp: 'Опыт работы',
@@ -298,8 +312,24 @@ export default {
     contacts: 'Контактные данные',
     langs: 'Знание языков',
     skills: 'Навыки',
-    carSkills: 'Водительское удостоверение категории',
-    yearPostfix: 'гг'
+    carCategory: 'Категории:',
+    yearPostfix: 'гг',
+    yearPostfix2: 'г.',
+    agePostfix: 'лет',
+    monthsFull: [
+      "Январь",
+      "Февраль",
+      "Март",
+      "Апрель",
+      "Май",
+      "Июнь",
+      "Июль",
+      "Август",
+      "Сентябрь",
+      "Октябрь",
+      "Ноябрь",
+      "Декабрь"
+    ],
   },
   filters: {
     searchHint: 'Поиск по полям название, автор, город, основной текст',
@@ -444,7 +474,7 @@ export default {
     titleValidationMin: 'Минимум 2 символа',
     titleValidationMax: 'Максимум 75 символов',
     titleValidationSymbols: 'Используются запрещенные символы',
-    salaryLabel: 'Зарплата',
+    salaryLabel: 'Зарплата (манат)',
     salaryMinPH: 'от',
     salaryValidationRange: 'От 0 до 99999',
     salaryMaxPH: 'до',
