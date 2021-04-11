@@ -249,6 +249,8 @@ export default {
     exp: 'Опыт работы',
     expYes: 'Есть опыт',
     expNo: 'Нет опыта',
+    expTotal: 'Суммарный опыт ',
+    expY: 'лет',
     edu: 'Образование',
     eduph: 'Среднее',
     skills: 'Навыки',
@@ -269,8 +271,8 @@ export default {
     descLabel: 'Описание должностных обязаностей',
     periodLabel: 'Период',
     periodph: 'с год/месяц/число по год/месяц/число',
-    addMoreExp: 'Добавить место',
-    addMoreEdu: 'Добавить место',
+    addMoreExp: 'Добавить',
+    addMoreEdu: 'Добавить',
     remove: 'Убрать',
     eduPlaceLabel: 'Учебное заведение',
     eduPlaceph: 'Технический университет',
@@ -288,7 +290,8 @@ export default {
     addLang: 'Добавить язык',
     langph: 'Введите язык, затем нажмите добавить',
     addedLangs: 'Добавленные языки',
-    noAddedLangs: 'Языки не выбраны'
+    noAddedLangs: 'Языки не выбраны',
+    any: 'Любые (в т. ч. не указано)'
   },
   cvList: {
     cvListLabel: 'Поиск резюме',
@@ -300,10 +303,13 @@ export default {
   cvSearch: {
     position1: 'Должность',
     expLabelYears: 'Опыт работы (лет)',
-    expName: 'Опыт (должность)',
+    expName: 'Опыт (Желаемая должность)',
     expNamePh: 'Название',
     tel: 'Поиск по номеру',
     telph: '+789 8990',
+    found: 'Найдено',
+    cvs: 'резюме',
+    nameSearch: 'Поиск по имени'
   },
   cvDetail: {
     label: 'Резюме',
@@ -312,7 +318,9 @@ export default {
     contacts: 'Контактные данные',
     langs: 'Знание языков',
     skills: 'Навыки',
+    telHome: 'Дом. Тел.',
     carCategory: 'Категории:',
+    carCategoryWithoutCar: 'Права:',
     yearPostfix: 'гг',
     yearPostfix2: 'г.',
     agePostfix: 'лет',
@@ -330,6 +338,8 @@ export default {
       "Ноябрь",
       "Декабрь"
     ],
+    updated_at: 'Обновлено',
+    last_online: 'Последний логин'
   },
   filters: {
     searchHint: 'Поиск по полям название, автор, город, основной текст',
@@ -364,6 +374,7 @@ export default {
     fJCatPh: 'Бухгалтер',
     fExpPh: 'от 1 до 3 лет',
     fSalPh: '1000-3000',
+    reopen: 'Расширить'
   },
   jobs: {
     sortOpts: {

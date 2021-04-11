@@ -1,16 +1,17 @@
 <template>
-    <div v-if="loading" class="cv-list" style="margin-top: 140px;">
-        <div  class="lds-dual-ring"/>
-    </div>
-    <div class="cv-list" v-else-if="$store.state.user.role === 'company' && $store.state.user.rights && $store.state.user.rights.includes('bauss')">
+    <div class="cv-list" v-if="$store.state.user.role === 'company' && $store.state.user.rights && $store.state.user.rights.includes('bauss')">
         <!-- TODO: serverside check role before sending?? -->
         <p class="pageHeader">{{$t('cvList.cvListLabel')}}</p>
         <!-- <div>
             search-bar
         </div> -->
-        <div class="jobs__top-search">
+        <CvsFilter
+            @submit-search="searchCvs"
+            :count="count"
+            ref="cvsFilters"
+        />
+        <!-- <div class="jobs__top-search">
             <button class="filtersHamburgerBtn"/>
-            <!-- @click="$store.dispatch('filtersToggle')" -->
             <input
                 style="border:none;"
                 class="searchInput"
@@ -18,17 +19,21 @@
                 :value="searchLine"
                 :placeholder="$t('jobs.searchPh')"
             >
-            <!-- @keyup.enter="$store.dispatch('refreshjobs', {}); $store.dispatch('filtersOff')" -->
-            <!-- @input="$store.dispatch('filterUpd', {prop: 'txt', value: $event.target.value})" -->
             <button
                 class="headerBtns1 searchBtn"
             >
-            <!-- @click="$store.dispatch('refreshjobs', {}); $store.dispatch('filtersOff')" -->
                 <span class="noshow-below550">{{$t('filters.searchBtn')}}</span>
             </button>
-        </div>
+        </div> -->
+            <!-- @click="$store.dispatch('filtersToggle')" -->
+            <!-- @keyup.enter="$store.dispatch('refreshjobs', {}); $store.dispatch('filtersOff')" -->
+            <!-- @input="$store.dispatch('filterUpd', {prop: 'txt', value: $event.target.value})" -->
+            <!-- @click="$store.dispatch('refreshjobs', {}); $store.dispatch('filtersOff')" -->
 
-        <div>
+        <div v-if="loading" class="cv-list" style="margin-top: 140px;">
+            <div  class="lds-dual-ring"/>
+        </div>
+        <div v-else>
             <div
                 v-for="cv in cvs"
                 :key="cv.id"
@@ -56,9 +61,14 @@
                     <div class="cv-body-line">
                         <div class="left">
                             <div class="cv-secondary">{{ cv.wantedJob }}</div>
-                            <div class="cv-secondary">{{ cv.salary_min ? cv.salary_min + '$ - ' : ''}} {{ cv.salary_max ? cv.salary_max + '$' : ''}}</div>
+                            <div class="cv-secondary">{{ cv.salary_min ? cv.salary_min + 'm - ' : ''}} {{ cv.salary_max ? cv.salary_max + 'm' : ''}}</div>
                             <div class="cv-text">
-                                {{ cv.exp ? $t('cvList.expYes') + '.' : '' }}
+                                {{ cv.exp
+                                    ? cv.total_exp
+                                        ? $t('addCv.expTotal') + ' ' + cv.total_exp + ' ' + $t('addCv.expY')
+                                        : ''
+                                    : ''
+                                }}
                                 {{ (cv.langs && cv.langs.length) ? $t('cvList.langs1') + ' ' + cv.langs.length + ' ' + $t('cvList.langs2') + '.' : ''}}
                                 {{ cv.edu ? $t('cvList.edu') + ': ' + cv.edu + '...' : ''}}
                             </div>
@@ -66,6 +76,7 @@
                         <div class="right" style="margin-top: auto;">
                             <div class="cv-tel cv-tel-1">{{ cv.tel }}</div>
                             <div class="cv-tel">{{ cv.tel_home }}</div>
+                            <div class="cv-secondary" style="margin-top: 10px;">{{ formatDate(cv.last_logged_in) }}</div>
                         </div>
                     </div>
                 </div>
@@ -95,8 +106,12 @@
     </div>
     <p class="pageHeader" style="margin: 40px auto;" v-else>404. Not found</p>
 </template>
+
 <script>
+import CvsFilter from 'components/organisms/CvsFilter'
+
 export default {
+    components: { CvsFilter },
     computed: {
         currentPage () {
             return this.$route.query.p
@@ -112,22 +127,51 @@ export default {
             cvs: [],
             searchLine: '',
             // 
+            count: 0,
             pages: 1,
             page_current: 1
         }
     },
     methods: {
-        fetchCvs (page_go) {
+        formatDate (d) {
+            if (d) {
+                try {
+                    let dd = new Date(d)
+                    let bdArr = dd.toLocaleDateString().split('/')
+                    return [bdArr[1], bdArr[0], bdArr[2]].join('/') + ' ' + dd.toTimeString().substring(0, 5)
+                } catch (error) {
+                    
+                }
+            }
+            return '-'
+        },
+        searchCvs (qry) {
+            this.fetchCvs(1, qry)
+        },
+        fetchCvs (page_go, qry) {
             this.loading = true
-            const url = '/cv-index' + (page_go > 1 ? '?page=' + page_go : '')
+            const url = '/cv-index' + (page_go > 1 ? '?page=' + page_go : '?r=1')
+            
+            let query = ''
+            // if (this.$route.fullPath.includes('?')) {
+            //     query = '?' + this.$route.fullPath.split('?')[1]
+            // }
+            if (qry) {
+                query += qry
+            }
             this.$axios
-                .get(url, null, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+                .get(url + query, null, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
                 .then(resp => {
                     if (resp.data && resp.data.rows && Array.isArray(resp.data.rows)) {
                         this.cvs = resp.data.rows
+                        this.count = resp.data.count
+
                         this.pages = Math.ceil(Number(resp.data.count) / Number(resp.data.perpage))
                         this.page_current = resp.data.page
                         this.loading = false
+                        if (qry) {
+                            this.$refs.cvsFilters.hide()
+                        }
                     } else {
                         this.$q.notify('Error receiving cvs from the server')
                         this.loading = false
@@ -291,6 +335,7 @@ export default {
 .cv-col-mid {
     text-align: left;
     flex-grow: 4;
+    max-width: 80%;
     @media screen and (max-width 550px) {
         max-width: calc(100% - 66px);
     }

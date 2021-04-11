@@ -25,7 +25,7 @@
                 <div class="cvd-header">{{cv.name + ' ' + cv.surname}}</div>
                 <div class="cvd-subheader">
                     <span v-if="cv.birth">
-                        {{(new Date(cv.birth)).toLocaleDateString()}}
+                        {{bdate}}
                         ({{Math.abs(new Date(Date.now() - +(new Date(cv.birth))).getUTCFullYear() - 1970)}}
                         {{$t('cvDetail.agePostfix')}}){{cv.sex ? ',' : ''}}
                     </span>
@@ -53,7 +53,7 @@
                 <!-- src="/statics/rect68.png" -->
             </div>
             <div class="block-3">
-                <div>
+                <div style="margin-bottom: 50px;">
                     <div class="cvd-block-header">
                         {{$t('cvDetail.exp')}}
                     </div>
@@ -61,14 +61,14 @@
                         <div
                             v-for="(exp, eidx) in cv.cvExt.exps"
                             :key="eidx"
-                            style="margin-bottom: 20px;"
+                            style="margin-bottom: 24px;"
                         >
                             <div class="cv-enitity">
                                 {{ exp.position }}
                             </div>
                             <div class="cv-place">
                                 <span>{{ exp.place }}</span>
-                                <span class="cv-year" v-if="exp.start || exp.end">
+                                <div class="cv-year" v-if="exp.start || exp.end">
                                     {{ exptwoDates(exp.start, exp.end) }}
                                     <!-- <span v-if="exp.start">
                                         {{$t('addCv.from')}} {{expDate(exp.start)}}
@@ -77,11 +77,9 @@
                                         {{$t('addCv.to')}} {{expDate(exp.end)}}
                                     </span>
                                     {{ $t('cvDetail.yearPostfix')}} -->
-                                </span>
+                                </div>
                             </div>
-                            <div class="cv-dsc">
-                                {{exp.desc}}
-                            </div>
+                            <pre class="cv-dsc" style="margin: 8px 0; font-size: 18px;">{{exp.desc}}</pre>
                         </div>
                     </div>
                 </div>
@@ -137,7 +135,7 @@
                         </div>
                         <div class="cvd-line">
                             <span class="bold">
-                                {{$t('addCv.telHome')}}: 
+                                {{$t('cvDetail.telHome')}}: 
                             </span>
                             {{cv.tel_home}}
                         </div>
@@ -168,7 +166,7 @@
                 </div>
             </div>
             <div class="block-5">
-                <div v-if="cv.langs && cv.langs.length">
+                <div v-if="cv.langs && cv.langs.length" style="margin-bottom: 50px;">
                     <div class="cvd-block-header">
                         {{$t('cvDetail.langs')}}
                     </div>
@@ -176,7 +174,7 @@
                         <div
                             v-for="(lang, lidx) in cv.langs"
                             :key="lidx"
-
+                            style="word-wrap: break-word; text-transform: capitalize;"
                         >
                             {{ lang }}
                         </div>
@@ -190,14 +188,21 @@
                         <div class="cvd-line" v-if="cv.car">
                             {{ $t('addCv.carLabel') }}
                         </div>
-                        <div class="cvd-line" v-if="cv.driver.a || cv.driver.b || cv.driver.c || cv.driver.d">
+                        <div class="cvd-line" v-if="cv.car && (cv.driver.a || cv.driver.b || cv.driver.c || cv.driver.d)">
                             {{ $t('cvDetail.carCategory') }} {{['', 'A'][+cv.driver.a]}} {{['', 'B'][+cv.driver.b]}} {{['', 'C'][+cv.driver.c]}} {{['', 'D'][+cv.driver.d]}}
                         </div>
-                        <div style="margin-top: 5px;" class="cvd-line bold" v-if="cv.skills">
+                        <div class="cvd-line" v-else-if="!cv.car && (cv.driver.a || cv.driver.b || cv.driver.c || cv.driver.d)">
+                            {{ $t('cvDetail.carCategoryWithoutCar') }} {{['', 'A'][+cv.driver.a]}} {{['', 'B'][+cv.driver.b]}} {{['', 'C'][+cv.driver.c]}} {{['', 'D'][+cv.driver.d]}}
+                        </div>
+                        <div style="margin-top: 5px; word-wrap: break-word;" class="cvd-line bold" v-if="cv.skills">
                             {{cv.skills}}
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="cvd-subheader cvd-footer">
+                <div>{{$t('cvDetail.updated_at')}} <span style="font-weight: 900;">{{formatDate(cv.updated_at)}}</span></div>
+                <div>{{$t('cvDetail.last_online')}} <span style="font-weight: 900;">{{formatDate(cv.last_logged_in)}}</span></div>
             </div>
         </div>
     </div>
@@ -211,7 +216,32 @@ export default {
             cv: {}
         }
     },
+    computed: {
+        bdate () {
+            if (this.cv.birth) {
+                try {
+                    let bdArr = (new Date(this.cv.birth)).toLocaleDateString().split('/')
+                    return [bdArr[1], bdArr[0], bdArr[2]].join('/')
+                } catch (error) {
+                    
+                }
+            }
+            return ''
+        }
+    },
     methods: {
+        formatDate (d) {
+            if (d) {
+                try {
+                    let dd = new Date(d)
+                    let bdArr = dd.toLocaleDateString().split('/')
+                    return [bdArr[1], bdArr[0], bdArr[2]].join('/') + ' ' + dd.toTimeString().substring(0, 5)
+                } catch (error) {
+                    
+                }
+            }
+            return '-'
+        },
         exptwoDates(dstrfrom, dstrto) {
             const d1 = new Date(dstrfrom)
             const d2 = new Date(dstrto)
@@ -282,6 +312,7 @@ export default {
     padding 0 20px
 
 .cv-detail-inner
+    position: relative;
     background: #FFFFFF;
     opacity: 0.99;
     border: 0.5px solid rgba(0, 0, 0, 0.2);
@@ -299,6 +330,7 @@ export default {
         grid-template-columns 100%
         row-gap 30px
         padding 30px 20px
+        padding-bottom 60px
         grid-template-areas "block-1" "block-2" "block-4" "block-3" "block-5"
     div
         // background-color gray
@@ -337,8 +369,11 @@ export default {
         font-size: 28px;
         line-height: 34px;
         color: #C00027;
+        word-break: break-word;
     .cvd-subheader
-        margin-bottom 50px
+        margin-top 8px
+        font-weight 600
+        margin-bottom 40px
     .cvd-job
         font-weight: 600;
         font-size: 20px;
@@ -360,7 +395,7 @@ export default {
         font-size: 16px;
         line-height: 23px;
         color: #181059;
-        margin-bottom 50px
+        // margin-bottom 50px
         .bold
             font-weight 600
 
@@ -403,4 +438,20 @@ export default {
     color: rgba(24, 16, 89, 1);
     font-style: italic;
 }
+.cv-dsc {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+.cvd-footer
+    position: absolute;
+    left: 50px;
+    right: 30px;
+    bottom: 20px;
+    margin-bottom: 0 !important;
+    display: flex;
+    justify-content: space-between;
+    @media screen and (max-width 550px)
+        flex-direction column
+        left: 20px;
+        right: 20px;
 </style>

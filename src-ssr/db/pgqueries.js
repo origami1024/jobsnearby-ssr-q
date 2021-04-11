@@ -976,7 +976,7 @@ async function cvGetDetail(req, res) {
         return false
       }
 
-      const que2 = `SELECT * FROM "cvs" WHERE id = $1`
+      const que2 = `SELECT cvs.*, users.last_logged_in FROM "cvs", "users" WHERE users.cv_id = cvs.id AND cvs.id = $1`
       const params2 = [ id ]
       pool.query(que2, params2, (err2, results2) => {
         if (err2) {
@@ -1033,6 +1033,7 @@ async function cvGetDetail(req, res) {
 }
 
 async function cvGetIndex(req, res) {
+  // console.log('cp7', req.query)
   if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     const que1st = `SELECT user_id, email FROM "users" WHERE auth_cookie = $1 AND email = $2 AND role = 'company' AND rights = 'bauss'`
     const params1st = [req.signedCookies.session, req.signedCookies.mail]
@@ -1050,19 +1051,187 @@ async function cvGetIndex(req, res) {
         return false
       }
 
+      let approvedFilters = {
+        'txt': null,
+        'position': null,
+        'expname': null,
+        'car': null,
+        'city_current': null,
+        'city_based': null,
+        'edu': null,
+        'tel': null,
+        'sal_min': null,
+        // 'sal_max': null,
+        'langs': null,
+        'exp_min': null,
+        'exp_max': null
+      }
+      let likeFilters = [
+        'txt',
+        'position',
+        'expname',
+        'city_current',
+        'city_based',
+        'edu',
+        'tel'
+      ]
+      //LIKE %% filter or exact equals
+      Object.keys(approvedFilters).forEach(key => {
+        if (req.query[key]) {
+          const val = likeFilters.includes(key)
+            ? '%' + String(req.query[key]).toLowerCase() + '%'
+            : String(req.query[key].toLowerCase())
+          approvedFilters[key] = val
+        }
+      })
+
+      // txt first
+      let filters = ''
+      let filtersArray = []
+      let fParams = []
+      let currentParamNum = 1
+      if (approvedFilters.txt) {
+        filtersArray.push(`(LOWER(cvs.name) LIKE $${currentParamNum} OR
+        LOWER(cvs.surname) LIKE $${currentParamNum} OR
+        LOWER(cvs.email) LIKE $${currentParamNum})`)
+        fParams.push(approvedFilters.txt)
+        currentParamNum += 1
+        // AND
+        //         (LOWER(jobs.title) LIKE $2 OR
+        //         LOWER(users.company) LIKE $2 OR
+        //         LOWER(jobs.description) LIKE $2 OR
+        //         LOWER(jobs.city) LIKE $2)` : ''}
+        //         txt = '%' + req.query.txt.toLowerCase() + '%'
+      }
+      if (approvedFilters.position) {
+        filtersArray.push(`(LOWER(cv_exps.position) LIKE $${currentParamNum})`)
+        fParams.push(approvedFilters.position)
+        currentParamNum += 1
+      }
+
+      if (approvedFilters.expname) {
+        filtersArray.push(`(LOWER(cvs.wanted_job) LIKE $${currentParamNum})`)
+        fParams.push(approvedFilters.expname)
+        currentParamNum += 1
+      }
+      
+      if (approvedFilters.car) {
+        filtersArray.push(`(cvs.car = $${currentParamNum})`)
+        fParams.push(approvedFilters.car)
+        currentParamNum += 1
+      }
+
+      if (approvedFilters.city_current) {
+        filtersArray.push(`(LOWER(cvs.city_current) LIKE $${currentParamNum})`)
+        fParams.push(approvedFilters.city_current)
+        currentParamNum += 1
+      }
+
+      if (approvedFilters.city_based) {
+        filtersArray.push(`(LOWER(cvs.city_based) LIKE $${currentParamNum})`)
+        fParams.push(approvedFilters.city_based)
+        currentParamNum += 1
+      }
+
+      if (approvedFilters.edu) {
+        filtersArray.push(`(LOWER(cvs.edu) LIKE $${currentParamNum} OR
+        LOWER(cv_edus.general) LIKE $${currentParamNum})`)
+        fParams.push(approvedFilters.edu)
+        currentParamNum += 1
+      }
+
+      if (approvedFilters.tel) {
+        filtersArray.push(`(LOWER(cvs.tel) LIKE $${currentParamNum} OR
+        LOWER(cvs.tel_home) LIKE $${currentParamNum})`)
+        fParams.push(approvedFilters.tel)
+        currentParamNum += 1
+      }
+
+      if (approvedFilters.sal_min) {
+      // 1. IF NOT NUMBER PROBLEM
+      // 2. intervals problem
+        filtersArray.push(`(cvs.salary_max >= $${currentParamNum})`)
+        //  OR cvs.salary_max IS NULL
+        fParams.push(approvedFilters.sal_min)
+        currentParamNum += 1
+      }
+      if (approvedFilters.langs && approvedFilters.langs.length < 76) {
+        const langsPrep = '{' + approvedFilters.langs.replace(/[{}]/gi, '') + '}'
+        filtersArray.push(`($${currentParamNum} && cvs.langs::varchar[])`)
+        fParams.push(langsPrep)
+        currentParamNum += 1
+      }
+
+      if (approvedFilters.exp_min && !isNaN(Number(approvedFilters.exp_min))) {
+        const expMinNum = Number(approvedFilters.exp_min)
+        filtersArray.push(`(cvs.total_exp >= $${currentParamNum})`)
+        fParams.push(expMinNum)
+        currentParamNum += 1
+      }
+
+      if (approvedFilters.exp_max && !isNaN(Number(approvedFilters.exp_max))) {
+        const expMaxNum = Number(approvedFilters.exp_max)
+        filtersArray.push(`(cvs.total_exp <= $${currentParamNum})`)
+        fParams.push(expMaxNum)
+        currentParamNum += 1
+      }
+
+      
+      if (filtersArray.length) {
+        filters = 'WHERE ' + filtersArray.join(' AND ')
+      }
+
+      // console.log('cp filters packed:', filters)
+      // console.log('cp filters parms:', fParams)
+
+
       let page = 1
       const perpage = 25
       if (req.query.page && Number(req.query.page) > 0 && Number(req.query.page) < 11) page = Number(req.query.page)
       const offset = (page - 1) * Number(perpage)
 
-      const que2 = `SELECT * FROM "cvs" LIMIT ${perpage}${offset ? ' OFFSET ' + offset : ''}`
-      pool.query(que2, null, (err2, res2) => {
+      const que2 = `SELECT cvs.*, users.last_logged_in FROM "cvs"
+        LEFT OUTER JOIN cv_exps ON (cvs.id = cv_exps.cv_id)
+        LEFT OUTER JOIN cv_edus ON (cvs.id = cv_edus.cv_id)
+        LEFT OUTER JOIN users ON (cvs.id = users.cv_id)
+        ${filters || ''}
+        GROUP BY cvs.id, users.last_logged_in
+        ORDER BY users.last_logged_in DESC
+        LIMIT ${perpage}
+        ${offset ? ' OFFSET ' + offset : ''}`
+
+      // const que2 = `SELECT cvs.*, cv_exps.*, cv_edus.* FROM "cvs" LEFT OUTER JOIN cv_exps ON (cvs.id = cv_exps.cv_id) LEFT OUTER JOIN cv_edus ON (cvs.id = cv_edus.cv_id)  ${filters || ''} LIMIT ${perpage}${offset ? ' OFFSET ' + offset : ''}`
+      // const que2 = `SELECT * FROM "cvs" LIMIT ${perpage}${offset ? ' OFFSET ' + offset : ''}`
+      // console.log('cp 9090', que2)
+      const params2 = filters.length ? fParams : null
+      pool.query(que2, params2, (err2, res2) => {
         if (err2) {
-          res.send('step4. Error', err2)
+          res.send('step4. Error' + err2)
           return false
         }
-        const que3 = `SELECT COUNT(*) FROM "cvs"`
-        pool.query(que3, null, (err3, res3) => {
+        // that is all shiet cause then pagination is cooked
+        // let cvs = []
+        // console.log('cp rr', res2.rows.length)
+        // res2.rows.forEach(row => {
+        //   // just remove duplicates, no need for the related data on index
+        //   // just need it in search
+        //   const needle = cvs.findIndex(cv => cv.id === row.id)
+        //   if (needle === -1) {
+        //     cvs.push(row)
+        //   }
+        // })
+        // // res2.rows.forEach(row => {
+        // //   const needle = cvs.findIndex(cv => cv.id === row.id)
+        // //   if (needle > -1) {
+        // //     cvs[needle].exps.push({place: row.place, position: row.position, start: row.start, end: row.end, desc: row.desc})
+        // //   }
+        // //   cvs.push(row)
+        // // })
+        const que3 = `SELECT COUNT(DISTINCT cvs.id) FROM "cvs"
+        LEFT OUTER JOIN cv_exps ON (cvs.id = cv_exps.cv_id)
+        LEFT OUTER JOIN cv_edus ON (cvs.id = cv_edus.cv_id)
+        ${filters || ''}`
+        pool.query(que3, params2, (err3, res3) => {
           if (err3) {
             res.send('step5. Error')
             return false
@@ -1375,9 +1544,16 @@ async function cvCreateUpdate (req, res) {
         return false
       }
       // parsedData.user_id = uid
+      parsedData.updated_at = new Date()
       let que2
       const columns = Object.keys(parsedData)
       const params2nd = Object.values(parsedData)
+
+      const parsedExts = validateCVExts(req.body.cvExt)
+      columns.push('total_exp')
+      params2nd.push(parsedExts.totalExp || 0)
+      console.log('cpcpc231', parsedExts)
+
       if (cv_id) {
         //cv found, update
         //use uid for smth???,
@@ -1420,7 +1596,7 @@ async function cvCreateUpdate (req, res) {
           res.send({ result: 'OK' })
         }
 
-        const parsedExts = validateCVExts(req.body.cvExt)
+        // const parsedExts = validateCVExts(req.body.cvExt)
         
         if (parsedExts.error) {
           console.log('error parsing cvExts', parsedExts.error)
@@ -1519,12 +1695,13 @@ function validateCVExts (data) {
       exps: [],
       edus: []
     }
+    console.log('cp9', data.exps)
     if (data.exps && Array.isArray(data.exps) && data.exps.length) {
       data.exps.slice(0, 5).forEach(exp => {
         if (exp.place &&
           exp.place.length < 76 && 
           (!exp.position || exp.position.length < 76) &&
-          (!exp.range || (!exp.range.from || exp.range.from.length < 30) || (!exp.range.to || exp.range.to.length < 30)) &&
+          (!exp.range || (!exp.range.from || (exp.range.from && exp.range.from.length < 30)) || (!exp.range.to || (exp.range.to && exp.range.to.length < 30))) &&
           (!exp.desc || exp.desc.length < 801)
         ) {
           exp.start = new Date(exp.range.from)
@@ -1532,6 +1709,10 @@ function validateCVExts (data) {
           parsedExts.exps.push(exp)
         }
       })
+      
+      parsedExts.totalExp = Math.round(parsedExts.exps.slice(0, 5)
+        .reduce((acc, cur) => acc + (cur.end - cur.start), 0) / 1000 / 60 / 60 / 24 / 30 / 12 * 10
+      ) / 10
     }
 
     if (data.edus && Array.isArray(data.edus) && data.edus.length) {
@@ -1698,7 +1879,7 @@ function validateCV (data) {
     //langs
     if (data.langs && Array.isArray(data.langs)) {
       let langsFiltered = data.langs.filter(lang => lang.length < 51)
-      parsedData.langs = langsFiltered
+      parsedData.langs = langsFiltered.map(l => String(l).toLowerCase())
     } else {
       parsedData.langs = data.langs
     }

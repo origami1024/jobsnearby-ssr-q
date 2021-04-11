@@ -185,7 +185,7 @@
                 id="rulescb1"
                 v-model="rules" :error-message="validation.rules" :error="validation.rules != ''"/>
               <label class="cb1rules-label" style="padding-top: 3px; color: var(--color1);" for="rulescb1">
-                * {{$t('reg.rulesStart')}} <a class="cb1rules-link" style="color: var(--btn-color); text-decoration: none;" href="#">{{$t('reg.rulesLink')}}</a>{{$t('reg.rulesEnd')}}
+                * {{$t('reg.rulesStart')}} <a class="cb1rules-link" style="color: var(--btn-color); text-decoration: none;">{{$t('reg.rulesLink')}}</a>{{$t('reg.rulesEnd')}}
               </label>
             </div>
             <q-btn 

@@ -364,7 +364,7 @@
                 :disabled="cvExt.exps.length > 4"
                 @click="addOneExp"
                 class="headerBtns1 weight600 text-white"
-                style="margin-top: 8px;"
+                style="background-color: var(--violet-btn-color); margin-top: 8px;"
               >
                 {{$t('addCv.addMoreExp')}}
               </q-btn>
@@ -379,7 +379,7 @@
               v-for="(edu, uidx) in cvExt.edus"
               :key="'edu_' + uidx"
             >
-              <div class="w586">
+              <!-- <div class="w586">
                 <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
                   <p class="startP">{{$t('addCv.edu')}}</p>
                 </div>
@@ -397,6 +397,31 @@
                   v-model="cvExt.edus[uidx].general"
                   :options="$t('addCv.eduOptions')"
                   :hint="null"
+                />
+              </div> -->
+              <div class="w586">
+                <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+                  <p class="startP">{{$t('addCv.edu')}}</p>
+                </div>
+                <q-select
+                  :value="cvExt.edus[uidx].general"
+                  @input="cvExt.edus[uidx].general = $event"
+                  dense
+                  outlined
+                  bg-color="white" color="deep-purple-10"
+                  use-input
+                  input-debounce="0"
+                  fill-input
+                  hide-selected
+                  ref="edu"
+                  :options="eduOpts"
+                  @filter="filterFnEdu"
+                  :hint="null"
+                  :placeholder="$t('addCv.eduph')"
+                  @keyup="cvExt.edus[uidx].general = $event.target.value"
+                  dropdown-icon="none"
+                  class="dropdown-padding-adjust"
+                  :maxlength="30"
                 />
               </div>
               <TextField
@@ -436,7 +461,7 @@
                 :disabled="cvExt.edus.length > 4"
                 @click="addOneEdu"
                 class="headerBtns1 weight600 text-white"
-                style="margin-top: 8px;"
+                style="background-color: var(--violet-btn-color); margin-top: 8px;"
               >
                 {{$t('addCv.addMoreEdu')}}
               </q-btn>
@@ -454,6 +479,7 @@
             </div>
             <!-- @keyup="cv.langs = $event.target.value" -->
             <!-- @input="langsInput" -->
+            <!-- @input="dbg1" -->
             <div class="flex">
               <q-select
                 v-model="tmpLang"
@@ -474,7 +500,13 @@
                 style="flex-grow: 1; margin-right: 8px;"
                 :hint="null"
                 ref="lang"
-              />
+              >
+                <template v-slot:option="slotProps">
+                  <div :lang="slotProps.opt" style="cursor: pointer; padding: 6px 10px;" class="hov-1" @click.prevent="selectClick">
+                    {{slotProps.opt}}
+                  </div>
+                </template>
+              </q-select>
               <q-btn @click="langsEnterOuter" style="background-color: var(--violet-btn-color); color: white; border-radius: 10px; display: block; height: 36px;">
                 {{$t('addCv.addLang')}}
               </q-btn>
@@ -593,7 +625,12 @@ export default {
       if (!d) {
         return ''
       }
-      return d.toLocaleDateString()
+
+      try {
+          let bdArr = d.toLocaleDateString().split('/')
+          return [bdArr[1], bdArr[0], bdArr[2]].join('/')
+      } catch (error) {}
+      return ''
     }
   },
   data () {
@@ -678,7 +715,7 @@ export default {
       lazyRulesAll: true,
 
       cityList: this.$t('App.cityList'),//["Ашхабад", "Дашогуз", "Мары", "Туркменабад", "Туркменбаши"],
-      scheduleList: this.$t('addJob.scheduleList'),//["5/2", "6/1", "2/2", "3/2", "3/1", "15/15"],
+      // scheduleList: this.$t('addJob.scheduleList'),//["5/2", "6/1", "2/2", "3/2", "3/1", "15/15"],
       eduList: this.$t('addCv.eduOptions'),
       eduOpts: this.eduList,
       langList: this.$t('addJob.langOptions'),
@@ -696,7 +733,7 @@ export default {
       salaryValidated: true,
       descError: '',
       cityOptions: this.cityList,
-      scheduleOptions: this.scheduleList,
+      // scheduleOptions: this.scheduleList,
     }
   },
   activated () {
@@ -711,12 +748,23 @@ export default {
     this.preloaded = false //trigger only once if its ssred
   },
   methods:{
-    // langsInput ($event) {
-    //   // this.tmpLang = $event
-    //   // console.log('asdasd', this.tmpLang)
-    //   this.langsEnterOuter()
-    //   this.$refs.lang.blur()
-    // },
+    selectClick (val) {
+      const lang = val.target.getAttribute('lang').replace(',', '.')
+      
+      if (lang && lang.length) {
+        if (this.cv.langs.length < 3) {
+          if (!this.cv.langs.includes(lang)) {
+            this.cv.langs.push(lang)
+          } else {
+            this.$q.notify(this.$t('addCv.langDuplicate'))
+          }
+        } else {
+          this.$q.notify(this.$t('addCv.langMax'))
+        }
+      }
+      this.$refs.lang.hidePopup()
+      this.tmpLang = ''
+    },
     langInputShenanigans (val) {
       this.tmpLang = val
     },
@@ -724,7 +772,7 @@ export default {
       if (this.tmpLang !== '') {
         if (this.cv.langs.length < 3) {
           if (!this.cv.langs.includes(this.tmpLang)) {
-            this.cv.langs.push(this.tmpLang)
+            this.cv.langs.push(this.tmpLang.replace(',', '.'))
           } else {
             this.$q.notify(this.$t('addCv.langDuplicate'))
           }
@@ -738,7 +786,7 @@ export default {
       if (val !== '') {
         if (this.cv.langs.length < 3) {
           if (!this.cv.langs.includes(val)) {
-            this.cv.langs.push(val)
+            this.cv.langs.push(val.replace(',', '.'))
           } else {
             this.$q.notify(this.$t('addCv.langDuplicate'))
           }
@@ -1022,12 +1070,12 @@ export default {
         this.langOpts = this.langList.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     },
-    filterSchedule (val, update, abort) {
-      update(() => {
-        const needle = val.toLowerCase()
-        this.scheduleOptions = this.scheduleList.filter(v => v.toLowerCase().indexOf(needle) > -1)
-      })
-    },
+    // filterSchedule (val, update, abort) {
+    //   update(() => {
+    //     const needle = val.toLowerCase()
+    //     this.scheduleOptions = this.scheduleList.filter(v => v.toLowerCase().indexOf(needle) > -1)
+    //   })
+    // },
     scheduleUpd(new1) {
       this.job.schedule = new1
     },
@@ -1294,4 +1342,7 @@ div.q-field__messages
   width calc(100% + 20px)
   @media screen and (max-width 800px)
     width calc(100% + 68px)
+
+.hov-1:hover
+  color var(--violet-btn-color)
 </style>

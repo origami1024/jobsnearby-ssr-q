@@ -7,8 +7,8 @@
     <label
       style="display: flex; align-items: center; margin: 12px 0;
         cursor: pointer; color: var(--color1); font-size: 14px;
-        user-select: none; font-weight: 500;"
-      v-for="lidx in 2" :key="lidx"
+        user-select: none; font-weight: 500; text-align: left;"
+      v-for="lidx in vals.length" :key="lidx"
     >
       <q-radio
         :value="value"
@@ -20,22 +20,6 @@
       />
       {{ labels[lidx - 1] }}
     </label>
-    <!-- <label
-      style="
-        display: flex; align-items: center; margin: 12px 0;
-        cursor: pointer; color: var(--color1); font-size: 14px;
-        user-select: none; font-weight: 500;
-      "
-    >
-      <q-radio
-        v-model="cv.car"
-        :val="false"
-        color="red-10"
-        dense
-        style="margin-right: 10px;"
-      />
-      {{$t('addCv.no')}}
-    </label> -->
   </div>
 </template>
 
@@ -66,6 +50,10 @@ export default {
       type: [Boolean, String],
       default: null
     },
+    // extended: {
+    //   type: Boolean,
+    //   default: false
+    // }
     // ph: {
     //   type: String,
     //   default: ''
