@@ -14,38 +14,12 @@
         transition-prev="jump-up"
         transition-next="jump-up"
       >
-        <q-tab-panel name="cv" class="subprofile__cv subProfilePaddings" @drop="cvDrop">
-          
-          <div class="line" style="display: flex; width: 100%;">
-            <div style="max-width: 300px; width: 100%; margin-bottom: 20px;">
-
-              <!-- <label for="cvInp" class="uploaderWrapper" tabindex="0">
-                <input id="cvInp" ref="cvUplInp" @change="uploadCV($refs.cvUplInp.files)" type="file" style="display:none" accept=".doc, .docx, .pdf, .rtf"/>
-                <span>{{$t('sub.loadCVHeader')}}</span>
-              </label> -->
-              <label for="cvInpX" class="uploaderWrapper" tabindex="0">
-                <input id="cvInpX" ref="cvUplInpX" @change="uploadCVX($refs.cvUplInpX.files)" type="file" style="display:none" accept=".doc, .docx, .pdf, .rtf"/>
-                <span>{{$t('sub.loadCVHeader')}}</span>
-              </label>
-              <div class="urlpanel" style="display: flex; justify-content: space-between; align-items: center; font-size: 16px;">
-                {{(user.cvurl != null && user.cvurl != '') ? $t('sub.cvurlUploaded') + ':' : $t('sub.cvurlNone')}}
-                <a v-if="user.cvurl != null && user.cvurl != ''" :href="'https://docs.google.com/viewerng/viewer?url=' + user.cvurl" target="_blank">
-                  <q-icon color="blue-10" size="32px" name="assignment">
-                  </q-icon>
-                </a>
-              </div>
-            </div>
-          </div>
-          <!-- <div style="margin-bottom: 15px;">{{user.cvurl}}</div> -->
-          <div style="max-width: 300px; display: flex; width: 100%;">
-            <q-btn style="margin-left: auto;" dense class="headerBtns1" v-if="user.cvurl != null && user.cvurl != ''" color="red-10" :label="$t('sub.deleteCVBtn')" @click="cvdel" />
-          </div>
+        <q-tab-panel name="cv" class="subprofile__cv subProfilePaddings" @drop="cvDrop">       
 
           <div
             class="cv-controls"
             v-if="user.role === 'subscriber'"
-            v-show="false"
-            style="display: flex; flex-direction: column;"
+            style="display: flex; flex-direction: column; border-radius: 6px; border: 1px solid #c2c2c6; width: 100%; padding: 6px; margin-bottom: 12px;"
           >
             <q-btn
               v-if="user.cv_id"
@@ -73,6 +47,25 @@
               rounded
               @click="deleteCv"
             />
+          </div>
+
+          <div class="line" style="display: flex; width: 100%; border-radius: 6px; border: 1px solid #c2c2c6; padding: 6px;">
+            <div style="max-width: 300px; width: 100%; margin-bottom: 20px;">
+              <label for="cvInpX" class="uploaderWrapper" tabindex="0">
+                <input id="cvInpX" ref="cvUplInpX" @change="uploadCVX($refs.cvUplInpX.files)" type="file" style="display:none" accept=".doc, .docx, .pdf, .rtf"/>
+                <span>{{$t('sub.loadCVAddendumHeader')}}</span>
+              </label>
+              <div class="urlpanel" style="display: flex; justify-content: space-between; align-items: center; font-size: 16px;">
+                {{(user.cvurl != null && user.cvurl != '') ? $t('sub.addendumUrlUploaded') + ':' : $t('sub.addendumUrlNone')}}
+                <a v-if="user.cvurl != null && user.cvurl != ''" :href="'https://docs.google.com/viewerng/viewer?url=' + user.cvurl" target="_blank">
+                  <q-icon color="blue-10" size="32px" name="assignment">
+                  </q-icon>
+                </a>
+              </div>
+            </div>
+            <div style="display: flex; width: 100%;">
+              <q-btn style="margin-left: auto;" dense class="headerBtns1" v-if="user.cvurl != null && user.cvurl != ''" color="red-10" :label="$t('sub.deleteAddendums')" @click="cvdel" />
+            </div>
           </div>
         </q-tab-panel>
         <q-tab-panel name="sentcvs">

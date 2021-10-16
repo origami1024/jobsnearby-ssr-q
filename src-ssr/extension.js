@@ -104,6 +104,7 @@ module.exports.extendApp = function ({ app, ssr }) {
   app.get('/cplogin.json', adm.adminLogin)
   app.post('/cploginep.json', adm.cpLoginEndpoint)
   app.get('/allfb.json', adm.getAllFB)
+  app.get('/banners.json', adm.banners)
   app.get('/adminusers.json', adm.adminUsers)
   app.get('/adminjobs.json', adm.adminJobs)
   app.get('/adminstats.json', adm.adminStatsRoute)

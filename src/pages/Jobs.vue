@@ -5,6 +5,37 @@
       <div class="jobs__banner-right">
         <div class="banner__header-wrap">
           <h1 class="banner__header">{{$t('jobs.bannerHeader')}}</h1>
+          <div
+            v-if="false && 'Admin part not implemented'"
+            :style="`
+              background: #ccc8;
+              height: 68px;
+              width: 600px;
+              border-radius: 6px;
+              margin-left: auto;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            `"
+          >
+            Посетите нашу группу в вк. Место под рекламу.
+          </div>
+        </div>
+        <div
+          v-if="false && 'Admin part not implemented'"
+          :style="`
+            background: #ccc8;
+            height: 62px;
+            width: 280px;
+            margin-bottom: 12px;
+            padding: 12px 26px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          `"
+        >
+          Посетите нашу группу в вк. Место под рекламу.
         </div>
         <div class="jobs__top-search">
           <button class="filtersHamburgerBtn" @click="$store.dispatch('filtersToggle')"/>

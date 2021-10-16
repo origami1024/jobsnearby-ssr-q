@@ -133,12 +133,11 @@ export default {
         }
     },
     methods: {
-        formatDate (d) {
-            if (d) {
+        formatDate (date) {
+            if (date) {
                 try {
-                    let dd = new Date(d)
-                    let bdArr = dd.toLocaleDateString().split('/')
-                    return [bdArr[1], bdArr[0], bdArr[2]].join('/') + ' ' + dd.toTimeString().substring(0, 5)
+                    const d = new Date(date)
+                    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${d.toTimeString().substring(0, 5)}`
                 } catch (error) {
                     
                 }

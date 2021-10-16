@@ -32,9 +32,10 @@
               glossy
               class="controlbtn"
               @click="editJob(item.job_id)"
+              style="margin-bottom: 4px;"
             >
               <q-tooltip>
-                <p style="font-size: 15px; margin: 0">{{$t('jobsStats.editHint')}}</p>
+                <p style="font-size: 15px; margin: 0;">{{$t('jobsStats.editHint')}}</p>
               </q-tooltip>
             </q-btn>
             <q-btn
@@ -44,6 +45,7 @@
               color="blue"
               glossy
               class="controlbtn"
+              style="margin-bottom: 4px;"
               @click="$store.dispatch('reopenJobById',item.job_id)"
             >
               <q-tooltip>
@@ -57,27 +59,29 @@
               color="purple"
               glossy
               class="controlbtn"
+              style="margin-bottom: 4px;"
               @click="$store.dispatch('reopenJobById',item.job_id)"
             >
               <q-tooltip>
                 <p style="font-size: 15px;margin: 0">{{$t('jobsStats.resendHint')}}</p>
               </q-tooltip>
             </q-btn>
-            <div style="display: inline;">
-              <q-btn
-                :disable="item.is_closed"
-                icon="work_off"
-                size="sm"
-                color="orange"
-                glossy
-                class="controlbtn"
-                @click="$store.dispatch('closeJobById',{jid: item.job_id, notifier: $q.notify})"
-              >
-              </q-btn>
-              <q-tooltip>
-                <p style="font-size: 15px;margin: 0">{{$t('jobsStats.closeHint')}}</p>
-              </q-tooltip>
-            </div>
+            <!-- <div style="display: inline;"> -->
+            <q-btn
+              :disable="item.is_closed"
+              icon="work_off"
+              size="sm"
+              color="orange"
+              glossy
+              class="controlbtn"
+              style="margin-bottom: 4px;"
+              @click="$store.dispatch('closeJobById',{jid: item.job_id, notifier: $q.notify})"
+            >
+            </q-btn>
+            <q-tooltip>
+              <p style="font-size: 15px;margin: 0">{{$t('jobsStats.closeHint')}}</p>
+            </q-tooltip>
+            <!-- </div> -->
 
             <q-btn
               icon="delete_forever"
@@ -85,6 +89,7 @@
               color="red"
               glossy
               class="controlbtn"
+              style="margin-bottom: 4px;"
               @click="$store.dispatch('deleteJobById',{jid: item.job_id, notifier: $q.notify})"
             >
               <q-tooltip>

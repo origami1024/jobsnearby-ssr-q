@@ -82,7 +82,8 @@
             :rules="[
               val => (lazyRulesAll || !!val) || $t('addCv.NameValidationRequired'),
               val => (lazyRulesAll || val.length > 5) || $t('addCv.telValidationMin'),
-              val => val.length < 21 || $t('addCv.telValidationMax')
+              val => val.length < 21 || $t('addCv.telValidationMax'),
+              val => /^[\d\+ ]*$/.test(val) || $t('addCv.telValidationFormat')
             ]"
             :reqd="true" :lazy="lazyRulesAll" :maxlength="20" :maxlhidden="true"
           />
@@ -91,7 +92,8 @@
             :label="$t('addCv.telHome')" :ph="$t('addCv.telph')"
             :rules="[
               val => val === null || val === '' || (lazyRulesAll || val.length > 5) || $t('addCv.telValidationMin'),
-              val => val === null || val === '' || val.length < 21 || $t('addCv.telValidationMax')
+              val => val === null || val === '' || val.length < 21 || $t('addCv.telValidationMax'),
+              val => (val === null || /^[\d\+ ]*$/.test(val)) || $t('addCv.telValidationFormat')
             ]"
             :lazy="lazyRulesAll"
             :maxlength="20" :maxlhidden="true"
@@ -322,8 +324,10 @@
                       <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                         <q-date
                           v-model="cvExt.exps[eidx].range"
+                          @range-start="cvExt.exps[eidx].range = {from: (new Date(`${$event.month}-${$event.day}-${$event.year}`)).toISOString()}"
                           range
                         >
+                        <!-- mask="DD/MM/YYYY" -->
                           <div class="row items-center justify-end">
                             <q-btn v-close-popup label="Close" color="primary" flat />
                           </div>
@@ -547,7 +551,7 @@
 
           <hr class="cv-hr" style="margin: 20px 0 30px;"/>
 
-          <TextField
+          <!-- <TextField
             v-model="cv.wanted_job" ref="wanted_job"
             :label="$t('addCv.wantedJob')" :ph="$t('addCv.wantedJobPh')"
             :rules="[
@@ -557,7 +561,40 @@
             ]"
             :reqd="true" :lazy="lazyRulesAll"
             :maxlength="75" :maxlhidden="true"
-          />
+          /> -->
+
+          <div class="w586">
+            <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+              <p class="star reqd"/><p class="startP">{{$t('addCv.wantedJob')}}</p>
+            </div>
+            <q-select
+              :value="cv.wanted_job"
+              @input="jobTitleUpd"
+              dense
+              outlined
+              bg-color="white" color="deep-purple-10"
+              use-input
+              input-debounce="0"
+              fill-input
+              hide-selected
+              ref="wanted_job"
+              :options="jobTitleOptions"
+              @filter="jobTitleFilterFn"
+              :hint="null"
+              :placeholder="$t('addCv.wantedJobPh')"
+              @keyup="addNewJobTitle"
+              dropdown-icon="none"
+              class="dropdown-padding-adjust"
+              :maxlength="75"
+              :rules="[
+                val => (lazyRulesAll || !!val) || $t('addCv.NameValidationRequired'),
+                val => (lazyRulesAll || val.length > 1) || $t('addCv.nameValidationMin'),
+                val => val.length < 76 || $t('addCv.nameValidationMax')
+              ]"
+              :lazy-rules="lazyRulesAll"
+            />
+          </div>
+
           <div class="w586">
             <div class="sal-wrap">
               <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
@@ -627,8 +664,7 @@ export default {
       }
 
       try {
-          let bdArr = d.toLocaleDateString().split('/')
-          return [bdArr[1], bdArr[0], bdArr[2]].join('/')
+          return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`
       } catch (error) {}
       return ''
     }
@@ -714,7 +750,7 @@ export default {
       
       lazyRulesAll: true,
 
-      cityList: this.$t('App.cityList'),//["Ашхабад", "Дашогуз", "Мары", "Туркменабад", "Туркменбаши"],
+      cityList: this.$t('App.cityList'),
       // scheduleList: this.$t('addJob.scheduleList'),//["5/2", "6/1", "2/2", "3/2", "3/1", "15/15"],
       eduList: this.$t('addCv.eduOptions'),
       eduOpts: this.eduList,
@@ -733,12 +769,14 @@ export default {
       salaryValidated: true,
       descError: '',
       cityOptions: this.cityList,
+      jobTitleList: this.$t('addCv.jobTitleOptions'),
+      jobTitleOptions: this.jobTitleList
       // scheduleOptions: this.scheduleList,
     }
   },
   activated () {
     if (this.isNew) {
-      this.$set(this, 'cv', this.cvInit)
+      this.$set(this, 'cv', JSON.parse(JSON.stringify(this.cvInit)))
       this.lazyRulesAll = true
     } else {
       this.fetchData()
@@ -798,22 +836,42 @@ export default {
       }
     },
     getFromToRange (range) {
-      if (!range || !range.from || !range.to) {
+      if (!range) {
         return ''
       }
-      let dfrom = new Date(range.from)
-      let dto = new Date(range.to)
-      if (!dfrom || !dto) {
-        return ''
+      if (range.from && range.to) {
+        let dfrom = new Date(range.from)
+        let dto = new Date(range.to)
+        if (!dfrom || !dto) {
+          return ''
+        }
+        try {
+          // let bdArr = dfrom.toLocaleDateString().split('/')
+          // let dfromX = [bdArr[1], bdArr[0], bdArr[2]].join('/')
+          // let bdArr2 = dto.toLocaleDateString().split('/')
+          // let dtoX = [bdArr2[1], bdArr2[0], bdArr2[2]].join('/')
+          // return `с ${dfromX} по ${dtoX}`
+          // const d = new Date(date)
+          return `с ${dfrom.getDate()}/${dfrom.getMonth() + 1}/${dfrom.getFullYear()} по ${dto.getDate()}/${dto.getMonth() + 1}/${dto.getFullYear()}`
+        } catch (error) {}
+      } else if (range.from) {
+        let dfrom = new Date(range.from)
+        try {
+          // let bdArr = dfrom.toLocaleDateString().split('/')
+          // let dfromX = [bdArr[1], bdArr[0], bdArr[2]].join('/')
+          // return `с ${dfromX}`
+          return `с ${dfrom.getDate()}/${dfrom.getMonth() + 1}/${dfrom.getFullYear()}`
+        } catch (error) {}
+      } else {
+        let dfrom = new Date(range)
+        try {
+          // let bdArr = dfrom.toLocaleDateString().split('/')
+          // let dfromX = [bdArr[1], bdArr[0], bdArr[2]].join('/')
+          // return `с ${dfromX}`
+          return `с ${dfrom.getDate()}/${dfrom.getMonth() + 1}/${dfrom.getFullYear()}`
+        } catch (error) {}
       }
-      return `с ${dfrom.toLocaleDateString()} по ${dto.toLocaleDateString()}`
-      // cvExt.exps[eidx].range
-      //               ? (cvExt.exps[eidx].range.from
-      //                 ? 'с ' + cvExt.exps[eidx].range.from + ' '
-      //                 : '') + (cvExt.exps[eidx].range.to
-      //                   ? 'по ' + cvExt.exps[eidx].range.to
-      //                   : '')
-      //               : ''
+      return ''
     },
     removePhoto () {
       this.$store.commit('setSubscriberPhoto', null)
@@ -913,7 +971,11 @@ export default {
           if (respd.cvExt) {
             if (respd.cvExt.exps && respd.cvExt.exps.length) {
               respd.cvExt.exps.forEach(exp => {
-                exp.range = {from: exp.start, to: exp.end}
+                if (exp.end) {
+                  exp.range = {from: exp.start, to: exp.end}
+                } else {
+                  exp.range = exp.start
+                }
               })
             }
             this.$set(this, 'cvExt', respd.cvExt)
@@ -946,6 +1008,12 @@ export default {
     cityBasedUpd (new2) {
       this.cv.city_based = new2
     },
+    jobTitleUpd (new1) {
+      this.cv.wanted_job = new1
+    },
+    addNewJobTitle (e) {
+      this.jobTitleUpd(e.target.value)
+    },
 
     resetFields() {//Ok
       this.job = Object.assign({}, this.jobInit)
@@ -977,9 +1045,10 @@ export default {
         scrollPos = 190
       }
 
-      this.$refs.wanted_job.$refs.qinput.validate()
-      if (this.$refs.wanted_job.$refs.qinput.hasError) {
-        scrollPos = 1700
+      this.$refs.wanted_job.validate()
+      if (this.$refs.wanted_job.hasError) {
+        let maxH = document.documentElement.scrollHeight
+        scrollPos = maxH - 500
       }
       this.$refs.salary_min.validate()
       if (this.$refs.salary_min.hasError) {
@@ -1056,6 +1125,12 @@ export default {
       update(() => {
         const needle = val.toLowerCase()
         this.cityOptions = this.cityList.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    jobTitleFilterFn (val, update, abort) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.jobTitleOptions = this.jobTitleList.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     },
     filterFnEdu (val, update, abort) {
@@ -1254,14 +1329,13 @@ div.q-field__messages
       font-size 17.7px
       text-align center
   .star
-    // align-self flex-start
-    margin-right 4px
     font-family: Montserrat, sans-serif
     font-size: 14px;
     line-height: 17px;
     color var(--btn-color)
-    // margin-top 5px
-    width 6px
+    position relative
+    margin-right 0px
+    width 0px
   .reqd:before
     content '*'
     font-family Montserrat, sans-serif

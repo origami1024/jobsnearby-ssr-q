@@ -5,9 +5,7 @@
     <div
         class="cv-detail"
         v-else-if="
-            ($store.state.user.role === 'company' &&
-            $store.state.user.rights &&
-            $store.state.user.rights.includes('bauss')) ||
+            ($store.state.user.role === 'company' && cv && Object.keys(cv).length) ||
             ($store.state.user.role === 'subscriber' &&
             $store.state.user.cv_id &&
             $route.params.id &&
@@ -49,15 +47,20 @@
                     style="max-width: 100%; max-height: 188px;"
                     :src="'/uploads/cvpics/' + cv.photo"
                     alt="photo"
+                    ref="photo"
+                    @error="cvPhotoError"
                 />
                 <!-- src="/statics/rect68.png" -->
             </div>
             <div class="block-3">
-                <div style="margin-bottom: 50px;">
+                <div
+                    v-if="(cv.cvExt && cv.cvExt.exps && cv.cvExt.exps.length)"
+                    style="margin-bottom: 50px;"
+                >
                     <div class="cvd-block-header">
                         {{$t('cvDetail.exp')}}
                     </div>
-                    <div class="cvd-text">
+                    <div class="cvd-text" style="display: flex; flex-direction: column-reverse;">
                         <div
                             v-for="(exp, eidx) in cv.cvExt.exps"
                             :key="eidx"
@@ -96,16 +99,16 @@
                             :key="eidx"
                             style="margin-bottom: 20px;"
                         >
-                            <div class="cv-enitity">
-                                {{ edu.spec }}
+                            <div class="cv-enitity mb-1x">
+                                {{ edu.general }}
                             </div>
-                            <div class="cv-place">
+                            <div class="cv-place mb-1x">
                                 <span>{{ edu.place }}</span>
                                 <span class="cv-year">
                                     {{ edu.year }} {{ $t('cvDetail.yearPostfix')}}
                                 </span>
                             </div>
-                            <div class="cvd-line" v-if="edu.fac">
+                            <div class="cvd-line mb-1x" v-if="edu.fac">
                                 <span class="bold">
                                     {{$t('addCv.fac')}}:
                                 </span>
@@ -180,7 +183,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="cv.car || cv.driver.a || cv.driver.b || cv.driver.c || cv.driver.d">
+                <div v-if="cv.car || (cv.driver && (cv.driver.a || cv.driver.b || cv.driver.c || cv.driver.d))">
                     <div class="cvd-block-header">
                         {{$t('cvDetail.skills')}}
                     </div>
@@ -220,8 +223,8 @@ export default {
         bdate () {
             if (this.cv.birth) {
                 try {
-                    let bdArr = (new Date(this.cv.birth)).toLocaleDateString().split('/')
-                    return [bdArr[1], bdArr[0], bdArr[2]].join('/')
+                    const d = (new Date(this.cv.birth))
+                    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`
                 } catch (error) {
                     
                 }
@@ -230,40 +233,56 @@ export default {
         }
     },
     methods: {
-        formatDate (d) {
-            if (d) {
+        cvPhotoError () {
+            this.$nextTick(() => {
+                if (this.$refs.photo && this.$refs.photo.src && !this.$refs.photo.src.endsWith('/statics/personph.svg')) {
+                    this.$refs.photo.src = '/statics/personph.svg'
+                }
+            })
+        },
+        formatDate (date) {
+            if (date) {
                 try {
-                    let dd = new Date(d)
-                    let bdArr = dd.toLocaleDateString().split('/')
-                    return [bdArr[1], bdArr[0], bdArr[2]].join('/') + ' ' + dd.toTimeString().substring(0, 5)
+                    const d = new Date(date)
+                    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${d.toTimeString().substring(0, 5)}`
                 } catch (error) {
-                    
                 }
             }
             return '-'
         },
         exptwoDates(dstrfrom, dstrto) {
-            const d1 = new Date(dstrfrom)
-            const d2 = new Date(dstrto)
-            if (d1.getFullYear() !== d2.getFullYear()) {
-                return this.$t('cvDetail.monthsFull')[d1.getMonth()] +
-                    ' ' +
-                    d1.getUTCFullYear() +
-                    this.$t('cvDetail.yearPostfix2') +
-                    ' - ' +
-                    this.$t('cvDetail.monthsFull')[d2.getMonth()] +
-                    ' ' +
-                    d2.getUTCFullYear() +
-                    this.$t('cvDetail.yearPostfix2')
+            if (dstrfrom && dstrto) {
+                const d1 = new Date(dstrfrom)
+                const d2 = new Date(dstrto)
+                if (d1.getFullYear() !== d2.getFullYear()) {
+                    return this.$t('cvDetail.monthsFull')[d1.getMonth()] +
+                        ' ' +
+                        d1.getUTCFullYear() +
+                        this.$t('cvDetail.yearPostfix2') +
+                        ' - ' +
+                        this.$t('cvDetail.monthsFull')[d2.getMonth()] +
+                        ' ' +
+                        d2.getUTCFullYear() +
+                        this.$t('cvDetail.yearPostfix2')
+                } else {
+                    return this.$t('cvDetail.monthsFull')[d1.getMonth()] +
+                        ' ' +
+                        ' - ' +
+                        this.$t('cvDetail.monthsFull')[d2.getMonth()] +
+                        ' ' +
+                        d2.getUTCFullYear() +
+                        this.$t('cvDetail.yearPostfix2')
+                }
             } else {
+                const d1 = new Date(dstrfrom)
                 return this.$t('cvDetail.monthsFull')[d1.getMonth()] +
-                    ' ' +
-                    ' - ' +
-                    this.$t('cvDetail.monthsFull')[d2.getMonth()] +
-                    ' ' +
-                    d2.getUTCFullYear() +
-                    this.$t('cvDetail.yearPostfix2')
+                        ' ' +
+                        d1.getUTCFullYear() +
+                        this.$t('cvDetail.yearPostfix2') +
+                        ' ' +
+                        this.$t('cvDetail.workingYet')
             }
+            
         }
     },
     activated () {
@@ -282,10 +301,15 @@ export default {
                 if (resp.data) {
                     const respd = resp.data
                     const driverDict = ['a', 'b', 'c', 'd']
-                    respd.driver = respd.driver.split('').reduce((acc, cur, didx) => {
-                        acc[driverDict[didx]] = !!Number(cur)
-                        return acc
-                    }, {})
+                    if (respd.driver) {
+                        
+                        respd.driver = respd.driver.split('').reduce((acc, cur, didx) => {
+                            acc[driverDict[didx]] = !!Number(cur)
+                            return acc
+                        }, {})
+                    } else {
+                        respd.driver = {a: false, b: false, c: false, d: false}
+                    }
                     this.cv = respd
                     this.loading = false
                 } else {
@@ -423,6 +447,9 @@ export default {
     transform: rotate(360deg);
   }
 }
+.mb-1x {
+    margin-bottom: 3px;
+}
 .cv-enitity {
     font-weight: 600;
     font-size: 16px;
@@ -439,6 +466,8 @@ export default {
     font-style: italic;
 }
 .cv-dsc {
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px !important;
     word-wrap: break-word;
     white-space: pre-wrap;
 }

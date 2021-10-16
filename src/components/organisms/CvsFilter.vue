@@ -30,11 +30,12 @@
                 <div>
                     {{$t('cvSearch.found') + ' ' +  count + ' ' + $t('cvSearch.cvs')}}
                 </div>
-                <div>
+                <!-- debugg -->
+                <!-- <div>
                     <div v-for="(v, k) in lastSearchSummary" :key="k">
                         {{v}}
                     </div>
-                </div>
+                </div> -->
             </div>
             <div
                 v-if="isOpen"
@@ -64,12 +65,41 @@
                         class="dropdown-padding-adjust"
                     />
                 </div> -->
-                <TextField
+
+                <!-- <TextField
                     v-model="search.position" ref="position"
                     :label="$t('cvSearch.position1')" :ph="$t('filters.fJCatPh')"
                     :maxlength="75" :maxlhidden="true"
                     class="field-widget"
-                />
+                /> -->
+
+                <div class="w586 field-widget">
+                    <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+                        <!-- <p class="star"> </p> -->
+                        <p class="startP">{{$t('cvSearch.position1')}}</p>
+                    </div>
+                    <q-select
+                        :value="search.position"
+                        @input="positionUpd"
+                        dense
+                        outlined
+                        bg-color="white" color="deep-purple-10"
+                        use-input
+                        input-debounce="0"
+                        fill-input
+                        hide-selected
+                        ref="position"
+                        :options="jobTitleOptions"
+                        @filter="jobTitleFilterFn"
+                        :hint="null"
+                        :placeholder="$t('filters.fJCatPh')"
+                        @keyup="addNewJobTitle"
+                        dropdown-icon="none"
+                        class="dropdown-padding-adjust"
+                        :maxlength="75"
+                    />
+                </div>
+
                 <div class="w586 field-widget">
                     <!-- <div class="sal-wrap"> -->
                         <div class="addJoblabel" style="display: flex; margin-bottom: 8px;">
@@ -99,12 +129,39 @@
                     <!-- </div> -->
                 </div>
 
-                <TextField
+                <!-- <TextField
                     v-model="search.expname" ref="expname"
                     :label="$t('cvSearch.expName')" :ph="$t('cvSearch.expNamePh')"
                     :maxlength="75" :maxlhidden="true"
                     class="field-widget"
-                />
+                /> -->
+
+                <div class="w586 field-widget">
+                    <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
+                        <!-- <p class="star"> </p> -->
+                        <p class="startP">{{$t('cvSearch.expName')}}</p>
+                    </div>
+                    <q-select
+                        :value="search.expname"
+                        @input="expNameUpd"
+                        dense
+                        outlined
+                        bg-color="white" color="deep-purple-10"
+                        use-input
+                        input-debounce="0"
+                        fill-input
+                        hide-selected
+                        ref="expname"
+                        :options="expNameOptions"
+                        @filter="expNameFilterFn"
+                        :hint="null"
+                        :placeholder="$t('cvSearch.expNamePh')"
+                        @keyup="addNewExpNameTitle"
+                        dropdown-icon="none"
+                        class="dropdown-padding-adjust"
+                        :maxlength="75"
+                    />
+                </div>
 
                 <div class="w586 field-widget">
                     <div class="addJoblabel" style="display: flex; margin-bottom:8px;">
@@ -331,10 +388,18 @@
                 <q-btn
                     v-if="!isOpen"
                     class="headerBtns1 applybtn btn550adj"
-                    style="background-color: var(--violet-btn-color); font-weight: 700; max-width: 210px; display: block; align-self: center; margin-top: 18px;"
+                    style="margin-right: 10px; background-color: var(--violet-btn-color); font-weight: 700; max-width: 210px; display: block; align-self: center; margin-top: 18px;"
                     text-color="white"
                     :label="$t('filters.reopen')"
                     @click="isOpen = !isOpen"
+                />
+                <q-btn
+                    v-if="isOpen"
+                    class="headerBtns1 applybtn btn550adj"
+                    style="background-color: var(--violet-btn-color); font-weight: 700; max-width: 210px; display: block; align-self: center; margin-top: 18px;"
+                    text-color="white"
+                    :label="$t('filters.resetBtn')"
+                    @click="resetSearch"
                 />
             </div>
         </div>
@@ -399,12 +464,43 @@ export default {
             eduOpts: this.eduList,
             lastSearchSummary: '',
 
+            jobTitleList: this.$t('addCv.jobTitleOptions'),
+            jobTitleOptions: this.jobTitleList,
+
+            expNameList: this.$t('addCv.jobTitleOptions'),
+            expNameOptions: this.expNameList,
+
             langList: this.$t('addJob.langOptions'),
             langOpts: this.langList,
             tmpLang: '',
         }
     },
     methods: {
+        positionUpd (new1) {
+            this.search.position = new1
+        },
+        addNewJobTitle (e) {
+            this.positionUpd(e.target.value)
+        },
+        expNameUpd (new1) {
+            this.search.expname = new1
+        },
+        addNewExpNameTitle (e) {
+            this.expNameUpd(e.target.value)
+        },
+        jobTitleFilterFn (val, update, abort) {
+            update(() => {
+                const needle = val.toLowerCase()
+                this.jobTitleOptions = this.jobTitleList.filter(v => v.toLowerCase().indexOf(needle) > -1)
+            })
+        },
+        expNameFilterFn (val, update, abort) {
+            update(() => {
+                const needle = val.toLowerCase()
+                this.expNameOptions = this.expNameList.filter(v => v.toLowerCase().indexOf(needle) > -1)
+            })
+        },
+
         selectClick (val) {
             const lang = val.target.getAttribute('lang').replace(',', '.')
 
@@ -465,6 +561,31 @@ export default {
             
         hide () {
             this.isOpen = false
+        },
+
+        resetSearch () {
+            this.searchLine = ''
+            this.search = {
+                exp: {label: "", value: 'idc'},
+                expname: null,
+                car: null,
+                position: null,
+                city_current: null,
+                city_based: null,
+                sal_min: null,
+                sal_max: null,
+                exp_min: null,
+                exp_max: null,
+                edu: null,
+                langs: [],
+                driver: {
+                    a: false,
+                    b: false,
+                    c: false,
+                    d: false
+                }
+            }
+            // this.submitSearch()
         },
         submitSearch () {
             // this.$axios

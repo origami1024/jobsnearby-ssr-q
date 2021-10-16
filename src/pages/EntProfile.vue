@@ -41,33 +41,44 @@
                 <q-badge v-if="respsJreformat[item].hasNew > 0" style="background-color: var(--btn-color); border-radius: 100%; margin-left: auto; width: 23px; height: 23px; text-align: center; justify-content: center; border-font-family: Montserrat, sans-serif; font-weight: bold; font-size: 14px; line-height: 17px; color: white; align-self: start;"  :label="respsJreformat[item].hasNew"/>
               </template>
               
-              <ol style="padding: 8px 15px; padding-bottom: 15px; margin: 0 28px; font-family: Montserrat, sans-serif; font-size: 14px; line-height: 17px;">
+              <ol style="padding: 8px 15px; padding-bottom: 15px; margin: 0 22px; font-family: Montserrat, sans-serif; font-size: 14px; line-height: 17px;">
                 <li style="background-color: white !important; text-align: left; margin-bottom: 7px;" v-for="hit in respsJreformat[item].cvhits" :key="hit" :style="{backgroundColor: resps.find(val=>val.cvhit_id == hit).date_checked == null ? 'var(--color-graypink)' : 'white'}">
                   <span style="display: block; margin-bottom: 6px;">
-                    <!-- <a class="responseLinkLvl2" @click="viewHit(hit)" :href="'https://docs.google.com/viewerng/viewer?url=' + resps.find(val=>val.cvhit_id == hit).cv_url" target="_blank">
-                      {{
-                        resps.find(val=>val.cvhit_id == hit).name + ' ' + 
-                        resps.find(val=>val.cvhit_id == hit).surname
-                      }}
-                    </a> -->
                     <div style="display: inline-block; line-height: 24px; margin-right: 10px;">
                       {{
-                        resps.find(val=>val.cvhit_id == hit).name + ' ' + 
+                        resps.find(val=>val.cvhit_id == hit).name + ' ' +
                         resps.find(val=>val.cvhit_id == hit).surname
                       }}
                     </div>
-                    <a @click="viewHit(hit)" :href="'https://docs.google.com/viewerng/viewer?url=' + resps.find(val=>val.cvhit_id == hit).cv_url" target="_blank" class="responseLinkLvl2"
+                    <a
+                      v-if="resps.find(val=>val.cvhit_id == hit).cv_id !== null"
+                      :href="'/cvs/' + resps.find(val=>val.cvhit_id == hit).cv_id"
+                      @click="viewHit(hit)"
+                      target="_blank"
+                      class="responseLinkLvl2"
+                      style="margin-right: 16px;"
                     >
-                      <q-icon name="today" style="font-size: 24px;"></q-icon>
+                      <q-icon name="preview" class="icon-24-32"></q-icon>
+                      <q-tooltip>
+                        <p style="font-size: 14px; margin: 0">{{$t('entProfile.previewCv')}}</p>
+                      </q-tooltip>
+                    </a>
+                    <div v-else style="color: #999;">
+                      ({{$t('entProfile.cvDeleted')}})
+                    </div>
+                    <a v-if="resps.find(val=>val.cvhit_id == hit).cv_url" :href="'https://docs.google.com/viewerng/viewer?url=' + resps.find(val=>val.cvhit_id == hit).cv_url" target="_blank" class="responseLinkLvl2"
+                      style="margin-right: 12px;"
+                    >
+                      <q-icon name="today" class="icon-24-32"></q-icon>
                       <q-tooltip>
                         <p style="font-size: 14px; margin: 0">{{$t('entProfile.previewHint')}}</p>
                       </q-tooltip>
                     </a>
-                    <a :href="'https://' + resps.find(val=>val.cvhit_id == hit).cv_url" download class="responseLinkLvl2">
+                    <a v-if="resps.find(val=>val.cvhit_id == hit).cv_url" :href="'https://' + resps.find(val=>val.cvhit_id == hit).cv_url" download class="responseLinkLvl2">
                       <q-tooltip>
                         <p style="font-size: 14px; margin: 0">{{$t('entProfile.downloadHint')}}</p>
                       </q-tooltip>
-                      <q-icon name="description" style="font-size: 24px;"></q-icon>
+                      <q-icon name="description" class="icon-24-32"></q-icon>
                     </a>
                     <span class="newhit" v-if="resps.find(val=>val.cvhit_id == hit).date_checked == null">*</span>
                   </span>
@@ -592,7 +603,7 @@ export default {
 .entProfilePaddings
   padding: 40px 80px 35px 80px;
   @media screen and (max-width 550px)
-    padding 30px 34px
+    padding 20px 24px
 </style>
 <style lang="stylus">
 .q-tab-panel .q-item.q-focusable .q-focus-helper
@@ -715,4 +726,9 @@ export default {
     font-size 10px
 .entprofile .q-chip__content
   padding 0 6px !important
+
+.icon-24-32
+  font-size 24px
+  @media screen and (max-width 550px)
+    font-size 32px
 </style>

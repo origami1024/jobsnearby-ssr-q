@@ -135,7 +135,7 @@ export default function (/* { ssrContext } */) {
       },
       async hitcv (context, {job_id, notif, firstNote, onlyReg}) {
         if (context.state.user.role == 'subscriber') {
-          if (!context.state.user.cvurl || context.state.user.cvurl.length < 5) {
+          if (!context.state.user.cv_id) {
             this.$router.push("/subprofile")
             notif({html: true, message: firstNote})
             return false

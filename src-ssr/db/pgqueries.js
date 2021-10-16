@@ -654,7 +654,7 @@ async function getResps(req, res) {
       //   WHERE jobs.author_id = $1 AND cvhits.cvjob_id = jobs.job_id AND cvhits.cvuser_id = users.user_id
       // `
       let que2 = `
-        SELECT cvhits.*, jobs.title, users.name, users.surname
+        SELECT cvhits.*, jobs.title, users.name, users.surname, users.cv_id
         FROM cvhits
         INNER JOIN jobs
         ON jobs.author_id = $1
@@ -890,7 +890,7 @@ async function addOneJob (req, res) {
         res.send('step3-1')
         return false
       } else if (results.rows.length != 1) {
-        res.send('step3-2: ' + results.rows.length)
+        res.send('addOneJob. step3-2: ' + results.rows.length + ' ' + results.rows)
         return false
       }
       let uid = results.rows[0].user_id
@@ -955,7 +955,7 @@ async function cvGetDetail(req, res) {
     const que1st = `SELECT user_id, email, role, rights, cv_id FROM "users" WHERE auth_cookie = $1 AND email = $2`
     const params1st = [req.signedCookies.session, req.signedCookies.mail]
 
-    pool.query(que1st, params1st, (error, results) => {
+    pool.query(que1st, params1st, async (error, results) => {
       if (error) {
         res.send('step2')
         return false
@@ -968,10 +968,30 @@ async function cvGetDetail(req, res) {
         return false
       }
 
-      const role = results.rows[0].role
+      const user_id = results.rows[0].user_id
       const rights = results.rows[0].rights
+      
+      const role = results.rows[0].role
+      let allowedCvIds = []
+      if (rights !== 'bauss' && role === 'company') {
+        const queAllowedCvs = `SELECT users.cv_id from jobs, cvhits, users
+          WHERE jobs.author_id = $1 AND jobs.job_id = cvhits.cvjob_id AND users.user_id = cvhits.cvuser_id
+          GROUP BY users.cv_id`
+
+        const allowedCvsResp = await pool.query(queAllowedCvs, [user_id]).catch(error => {
+          console.log('cp allowedCvsResp err: ', error)
+          return false
+        })
+        if (!allowedCvsResp || !allowedCvsResp.rows || !allowedCvsResp.rows.length) {
+          res.send('step7-1')
+          return false
+        }
+        allowedCvIds = allowedCvsResp.rows.map(row => row.cv_id)
+      }
+
+      
       const cv_id = results.rows[0].cv_id
-      if (!(role === 'company' && rights === 'bauss') && !(role === 'subscriber' && cv_id && cv_id == id)) {
+      if (rights !== 'bauss' && !(role === 'company' && allowedCvIds.includes(String(id))) && !(role === 'subscriber' && cv_id && cv_id == id)) { // && rights === 'bauss'
         res.send('Step3-3. Authorization problems. ' + role + ' ' + cv_id)
         return false
       }
@@ -1495,13 +1515,14 @@ async function cvDelete(req, res) {
       const params21 = [null, uid, null]
       const params22 = [cv_id]
       pool.query(que21, params21, (error21, results21) => {
-        if (error21) {
-          res.send('Step 5. ' + error21)
-          return false
-        }
+        addLog('Удаление резюме ч1.', 'Айди резюме: ' + cv_id, uid, userEmail)
         pool.query(que22, params22, (error22, results22) => {
           if (error22) {
             res.send('Step 6. ' + error22)
+            return false
+          }
+          if (error21) {
+            res.send('Step 5. ' + error21)
             return false
           }
           res.send('OK')
@@ -1552,15 +1573,11 @@ async function cvCreateUpdate (req, res) {
       const parsedExts = validateCVExts(req.body.cvExt)
       columns.push('total_exp')
       params2nd.push(parsedExts.totalExp || 0)
-      console.log('cpcpc231', parsedExts)
 
       if (cv_id) {
         //cv found, update
-        //use uid for smth???,
         const columnsToRefs = columns.map((column, cidx) => column + '=$' + (cidx + 1))
-        // console.log('THIS DA ALRDY EXISTSING', columnsToRefs.join(','))
         que2 = `UPDATE "cvs" SET ${columnsToRefs.join(',')} WHERE id=${cv_id}`
-        console.log('YUPDATIONG')
       } else {
         //no cv - create new
         const refs = Object.keys(columns).map(k => '$' + (Number(k)+1)).join(',')
@@ -1695,23 +1712,35 @@ function validateCVExts (data) {
       exps: [],
       edus: []
     }
-    console.log('cp9', data.exps)
     if (data.exps && Array.isArray(data.exps) && data.exps.length) {
       data.exps.slice(0, 5).forEach(exp => {
+
+        if (exp.range && !exp.range.from) {
+          exp.range = {
+            from: exp.range
+          }
+        }
         if (exp.place &&
           exp.place.length < 76 && 
           (!exp.position || exp.position.length < 76) &&
           (!exp.range || (!exp.range.from || (exp.range.from && exp.range.from.length < 30)) || (!exp.range.to || (exp.range.to && exp.range.to.length < 30))) &&
           (!exp.desc || exp.desc.length < 801)
         ) {
+          
           exp.start = new Date(exp.range.from)
-          exp.end = new Date(exp.range.to)
+          if (exp.range.to) {
+            exp.end = new Date(exp.range.to)
+          } else {
+            exp.end = null
+          }
           parsedExts.exps.push(exp)
         }
       })
       
       parsedExts.totalExp = Math.round(parsedExts.exps.slice(0, 5)
-        .reduce((acc, cur) => acc + (cur.end - cur.start), 0) / 1000 / 60 / 60 / 24 / 30 / 12 * 10
+        .reduce((acc, cur) => acc + ((
+            cur.end || new Date()
+          ) - cur.start), 0) / 1000 / 60 / 60 / 24 / 30 / 12 * 10
       ) / 10
     }
 
@@ -2152,11 +2181,11 @@ async function hitjobcv(req, res) {
     res.status(400).send('Неправильный id вакансии.')
     return false
   }
-  if (!req.body.cvurl || req.body.cvurl.length > 85) {
-    //и еще надо проверить cv url  - что начинается с webhost000
-    res.send('Error: CV not loaded')
-    return false
-  }
+  // if (!req.body.cvurl || req.body.cvurl.length > 85) {
+  //   //и еще надо проверить cv url  - что начинается с webhost000
+  //   res.send('Error: CV not loaded')
+  //   return false
+  // }
   if (authPreValidation(req.signedCookies.session, req.signedCookies.mail)) {
     let que = `
       SELECT user_id
@@ -2821,9 +2850,9 @@ async function registerFinish (id, hash, usertype, arg1, arg2) {
   let insert = ''
   if (usertype === 'company' && (arg2 != true && arg2 != 'true')) arg2 = false
   if (usertype === 'subscriber') insert = `, name = $4, surname = $5`
-  else if (usertype === 'company') insert = `, company = $4, isagency = $5`
+  else if (usertype === 'company') insert = `, company = $4, isagency = $5, block_reason = 'not_verified'`
   let que = `UPDATE "users" SET pwhash = $1, role = $3${insert} where user_id = $2 RETURNING email`
-  //console.log(que, '///', arg2)
+  //console.log(que, '///', arg2)block_reason == 'not_verified'
   let params = [hash, id, usertype, arg1, arg2]
   let result = await pool.query(que, params).catch(error => {
     console.log(error)
@@ -2984,7 +3013,7 @@ async function login(req, res) {
     //get hash from db checking if mail exists
     let que = `
       SELECT pwhash, user_id, role, name, surname,
-      insearch, company, isagency, cvurl, is_active, cv_id, rights, logo_url
+      insearch, company, isagency, cvurl, is_active, cv_id, rights, logo_url,
       block_reason FROM "users" WHERE "email" = $1`
     let params = [mail]
     let userData = await pool.query(que, params).catch(error => {

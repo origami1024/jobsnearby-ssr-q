@@ -21,7 +21,8 @@
         
       </section>
       <!-- <section style="display: flex; justify-content: space-between"></section> -->
-      <section v-if="user.role != 'company' && job.author_id != 21" style="margin-bottom: 20px;">
+      <!--  && job.author_id != 21 -->
+      <section v-if="user.role != 'company'" style="margin-bottom: 20px;">
         <q-btn
         v-if="!user.ownCVs.find(val=>val.cvjob_id == job.job_id)"
         text-color="white"
@@ -50,9 +51,9 @@
           ({{$t('jobPage.cvAlreadySent')}})
         </div>
       </section>
-      <div v-else-if="user.role == 'subscriber' && job.author_id == 21" class="cvSentSpan">
+      <!-- <div v-else-if="user.role == 'subscriber' && job.author_id == 21" class="cvSentSpan">
         {{$t('jobPage.onlyDirectContacts')}}
-      </div>
+      </div> -->
       <section>
         <div>
           <h4 class="detailed__header1">{{$t('jobPage.reqs')}}</h4>
