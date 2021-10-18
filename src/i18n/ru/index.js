@@ -182,7 +182,7 @@ export default {
     expOpts: [
       {label: "Не имеет значения", value: -1},
       {label: "Без опыта", value: 0},
-      {label: "от 1 до 3 лет", value: 2}, 
+      {label: "от 1 до 3 лет", value: 2},
       {label: "от 3 до 5 лет", value: 4},
       {label: "от 5 лет", value: 6}
     ],
@@ -191,7 +191,7 @@ export default {
       {label: "Временная", value: 'v'}
     ],
     curOpts: [
-      {label: 'm', value: 'm'},      
+      {label: 'm', value: 'm'},
       {label: '$', value: '$'},
     ],
     cityList: ["Ашхабад", "Дашогуз", "Мары", "Туркменабад", "Туркменбаши"],
@@ -363,16 +363,16 @@ export default {
     jcat: 'Профессия',
     applyBtn: 'Применить',
     expFilters: [
-      {label: "Не имеет значения", value: 'idc'}, 
+      {label: "Не имеет значения", value: 'idc'},
       {label: "Без опыта", value: '0'},
-      {label: "от 1 до 3 лет", value: '1-3'}, 
+      {label: "от 1 до 3 лет", value: '1-3'},
       {label: "от 3 до 5 лет", value: '3-5'},
       {label: "от 5 лет", value: '5'}
     ],
     salFilters: [
-      {label: "Не имеет значения", value: 'idc'}, 
-      {label: "0 - 1000", value: '0-1'}, 
-      {label: "1000 - 3000", value: '1-3'}, 
+      {label: "Не имеет значения", value: 'idc'},
+      {label: "0 - 1000", value: '0-1'},
+      {label: "1000 - 3000", value: '1-3'},
       {label: "от 3000", value: '3'},
     ],
     cities: ["Не имеет значения", "Ашхабад", "Дашогуз", "Мары", "Туркменабад", "Туркменбаши"],
@@ -616,5 +616,11 @@ export default {
     closedByUser: 'Готова к открытию',
     closedByAdmin: 'Закрыта админом',
     awaitsAdmin: 'Ожидает проверки модератора',
+  },
+  pwaInstall: {
+    text: 'Установить приложение?',
+    yes: 'Да',
+    no: 'Нет',
+    later: 'Позже'
   }
 }

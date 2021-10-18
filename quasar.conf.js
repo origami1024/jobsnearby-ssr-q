@@ -1,8 +1,8 @@
 /* eslint-env node */
 
-/*	
- * This file runs in a Node context (it's NOT transpiled by Babel), so use only	
- * the ES6 features that are supported by your Node version. https://node.green/	
+/*
+ * This file runs in a Node context (it's NOT transpiled by Babel), so use only
+ * the ES6 features that are supported by your Node version. https://node.green/
  */
 
 // Configuration for your app
@@ -18,9 +18,9 @@ module.exports = function (/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/cli-documentation/boot-files
-    boot: [      
+    boot: [
       'i18n',
-      'axios',
+      'axios'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -53,7 +53,8 @@ module.exports = function (/* ctx */) {
       // Quasar plugins
       plugins: [
         'Notify',
-        'Meta'
+        'Meta',
+        'LocalStorage'
       ],
       config: {
         notify: { timeout: 2000, position: 'top' }
@@ -62,7 +63,7 @@ module.exports = function (/* ctx */) {
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie
     supportIE: false,
-    
+
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ts
     supportTS: false,
 
@@ -105,7 +106,7 @@ module.exports = function (/* ctx */) {
 
     // https://quasar.dev/quasar-cli/developing-ssr/configuring-ssr
     ssr: {
-      pwa: false
+      pwa: true
     },
 
     // https://quasar.dev/quasar-cli/developing-pwa/configuring-pwa
@@ -114,15 +115,42 @@ module.exports = function (/* ctx */) {
       workboxOptions: {}, // only for GenerateSW
       manifest: {
         name: 'Hunarmen',
-        
         short_name: 'Hunarmen',
         description: 'Работа в Туркменистане',
         display: 'standalone',
         orientation: 'portrait',
-        
+        start_url:  './',
         background_color: '#ffffff',
-        
-        theme_color: '#027be3',
+        theme_color: '#8645FF',
+        features: ['Cross Platform', 'fast', 'simple'],
+        categories: ['productivity'],
+        icons: [
+          {
+            'src': 'statics/icons/icon-128x128.png',
+            'sizes': '128x128',
+            'type': 'image/png'
+          },
+          {
+            'src': 'statics/icons/icon-192x192.png',
+            'sizes': '192x192',
+            'type': 'image/png'
+          },
+          {
+            'src': 'statics/icons/icon-256x256.png',
+            'sizes': '256x256',
+            'type': 'image/png'
+          },
+          {
+            'src': 'statics/icons/icon-384x384.png',
+            'sizes': '384x384',
+            'type': 'image/png'
+          },
+          {
+            'src': 'statics/icons/icon-512x512.png',
+            'sizes': '512x512',
+            'type': 'image/png'
+          }
+        ]
       }
     },
 
