@@ -111,8 +111,12 @@ module.exports = function (/* ctx */) {
 
     // https://quasar.dev/quasar-cli/developing-pwa/configuring-pwa
     pwa: {
-      workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
-      workboxOptions: {}, // only for GenerateSW
+      workboxPluginMode: 'InjectManifest', // 'GenerateSW' or 'InjectManifest'
+      workboxOptions: {
+        // clientsClaim: true,
+        // skipWaiting: false,
+        // exclude: [ '../quasar.client-manifest.json' ]
+      }, // only for GenerateSW
       manifest: {
         name: 'Hunarmen',
         short_name: 'Hunarmen',
