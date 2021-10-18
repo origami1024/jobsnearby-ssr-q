@@ -19,7 +19,7 @@
     <meta itemprop="validThrough" :content="plusOneMonth">
     <div class="line lowres_twolines linetwo">
       <h4 class="cardHeader" itemprop="title">
-        <a :href="'/jobpage/' + job.job_id" target="_blank">
+        <a :href="'/jobpage/' + job.job_id">
           <strong class="joblink" v-html="filteredTitle"/>
         </a>
       </h4>
@@ -47,7 +47,7 @@
           : ''} ${filteredDesc}`">
       </p>
     </div>
-    
+
     <div class="line">
       <div class="line spbtw" style="width: 100%">
         <a class="showContactsLink noshow-below550" @click.prevent="isContactsShown = !isContactsShown" href="#">
@@ -107,7 +107,7 @@ export default {
     job: Object,
   },
   data: ()=>{return {
-    isContactsShown: false 
+    isContactsShown: false
   }},
   computed: {
     telProcessed() {
@@ -144,24 +144,24 @@ export default {
     filteredTitle: function() {
       if (this.searchFilter.length > 1 && this.job.title.toLowerCase().includes(this.searchFilter)) {
         let i = this.job.title.toLowerCase().indexOf(this.searchFilter)
-        return this.job.title.substr(0, i) + 
-        '<span class="searched">' + this.job.title.substr(i, this.searchFilter.length) + '</span>' + 
+        return this.job.title.substr(0, i) +
+        '<span class="searched">' + this.job.title.substr(i, this.searchFilter.length) + '</span>' +
         this.job.title.substr(i + this.searchFilter.length)
       } else return this.job.title
     },
     filteredAuthor: function() {
       if (this.searchFilter.length > 1 && this.job.author.toLowerCase().includes(this.searchFilter)) {
         let i = this.job.author.toLowerCase().indexOf(this.searchFilter)
-        return this.job.author.substr(0, i) + 
-        '<span class="searched">' + this.job.author.substr(i, this.searchFilter.length) + '</span>' + 
+        return this.job.author.substr(0, i) +
+        '<span class="searched">' + this.job.author.substr(i, this.searchFilter.length) + '</span>' +
         this.job.author.substr(i + this.searchFilter.length)
       } else return this.job.author
     },
     filteredCity: function() {
       if (this.searchFilter.length > 1 && this.job.city.toLowerCase().includes(this.searchFilter)) {
         let i = this.job.city.toLowerCase().indexOf(this.searchFilter)
-        return this.job.city.substr(0, i) + 
-        '<span class="searched">' + this.job.city.substr(i, this.searchFilter.length) + '</span>' + 
+        return this.job.city.substr(0, i) +
+        '<span class="searched">' + this.job.city.substr(i, this.searchFilter.length) + '</span>' +
         this.job.city.substr(i + this.searchFilter.length)
       } else if (this.job.city.length == 0) return this.$t('jc.notSpecified')
       else return this.job.city

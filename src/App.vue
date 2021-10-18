@@ -1,6 +1,7 @@
 <template>
   <div id="q-app">
-    <Header />
+    <PwaInstall />
+    <Header  />
     <keep-alive>
       <router-view class="r-view" @scrollTo="scrollTo"/>
     </keep-alive>
@@ -72,11 +73,12 @@ import { scroll } from 'quasar'
 const { getScrollTarget, setScrollPosition } = scroll
 
 import Header from 'components/organisms/Header'
+import PwaInstall from "components/atoms/PwaInstall";
 import { mapState } from 'vuex'
 export default {
   name: 'App',
   data: () => { return {
-    dismiss: null,
+    dismiss: null
   }},
   computed: {
     ...mapState(['user']),
@@ -86,11 +88,11 @@ export default {
     window.removeEventListener("storage", this.onStorageUpdate)
   },
   preFetch ({ store, currentRoute, previousRoute, redirect, ssrContext }) {
-    
+
     if (ssrContext && typeof ssrContext.req.userData === 'object' && ssrContext.req.userData !== null) {
       return store.dispatch('storeAuth', ssrContext.req.userData)
     }
-    
+
   },
   mounted() {
     if (localStorage.lang) this.$i18n.locale = localStorage.lang
@@ -135,6 +137,7 @@ export default {
     },
   },
   components: {
+    PwaInstall,
     Header
   }
 }

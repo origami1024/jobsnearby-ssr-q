@@ -234,7 +234,7 @@ export default {
     expOpts: [
       {label: "Tapawudy ýok", value: -1},
       {label: "Tejribe hökman däl", value: 0},
-      {label: "1 den 3 ýyla", value: 2}, 
+      {label: "1 den 3 ýyla", value: 2},
       {label: "3 den 5 ýyla", value: 4},
       {label: "5 ýyldan köp", value: 6}
     ],
@@ -243,7 +243,7 @@ export default {
       {label: "Wagtlaýyn", value: 'v'}
     ],
     curOpts: [
-      {label: 'manat', value: 'm'},      
+      {label: 'manat', value: 'm'},
       {label: '$', value: '$'},
     ],
     cityList: ["Aşgabat", "Daşoguz", "Mary", "Türkmenabat", "Türkmenbaşy"],
@@ -279,16 +279,16 @@ export default {
     jcat: 'Hünär',
     applyBtn: 'Ulanmak',
     expFilters: [
-      {label: "Tapawudy ýok", value: 'idc'}, 
+      {label: "Tapawudy ýok", value: 'idc'},
       {label: "Tejribe hökman däl", value: '0'},
-      {label: "1 den 3 ýyla", value: '1-3'}, 
+      {label: "1 den 3 ýyla", value: '1-3'},
       {label: "3 den 5 ýyla", value: '3-5'},
       {label: "5 ýyldan köp", value: '5'}
     ],
     salFilters: [
-      {label: "Tapawudy ýok", value: 'idc'}, 
-      {label: "0-1000", value: '0-1'}, 
-      {label: "1000-3000", value: '1-3'}, 
+      {label: "Tapawudy ýok", value: 'idc'},
+      {label: "0-1000", value: '0-1'},
+      {label: "1000-3000", value: '1-3'},
       {label: "3000 den köp", value: '3'},
     ],
     cities: ["Tapawudy ýok", "Aşgabat", "Daşoguz", "Mary", "Türkmenabat", "Türkmenbaşy"],
@@ -468,4 +468,10 @@ export default {
     currDefault: {label: 'm', value: 'm'},
     sendJobErrorLimit: 'Ýalňyş! Wezipe döretmegiň gündelik limity (30 sany) gutardy. Wezipe goşulmady.',
   },
+  pwaInstall: {
+    text: 'Programmany guruň?',
+    yes: 'Hawa',
+    no: 'Ýok',
+    later: 'Soňrak'
+  }
 }
