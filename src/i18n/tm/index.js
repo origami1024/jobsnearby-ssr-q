@@ -473,6 +473,6 @@ export default {
     yes: 'Hawa',
     no: 'Ýok',
     later: 'Soňrak',
-    button: 'Programmany guruň'
+    button: 'Programmany göçürip alyň'
   }
 }
