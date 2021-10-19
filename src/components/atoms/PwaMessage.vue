@@ -53,7 +53,7 @@
 let deferredPrompt;
 
 export default {
-  name: 'InstallBanner',
+  name: 'PwaMessage',
   data () {
     return {
       showBanner: false
