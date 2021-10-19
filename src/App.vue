@@ -1,6 +1,6 @@
 <template>
   <div id="q-app">
-    <PwaInstall />
+    <PwaMessage />
     <Header  />
     <keep-alive>
       <router-view class="r-view" @scrollTo="scrollTo"/>
@@ -54,13 +54,14 @@
                 </svg>
               </a>
             </li>
-            <li>
-              <q-btn
-                class="headerBtns1 violetBtns footerLinkFB"
-                to="/feedback"
-                :label="$t('App.fbBtnLabel')"
-              />
-            </li>
+<!--            <li>-->
+<!--              <q-btn-->
+<!--                class="headerBtns1 violetBtns footerLinkFB"-->
+<!--                to="/feedback"-->
+<!--                :label="$t('App.fbBtnLabel')"-->
+<!--              />-->
+<!--            </li>-->
+            <PwaButton />
           </ul>
         </li>
       </ul>
@@ -73,7 +74,8 @@ import { scroll } from 'quasar'
 const { getScrollTarget, setScrollPosition } = scroll
 
 import Header from 'components/organisms/Header'
-import PwaInstall from "components/atoms/PwaInstall";
+import PwaMessage from "components/atoms/PwaMessage";
+import PwaButton from "components/atoms/PwaButton";
 import { mapState } from 'vuex'
 export default {
   name: 'App',
@@ -137,7 +139,8 @@ export default {
     },
   },
   components: {
-    PwaInstall,
+    PwaMessage,
+    PwaButton,
     Header
   }
 }

@@ -472,6 +472,7 @@ export default {
     text: 'Programmany guruň?',
     yes: 'Hawa',
     no: 'Ýok',
-    later: 'Soňrak'
+    later: 'Soňrak',
+    button: 'Programmany guruň'
   }
 }
