@@ -102,7 +102,7 @@ module.exports = function (/* ctx */) {
 
     // animations: 'all', // --- includes all animations
     // https://quasar.dev/options/animations
-    animations: [],
+    animations: 'all',
 
     // https://quasar.dev/quasar-cli/developing-ssr/configuring-ssr
     ssr: {
@@ -124,8 +124,8 @@ module.exports = function (/* ctx */) {
         display: 'standalone',
         orientation: 'portrait',
         start_url:  './',
-        background_color: '#ffffff',
-        theme_color: '#8645FF',
+        background_color: '#8645FF',
+        theme_color: '#ffffff',
         features: ['Cross Platform', 'fast', 'simple'],
         categories: ['productivity'],
         icons: [

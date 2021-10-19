@@ -60,6 +60,13 @@ export default {
     }
   },
   methods: {
+    sendToYandex() {
+      try {
+        window[`yaCounter64814416`].reachGoal('installPwaHeader');
+      } catch (error) {
+        console.error(error);
+      }
+    },
     initBanner() {
       let neverShowAppInstallBanner = this.$q.localStorage.getItem('neverShowAppInstallBanner')
 
@@ -93,6 +100,7 @@ export default {
             deferredPrompt = null;
           });
       }
+      this.sendToYandex()
     },
     showAppInstallBanner() {
       setTimeout(() => {

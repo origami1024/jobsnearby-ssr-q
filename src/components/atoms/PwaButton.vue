@@ -20,6 +20,13 @@ export default {
     }
   },
   methods: {
+    sendToYandex() {
+      try {
+        window[`yaCounter64814416`].reachGoal('installPwaFooter');
+      } catch (error) {
+        console.error(error);
+      }
+    },
     initButton() {
         window.addEventListener('beforeinstallprompt', (e) => {
           // Prevent showing the prompt
@@ -41,6 +48,7 @@ export default {
             message: 'Приложение уже установлено!'
           })
       }
+      this.sendToYandex()
     },
     // showAppInstallButton() {
     //   this.showButton = true
