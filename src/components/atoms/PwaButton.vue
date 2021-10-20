@@ -41,10 +41,8 @@ export default {
             message: 'Приложение уже установлено!'
           })
       }
+      this.sendToYandex()
     },
-    // showAppInstallButton() {
-    //   this.showButton = true
-    // },
   },
   mounted() {
     this.initButton();
