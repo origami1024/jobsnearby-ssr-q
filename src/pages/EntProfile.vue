@@ -348,7 +348,7 @@ export default {
     getResps() {//ok
       let url = '/getresps'
       this.$axios
-        .post(url, null, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
+        .get(url, null, {headers: {'Content-Type' : 'application/json' }, withCredentials: true,})
         .then(response => {
           if (response.data && response.data.rows) {
             this.resps = response.data.rows
